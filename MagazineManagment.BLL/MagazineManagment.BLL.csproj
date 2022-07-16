@@ -8,11 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MagazineManagment.DAL\MagazineManagment.DAL.csproj" />
+    <ProjectReference Include="..\MagazineManagment.DTO\MagazineManagment.DTO.csproj" />
     <ProjectReference Include="..\MagazineManagment.Shared\MagazineManagment.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
