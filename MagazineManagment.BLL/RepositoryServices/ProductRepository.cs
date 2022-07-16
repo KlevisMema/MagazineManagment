@@ -5,12 +5,14 @@ using MagazineManagment.DTO.DataTransferObjects;
 using MagazineManagment.DAL.Models;
 using MagazineManagment.DTO.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace MagazineManagment.BLL.Services
 {
     public class ProductRepository : IProductRepository
     {
         private readonly ApplicationDbContext _context;
+       
         public ProductRepository(ApplicationDbContext context)
         {
             _context = context;
