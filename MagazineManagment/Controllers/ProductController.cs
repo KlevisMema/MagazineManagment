@@ -50,7 +50,7 @@ namespace MagazineManagment.Web.Controllers
 
         // Update Product 
         [HttpPut]
-        public async Task<ActionResult<ResponseService<ProductViewModel>>> UpdateProductAsync(ProductUpdateViewModel product)
+        public async Task<ActionResult<ResponseService<ProductViewModel>>> UpdateProductAsync([FromForm] ProductUpdateViewModel product)
         {
             var resultUpdateProduct = await _productRepository.UpdateProductAsync(product);
 
@@ -79,9 +79,9 @@ namespace MagazineManagment.Web.Controllers
 
         // serach a product by its name
         [HttpGet("GetProductByName/{productName}")]
-        public async Task<ActionResult<ResponseService<ProductViewModel>>> GetPorductByNameAsync(string ProductName)
+        public async Task<ActionResult<ResponseService<ProductViewModel>>> GetPorductByNameAsync(string productName)
         {
-            var resultGetProductByItsName = await _productRepository.GetPorductByNameAsync(ProductName);
+            var resultGetProductByItsName = await _productRepository.GetProductByNameAsync(productName);
 
             if (resultGetProductByItsName.Success)
                 return Ok(resultGetProductByItsName.Value);

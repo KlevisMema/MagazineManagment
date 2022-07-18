@@ -9,7 +9,7 @@ namespace MagazineManagment.DAL.Models.Base
         [Key]
         public Guid Id { get; set; }
         public DateTime  CreatedOn { get; set; }
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
         public bool IsDeleted { get; set; }
     }
 }

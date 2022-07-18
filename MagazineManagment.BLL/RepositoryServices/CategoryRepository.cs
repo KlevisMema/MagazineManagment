@@ -26,6 +26,7 @@ namespace MagazineManagment.BLL.Services
                 {
                     CategoryName = category.CategoryName,
                     CreatedOn = DateTime.Now,
+                    CreatedBy =  "Klevis"
                 };
 
                 _context.Categories.Add(Newcategory);
@@ -51,7 +52,7 @@ namespace MagazineManagment.BLL.Services
         {
             var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
             if (category == null)
-                return ResponseService<CategoryViewModel>.NotFound($"Category with id of {id} does not excists");
+                return ResponseService<CategoryViewModel>.NotFound($"Category with id of {id} does not exists");
 
             return ResponseService<CategoryViewModel>.Ok(category.AsCategoryDto());
         }
@@ -62,15 +63,14 @@ namespace MagazineManagment.BLL.Services
             var findCategory = await _context.Categories.FirstOrDefaultAsync(c => c.Id == category.Id);
 
             if (findCategory is null)
-            {
                 return ResponseService<CategoryViewModel>.NotFound($"Category with id : {category.Id} doesn't exists!!");
-            }
-
-            findCategory.CategoryName = category.CategoryName;
-            findCategory.CreatedOn = DateTime.Now;
 
             try
             {
+                findCategory.CategoryName = category.CategoryName;
+                findCategory.CreatedOn = DateTime.Now;
+
+
                 _context.Categories.Update(findCategory);
                 await _context.SaveChangesAsync();
                 return ResponseService<CategoryViewModel>.Ok(findCategory.AsCategoryDto());

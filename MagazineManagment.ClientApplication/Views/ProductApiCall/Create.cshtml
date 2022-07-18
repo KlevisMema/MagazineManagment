@@ -1,0 +1,42 @@
+﻿@using MagazineManagment.Shared.Enums;
+@model MagazineManagment.DTO.ViewModels.ProductCreateViewModel
+
+<form asp-action="Create" asp-controller="ProductApiCall" enctype="multipart/form-data">
+
+    <div class="form-group">
+        <label asp-for="ProductName" ></label>
+        <input asp-for="ProductName" type="text" placeholder="Product Name" class="form-control"/>
+        <span asp-validation-for="ProductName"  class="text-danger"></span>
+        <br />
+        <label asp-for="SerialNumber" ></label>
+        <input asp-for="SerialNumber" type="text" placeholder="Seial Number" class="form-control"/>
+        <span asp-validation-for="SerialNumber" class="text-danger"></span>
+        <br />
+        <label asp-for="Price" ></label>
+        <input asp-for="Price" type="number" placeholder="Price" class="form-control"/>
+        <span asp-validation-for="Price" class="text-danger"></span>
+        <br />
+        <label asp-for="ProductInStock" ></label>
+        <input asp-for="ProductInStock" type="number" placeholder="Product in stock" class="form-control"/>
+        <span asp-validation-for="ProductInStock" class="text-danger"></span>
+        <br />
+        <label asp-for="ProductCategoryId" ></label>
+        <select asp-for="ProductCategoryId" asp-items="@ViewBag.CategoryNames" class="form-control"></select>
+        <span asp-validation-for="ProductCategoryId" class="text-danger"></span>
+        <br />
+        <label asp-for="ProductDescription" ></label>
+        <input asp-for="ProductDescription" type="text" placeholder="Product description" class="form-control" />
+        <span asp-validation-for="ProductDescription" class="text-danger"></span>
+        <br />
+        <label asp-for="Image" ></label>
+        <input asp-for="ImageFile" accept="image/*" class="form-control"/> 
+        <span asp-validation-for="ImageFile" class="text-danger"></span>
+        <br />
+        <label asp-for="CurrencyType" ></label>
+        <select asp-for="CurrencyType" asp-items="Html.GetEnumSelectList<CurrencyTypeEnum>()" class="form-control"></select>
+        <span asp-validation-for="CurrencyType" class="text-danger"></span>
+    </div>
+    <br />
+    <input type="submit" value="Create Product" class="btn btn-primary" />
+
+</form>

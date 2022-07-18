@@ -5,7 +5,6 @@ using MagazineManagment.DTO.DataTransferObjects;
 using MagazineManagment.DAL.Models;
 using MagazineManagment.DTO.ViewModels;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 
 namespace MagazineManagment.BLL.Services
 {
@@ -25,15 +24,16 @@ namespace MagazineManagment.BLL.Services
             return products;
         }
 
-
         //Get a single product by id
         public async Task<ResponseService<ProductsAndCategoryInfoViewModel>> GetProductAsync(Guid id)
         {
             var product = await _context.Products.Include(p => p.ProductCategory).FirstOrDefaultAsync(x => x.Id == id);
+
             if (product is null)
             {
                 return ResponseService<ProductsAndCategoryInfoViewModel>.NotFound("Product doesnt exists");
             }
+
             return ResponseService<ProductsAndCategoryInfoViewModel>.Ok(product.AsProductCategoryDto());
         }
 
@@ -48,34 +48,54 @@ namespace MagazineManagment.BLL.Services
                 return ResponseService<ProductViewModel>.NotFound("Category not found");
             }
 
-            string BaseArrayImage = null;
+            var checkIfSerialNrExists = _context.Products.Where(sNr => sNr.SerialNumber == product.SerialNumber.ToUpper());
 
-            using (var ms = new MemoryStream())
+            if (checkIfSerialNrExists.Count() !=  0 )
             {
-                product.ImageFile.CopyTo(ms);
-                var fileBytes = ms.ToArray();
-                BaseArrayImage = Convert.ToBase64String(fileBytes);
+                return ResponseService<ProductViewModel>.ErrorMsg($"Serial number {product.SerialNumber} exists, please give another  serial number");
             }
+            
 
-            Product newProduct = new()
-            {
-                ProductName = product.ProductName,
-                Price = product.Price,
-                CreatedOn = DateTime.Now,
-                ProductDescription = product.ProductDescription,
-                ProductCategoryId = (Guid)product.ProductCategoryId,
-                Image = BaseArrayImage
-            };
+            string BaseArrayImage = null;
 
             try
             {
+                using (var ms = new MemoryStream())
+                {
+                    product.ImageFile.CopyTo(ms);
+                    var fileBytes = ms.ToArray();
+                    BaseArrayImage = Convert.ToBase64String(fileBytes);
+                }
+            }
+            catch (Exception ex)
+            {
+                return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
+            }
+          
+
+            try
+            {
+                Product newProduct = new()
+                {
+                    ProductName = product.ProductName,
+                    Price = product.Price,
+                    CreatedOn = DateTime.Now,
+                    ProductDescription = product.ProductDescription,
+                    ProductCategoryId = (Guid)product.ProductCategoryId,
+                    Image = BaseArrayImage,
+                    CreatedBy = "Klevis",
+                    CurrencyType = product.CurrencyType,
+                    SerialNumber = product.SerialNumber.ToUpper(),
+                    ProductInStock = product.ProductInStock
+                };
+
                 _context.Products.Add(newProduct);
                 await _context.SaveChangesAsync();
                 return ResponseService<ProductViewModel>.Ok(newProduct.AsProductDto());
             }
             catch (Exception ex)
             {
-                return ResponseService<ProductViewModel>.NotFound(ex.Message);
+                return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
             }
 
         }
@@ -90,11 +110,30 @@ namespace MagazineManagment.BLL.Services
                 return ResponseService<ProductViewModel>.NotFound("Product does not exists");
             }
 
+            string BaseArrayImage = null;
+
+            try
+            {
+                using (var ms = new MemoryStream())
+                {
+                    product.ImageFile.CopyTo(ms);
+                    var fileBytes = ms.ToArray();
+                    BaseArrayImage = Convert.ToBase64String(fileBytes);
+                }
+            }
+            catch (Exception ex)
+            {
+                return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
+            }
+
             productToBeUpdated.ProductName = product.ProductName;
             productToBeUpdated.Price = product.Price;
             productToBeUpdated.CreatedOn = DateTime.Now;
             productToBeUpdated.ProductDescription = product.ProductDescription;
-            productToBeUpdated.ProductCategoryId = (Guid)product.CategoryId;
+            productToBeUpdated.SerialNumber = product.SerialNumber;
+            productToBeUpdated.CreatedBy = product.CreatedBy;
+            productToBeUpdated.Image = BaseArrayImage;
+            productToBeUpdated.ProductInStock = product.ProductInStock;
 
             try
             {
@@ -104,7 +143,7 @@ namespace MagazineManagment.BLL.Services
             }
             catch (Exception ex)
             {
-                return ResponseService<ProductViewModel>.NotFound(ex.Message);
+                return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
             }
 
         }
@@ -125,7 +164,7 @@ namespace MagazineManagment.BLL.Services
             catch (Exception ex)
             {
 
-                return ResponseService<ProductViewModel>.NotFound(ex.Message);
+                return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
             }
 
             return ResponseService<ProductViewModel>.Deleted($"Produkti with id : {id} has been deleted!!!!");
@@ -138,7 +177,7 @@ namespace MagazineManagment.BLL.Services
         }
 
         // Serach a product by its name
-        public async Task<ResponseService<ProductViewModel>> GetPorductByNameAsync(string ProductName)
+        public async Task<ResponseService<ProductViewModel>> GetProductByNameAsync(string ProductName)
         {
             var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductName == ProductName);
             if (product == null)

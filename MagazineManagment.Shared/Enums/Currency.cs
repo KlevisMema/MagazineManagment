@@ -1,6 +1,6 @@
 ﻿namespace MagazineManagment.Shared.Enums
 {
-    public enum Currency
+    public enum CurrencyTypeEnum
     {
         Euro = 1,
         Dollar,

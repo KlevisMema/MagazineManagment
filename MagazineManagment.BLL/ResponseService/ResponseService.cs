@@ -51,5 +51,10 @@ namespace MagazineManagment.BLL.ResponseService
         {
             return new ResponseService<T>(ThrowMessage);
         }
+
+        public static ResponseService<T> ErrorMsg(string ThrowMessage)
+        {
+            return new ResponseService<T>(ThrowMessage);
+        }
     }
 }
