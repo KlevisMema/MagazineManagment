@@ -5,6 +5,7 @@ using MagazineManagment.DTO.DataTransferObjects;
 using MagazineManagment.DAL.Models;
 using MagazineManagment.DTO.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using System.Web.Http;
 
 namespace MagazineManagment.BLL.Services
 {
@@ -41,12 +42,12 @@ namespace MagazineManagment.BLL.Services
         public async Task<ResponseService<ProductViewModel>> CreateProductAsync(ProductCreateViewModel product)
         {
 
-            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == product.ProductCategoryId);
+            //var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == product.ProductCategoryId);
 
-            if (category is null)
-            {
-                return ResponseService<ProductViewModel>.NotFound("Category not found");
-            }
+            //if (category is null)
+            //{
+            //    return ResponseService<ProductViewModel>.NotFound("Category not found");
+            //}
 
             var checkIfSerialNrExists = _context.Products.Where(sNr => sNr.SerialNumber == product.SerialNumber.ToUpper());
 
@@ -56,21 +57,21 @@ namespace MagazineManagment.BLL.Services
             }
             
 
-            string BaseArrayImage = null;
+            //string BaseArrayImage = null;
 
-            try
-            {
-                using (var ms = new MemoryStream())
-                {
-                    product.ImageFile.CopyTo(ms);
-                    var fileBytes = ms.ToArray();
-                    BaseArrayImage = Convert.ToBase64String(fileBytes);
-                }
-            }
-            catch (Exception ex)
-            {
-                return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
-            }
+            //try
+            //{
+            //    using (var ms = new MemoryStream())
+            //    {
+            //        product.ImageFile.CopyTo(ms);
+            //        var fileBytes = ms.ToArray();
+            //        BaseArrayImage = Convert.ToBase64String(fileBytes);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
+            //}
           
 
             try
@@ -82,7 +83,7 @@ namespace MagazineManagment.BLL.Services
                     CreatedOn = DateTime.Now,
                     ProductDescription = product.ProductDescription,
                     ProductCategoryId = (Guid)product.ProductCategoryId,
-                    Image = BaseArrayImage,
+                    //Image = BaseArrayImage,
                     CreatedBy = "Klevis",
                     CurrencyType = product.CurrencyType,
                     SerialNumber = product.SerialNumber.ToUpper(),
@@ -132,7 +133,7 @@ namespace MagazineManagment.BLL.Services
             productToBeUpdated.ProductDescription = product.ProductDescription;
             productToBeUpdated.SerialNumber = product.SerialNumber;
             productToBeUpdated.CreatedBy = product.CreatedBy;
-            productToBeUpdated.Image = BaseArrayImage;
+            //productToBeUpdated.Image = BaseArrayImage;
             productToBeUpdated.ProductInStock = product.ProductInStock;
 
             try

@@ -16,7 +16,7 @@ namespace MagazineManagment.DTO.ViewModels
         public DateTime? CreatedOn { get; set; }
         public string? CreatedBy { get; set; }
         //public Guid? ProductCategoryId { get; set; }
-        public string? Image { get; set; }
+        //public string? Image { get; set; }
         //public IFormFile ImageFile { get; set; }
     }
 }

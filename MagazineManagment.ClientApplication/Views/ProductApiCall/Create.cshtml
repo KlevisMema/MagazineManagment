@@ -1,7 +1,7 @@
 ﻿@using MagazineManagment.Shared.Enums;
 @model MagazineManagment.DTO.ViewModels.ProductCreateViewModel
 
-<form asp-action="Create" asp-controller="ProductApiCall" enctype="multipart/form-data">
+<form asp-action="Create" asp-controller="ProductApiCall" enctype="multipart/form-data" method="post">
 
     <div class="form-group">
         <label asp-for="ProductName" ></label>
@@ -28,13 +28,17 @@
         <input asp-for="ProductDescription" type="text" placeholder="Product description" class="form-control" />
         <span asp-validation-for="ProductDescription" class="text-danger"></span>
         <br />
-        <label asp-for="Image" ></label>
-        <input asp-for="ImageFile" accept="image/*" class="form-control"/> 
+       @* <label asp-for="Image" ></label>
+        <input asp-for="ImageFile" type="file" accept="image/*" class="form-control"/> 
         <span asp-validation-for="ImageFile" class="text-danger"></span>
-        <br />
+        <br />*@
         <label asp-for="CurrencyType" ></label>
         <select asp-for="CurrencyType" asp-items="Html.GetEnumSelectList<CurrencyTypeEnum>()" class="form-control"></select>
         <span asp-validation-for="CurrencyType" class="text-danger"></span>
+        <br />
+        <label asp-for="CreatedBy" ></label>
+        <input asp-for="CreatedBy" type="text" class="form-control"/> 
+        <span asp-validation-for="CreatedBy" class="text-danger"></span>
     </div>
     <br />
     <input type="submit" value="Create Product" class="btn btn-primary" />

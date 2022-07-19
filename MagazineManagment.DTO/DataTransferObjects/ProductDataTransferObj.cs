@@ -14,7 +14,7 @@ namespace MagazineManagment.DTO.DataTransferObjects
                 CreatedOn = product.CreatedOn,
                 ProductDescription = product.ProductDescription,
                 Price = product.Price,
-                Image = product.Image,
+                //Image = product.Image,
                 //ProductCategoryId = product.ProductCategoryId,
                 CreatedBy = product.CreatedBy,
                 CurrencyType = product.CurrencyType,

@@ -3,6 +3,8 @@ using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DTO.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
+
+
 namespace MagazineManagment.Web.Controllers
 {
     [ApiController]
@@ -88,5 +90,6 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(resultGetProductByItsName.ErrorMessage);
         }
+
     }
 }
