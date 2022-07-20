@@ -3,21 +3,29 @@ using MagazineManagment.DTO.ViewModels;
 using MagazineManagment.Web.ApiCalls;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
+
 namespace MagazineManagment.ClientApplication.Controllers
 {
     public class ProductApiCallController : Controller
     {
-        public async Task<IActionResult> Index()
-        {
-            var products = ProductApiCalls.GetAllProducts("Product");
+        private readonly IProductApiCalls _productApiCalls;
 
+        public ProductApiCallController(IProductApiCalls productApiCalls)
+        {
+            _productApiCalls = productApiCalls;
+        }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            var products = _productApiCalls.GetAllProducts();
             return View(products);
         }
 
         [HttpGet]
-        public  IActionResult Create()
+        public IActionResult Create()
         {
-            var categoryList= ProductApiCalls.GetCreateProduct("CategoryNameOnly");
+            var categoryList = _productApiCalls.GetCreateProduct();
             ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
             return View();
         }
@@ -25,9 +33,10 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpPost]
         public IActionResult Create(ProductCreateViewModel product)
         {
-            var categoryList = ProductApiCalls.GetCreateProduct("CategoryNameOnly");
-            ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
-            return View("Create");
+            //var categoryList = _productApiCalls.GetCreateProduct();
+            //ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
+ 
+            return RedirectToAction("Index");
         }
     }
 }

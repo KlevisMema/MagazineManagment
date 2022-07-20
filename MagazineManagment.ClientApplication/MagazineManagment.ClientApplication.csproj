@@ -19,8 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MagazineManagment.Shared\MagazineManagment.Shared.csproj" />
-    <ProjectReference Include="..\MagazineManagment\MagazineManagment.Web.csproj" />
+    <ProjectReference Include="..\MagazineManagmet.ApiCalls\MagazineManagmet.ApiCalls.csproj" />
   </ItemGroup>
 
 </Project>

@@ -34,15 +34,17 @@ namespace MagazineManagment.DTO.ViewModels
         [StringLength(maximumLength: 30, MinimumLength = 4)]
         public string? ProductDescription { get; set; }
 
-        public string? Image { get; set; }
+        //public string? Image { get; set; }
 
-        [Required(ErrorMessage ="Product imageis required")]
-        [Display(Name = "Image")]
-        public IFormFile ImageFile { get; set; }
+        //[Required(ErrorMessage ="Product imageis required")]
+        //[Display(Name = "Image")]
+        //public IFormFile ImageFile { get; set; }
 
         [Required(ErrorMessage = "Category is required")]
         [Display(Name = "Category")]
         public Guid? ProductCategoryId { get; set; }
         public string? CreatedBy { get; set; }
+
+       
     }
 }

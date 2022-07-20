@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MagazineManagment.DAL.DataContext;
+using MagazineManagment.Web.ApiCalls;
+using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +16,8 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-
+builder.Services.AddTransient<IProductApiCalls, ProductApiCalls>();
+builder.Services.Configure<FetchApiValue>(builder.Configuration.GetSection(FetchApiValue.SectionName));
 
 builder.Services.AddControllersWithViews();
 
