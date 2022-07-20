@@ -6,7 +6,7 @@ namespace MagazineManagment.DTO.ViewModels
 {
     public class ProductUpdateViewModel
     {
-        [Required(ErrorMessage = "Id is required")]
+        //[Required(ErrorMessage = "Id is required")]
         public Guid Id { get; set; }
 
         [Required(ErrorMessage = "Product name is required")]
@@ -34,10 +34,10 @@ namespace MagazineManagment.DTO.ViewModels
         [StringLength(maximumLength: 30, MinimumLength = 4)]
         public string? ProductDescription { get; set; }
 
-        public string? Image { get; set; }
+        //public string? Image { get; set; }
 
-        [Display(Name = "Image")]
-        public IFormFile ImageFile { get; set; }
+        //[Display(Name = "Image")]
+        //public IFormFile ImageFile { get; set; }
 
         public string? CreatedBy { get; set; }
     }

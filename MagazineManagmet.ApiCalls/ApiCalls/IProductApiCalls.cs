@@ -1,4 +1,5 @@
-﻿using MagazineManagment.DTO.ViewModels;
+﻿using MagazineManagment.BLL.ResponseService;
+using MagazineManagment.DTO.ViewModels;
 
 namespace MagazineManagment.Web.ApiCalls
 {
@@ -6,6 +7,9 @@ namespace MagazineManagment.Web.ApiCalls
     {
         IEnumerable<ProductViewModel> GetAllProducts();
         IEnumerable<CategoryNameOnlyViewModel> GetCreateProduct();
-        //Task<ProductCreateViewModel> PostCreateProduct(ProductCreateViewModel product);
+        HttpResponseMessage PostCreateProduct(ProductCreateViewModel product);
+        ProductUpdateViewModel GetEdit(Guid id);
+        void PostEdit(ProductUpdateViewModel UpdateProduct);
+        void Delete(Guid id);
     }
 }

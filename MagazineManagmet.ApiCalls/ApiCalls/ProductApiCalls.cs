@@ -1,16 +1,18 @@
 ﻿using MagazineManagment.DTO.ViewModels;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
-using MagazineManagmet.ApiCalls.ApiCalls.ApiUrlValues;
 using Microsoft.Extensions.Options;
-
-
+using Newtonsoft.Json;
+using System.Collections;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace MagazineManagment.Web.ApiCalls
 {
     public class ProductApiCalls : IProductApiCalls
     {
+        private const string Product = "Product";
+        private const string GetCreateProductRoute = "CategoryNameOnly";
         private readonly IOptions<FetchApiValue> _config;
-
 
         public ProductApiCalls(IOptions<FetchApiValue> config)
         {
@@ -27,7 +29,7 @@ namespace MagazineManagment.Web.ApiCalls
             {
                 client.BaseAddress = new Uri(uri);
 
-                var response = client.GetAsync(UrlDestination.Product);
+                var response = client.GetAsync(Product);
                 response.Wait();
 
                 HttpResponseMessage result = response.Result;
@@ -52,7 +54,7 @@ namespace MagazineManagment.Web.ApiCalls
             {
                 client.BaseAddress = new Uri(uri);
 
-                var Response = client.GetAsync(UrlDestination.GetCreateProductRoute);
+                var Response = client.GetAsync(GetCreateProductRoute);
                 Response.Wait();
 
                 var result = Response.Result;
@@ -72,27 +74,93 @@ namespace MagazineManagment.Web.ApiCalls
             return categories;
         }
 
-        //public async Task<ProductViewModel> PostCreateProduct(ProductCreateViewModel product)
-        //{
-        //    using (var client = new HttpClient())
-        //    {
-        //        client.BaseAddress = new Uri("https://localhost:7208/api/Product");
+        public  HttpResponseMessage PostCreateProduct(ProductCreateViewModel product)
+        {
+            
+            string BaseArrayImage = null;
+            using (var ms = new MemoryStream())
+            {
+                product.ImageFile.CopyTo(ms);
+                var fileBytes = ms.ToArray();
+                BaseArrayImage = Convert.ToBase64String(fileBytes);
+            }
+            ProductCreateViewModelNoIFormFile newProduct = new ProductCreateViewModelNoIFormFile
+            {
+                ProductName = product.ProductName,
+                SerialNumber = product.SerialNumber,
+                Price = product.Price,
+                ProductCategoryId = product.ProductCategoryId,
+                Image = BaseArrayImage,
+                CreatedBy = product.CreatedBy,
+                ProductInStock = product.ProductInStock,
+                CurrencyType = product.CurrencyType,
+                ProductDescription =product.ProductDescription
+            };
 
-        //        // Post 
-        //        var postTask = client.PostAsJsonAsync<ProductCreateViewModel>("Product", product);
-        //        postTask.Wait();
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:7208/");
+            HttpResponseMessage result = client.PostAsJsonAsync<ProductCreateViewModelNoIFormFile>("api/Product", newProduct).Result;
+            
 
-        //        var result = postTask.Result;
+            return result;
 
-        //        if (result.IsSuccessStatusCode)
-        //        {
-                   
-        //        }
-        //    }
 
-         
 
-        //}
+
+            //var uri = "https://localhost:7208/api/Product";
+            //using (var client = new HttpClient())
+            //{
+            //    client.BaseAddress = new Uri(uri);
+            //    var result = client.PostAsJsonAsync<ProductCreateViewModel>("Product", product);
+            //    result.Wait();
+            //    if (result.IsCompletedSuccessfully)
+            //    {
+            //    }
+            //}
+        }
+
+        public ProductUpdateViewModel GetEdit(Guid id)
+        {
+            ProductUpdateViewModel editProduct = null;
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:7208/api/");
+
+                var getTask = client.GetAsync($"Product/{id}");
+                getTask.Wait();
+
+                var getTaskResult = getTask.Result;
+                if (getTaskResult.IsSuccessStatusCode)
+                {
+                    var readTask = getTaskResult.Content.ReadAsAsync<ProductUpdateViewModel>();
+                    editProduct = readTask.Result;
+                }
+            }
+            return editProduct;
+        }
+
+        public void PostEdit(ProductUpdateViewModel UpdateProduct)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:7208/api/");
+                var postTask = client.PutAsJsonAsync("Product", UpdateProduct);
+                postTask.Wait();
+
+               
+            }
+        }
+
+        public void  Delete(Guid id)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:7208/api/");
+                var deleteTask = client.DeleteAsync($"Product/{id}");
+                deleteTask.Wait();
+            }
+        }
     }
 } 
 
