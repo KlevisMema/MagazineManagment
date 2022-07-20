@@ -28,10 +28,10 @@
         <input asp-for="ProductDescription" type="text" placeholder="Product description" class="form-control" />
         <span asp-validation-for="ProductDescription" class="text-danger"></span>
         <br />
-       @* <label asp-for="Image" ></label>
+        <label asp-for="Image" ></label>
         <input asp-for="ImageFile" type="file" accept="image/*" class="form-control"/> 
         <span asp-validation-for="ImageFile" class="text-danger"></span>
-        <br />*@
+        <br />
         <label asp-for="CurrencyType" ></label>
         <select asp-for="CurrencyType" asp-items="Html.GetEnumSelectList<CurrencyTypeEnum>()" class="form-control"></select>
         <span asp-validation-for="CurrencyType" class="text-danger"></span>
@@ -44,3 +44,4 @@
     <input type="submit" value="Create Product" class="btn btn-primary" />
 
 </form>
+

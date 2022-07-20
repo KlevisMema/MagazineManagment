@@ -14,8 +14,8 @@ namespace MagazineManagment.DTO.DataTransferObjects
                 CreatedOn = product.CreatedOn,
                 ProductDescription = product.ProductDescription,
                 Price = product.Price,
-                //Image = product.Image,
-                //ProductCategoryId = product.ProductCategoryId,
+                Image = product.Image,
+                ProductCategoryId = product.ProductCategoryId,
                 CreatedBy = product.CreatedBy,
                 CurrencyType = product.CurrencyType,
                 SerialNumber = product.SerialNumber,
@@ -36,7 +36,7 @@ namespace MagazineManagment.DTO.DataTransferObjects
                 ProductDescription = product.ProductDescription,
                 CategoryId = product.ProductCategoryId,
                 CategoryName = product.ProductCategory.CategoryName,
-                //Image = product.Image,
+                Image = product.Image,
             };
         }
     }

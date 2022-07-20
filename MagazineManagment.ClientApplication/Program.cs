@@ -17,6 +17,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddTransient<IProductApiCalls, ProductApiCalls>();
+
 builder.Services.Configure<FetchApiValue>(builder.Configuration.GetSection(FetchApiValue.SectionName));
 
 builder.Services.AddControllersWithViews();
