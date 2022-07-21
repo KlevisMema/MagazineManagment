@@ -6,6 +6,7 @@ using MagazineManagment.DAL.Models;
 using MagazineManagment.DTO.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Web.Http;
+using System.Web.Http.ModelBinding;
 
 namespace MagazineManagment.BLL.Services
 {
@@ -44,12 +45,12 @@ namespace MagazineManagment.BLL.Services
         public async Task<ResponseService<ProductViewModel>> CreateProductAsync(ProductCreateViewModelNoIFormFile product)
         {
 
-            //var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == product.ProductCategoryId);
+            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == product.ProductCategoryId);
 
-            //if (category is null)
-            //{
-            //    return ResponseService<ProductViewModel>.NotFound("Category not found");
-            //}
+            if (category is null)
+            {
+                return ResponseService<ProductViewModel>.NotFound("Category not found");
+            }
 
 
             var checkIfSerialNrExists = await  _context.Products.AnyAsync(sNr => sNr.SerialNumber == product.SerialNumber.ToUpper());
@@ -57,24 +58,6 @@ namespace MagazineManagment.BLL.Services
             {
                 return ResponseService<ProductViewModel>.ErrorMsg($"Serial number {product.SerialNumber} exists, please give another  serial number");
             }
-
-
-            //string BaseArrayImage = null;
-
-            //try
-            //{
-            //    using (var ms = new MemoryStream())
-            //    {
-            //        product.ImageFile.CopyTo(ms);
-            //        var fileBytes = ms.ToArray();
-            //        BaseArrayImage = Convert.ToBase64String(fileBytes);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
-            //}
-
 
             try
             {
@@ -112,22 +95,6 @@ namespace MagazineManagment.BLL.Services
             {
                 return ResponseService<ProductViewModel>.NotFound("Product does not exists");
             }
-
-            //string BaseArrayImage = null;
-
-            //try
-            //{
-            //    using (var ms = new MemoryStream())
-            //    {
-            //        product.ImageFile.CopyTo(ms);
-            //        var fileBytes = ms.ToArray();
-            //        BaseArrayImage = Convert.ToBase64String(fileBytes);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
-            //}
 
             productToBeUpdated.ProductName = product.ProductName;
             productToBeUpdated.Price = product.Price;

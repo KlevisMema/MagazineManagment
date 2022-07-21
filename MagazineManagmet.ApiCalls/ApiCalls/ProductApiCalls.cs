@@ -1,4 +1,5 @@
 ﻿using MagazineManagment.DTO.ViewModels;
+using MagazineManagment.Shared.ApiUrlDestinations;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -10,13 +11,12 @@ namespace MagazineManagment.Web.ApiCalls
 {
     public class ProductApiCalls : IProductApiCalls
     {
-        private const string Product = "Product";
-        private const string GetCreateProductRoute = "CategoryNameOnly";
+
         private readonly IOptions<FetchApiValue> _config;
 
         public ProductApiCalls(IOptions<FetchApiValue> config)
         {
-            _config = config;  
+            _config = config;
         }
 
         public IEnumerable<ProductViewModel> GetAllProducts()
@@ -29,7 +29,7 @@ namespace MagazineManagment.Web.ApiCalls
             {
                 client.BaseAddress = new Uri(uri);
 
-                var response = client.GetAsync(Product);
+                var response = client.GetAsync(RequestDestination.Product);
                 response.Wait();
 
                 HttpResponseMessage result = response.Result;
@@ -54,7 +54,7 @@ namespace MagazineManagment.Web.ApiCalls
             {
                 client.BaseAddress = new Uri(uri);
 
-                var Response = client.GetAsync(GetCreateProductRoute);
+                var Response = client.GetAsync(RequestDestination.GetCreateProductRoute);
                 Response.Wait();
 
                 var result = Response.Result;
@@ -74,9 +74,11 @@ namespace MagazineManagment.Web.ApiCalls
             return categories;
         }
 
-        public  HttpResponseMessage PostCreateProduct(ProductCreateViewModel product)
+        public async Task<HttpResponseMessage> PostCreateProduct(ProductCreateViewModel product)
         {
+
             
+
             string BaseArrayImage = null;
             using (var ms = new MemoryStream())
             {
@@ -84,6 +86,7 @@ namespace MagazineManagment.Web.ApiCalls
                 var fileBytes = ms.ToArray();
                 BaseArrayImage = Convert.ToBase64String(fileBytes);
             }
+
             ProductCreateViewModelNoIFormFile newProduct = new ProductCreateViewModelNoIFormFile
             {
                 ProductName = product.ProductName,
@@ -94,29 +97,16 @@ namespace MagazineManagment.Web.ApiCalls
                 CreatedBy = product.CreatedBy,
                 ProductInStock = product.ProductInStock,
                 CurrencyType = product.CurrencyType,
-                ProductDescription =product.ProductDescription
+                ProductDescription = product.ProductDescription
             };
-
-            var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:7208/");
-            HttpResponseMessage result = client.PostAsJsonAsync<ProductCreateViewModelNoIFormFile>("api/Product", newProduct).Result;
             
 
+            var uri = _config.Value.PostCreateProduct;
+            var client = new HttpClient();
+            client.BaseAddress = new Uri(uri);
+            var result =  client.PostAsJsonAsync<ProductCreateViewModelNoIFormFile>(RequestDestination.PostCreateProductRoute, newProduct).Result;
+            
             return result;
-
-
-
-
-            //var uri = "https://localhost:7208/api/Product";
-            //using (var client = new HttpClient())
-            //{
-            //    client.BaseAddress = new Uri(uri);
-            //    var result = client.PostAsJsonAsync<ProductCreateViewModel>("Product", product);
-            //    result.Wait();
-            //    if (result.IsCompletedSuccessfully)
-            //    {
-            //    }
-            //}
         }
 
         public ProductUpdateViewModel GetEdit(Guid id)
@@ -148,11 +138,11 @@ namespace MagazineManagment.Web.ApiCalls
                 var postTask = client.PutAsJsonAsync("Product", UpdateProduct);
                 postTask.Wait();
 
-               
+
             }
         }
 
-        public void  Delete(Guid id)
+        public void Delete(Guid id)
         {
             using (var client = new HttpClient())
             {
@@ -162,6 +152,6 @@ namespace MagazineManagment.Web.ApiCalls
             }
         }
     }
-} 
+}
 
 

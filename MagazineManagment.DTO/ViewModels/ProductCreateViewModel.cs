@@ -1,4 +1,5 @@
-﻿using MagazineManagment.Shared.Enums;
+﻿using MagazineManagment.Shared.CustomModelValidation;
+using MagazineManagment.Shared.Enums;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
@@ -18,12 +19,12 @@ namespace MagazineManagment.DTO.ViewModels
 
         [Required(ErrorMessage = "Price is required")]
         [DataType(DataType.Currency)]
-        [Range(minimum: 20, maximum: 10000)]
+        [Range(minimum: 1.00, maximum: 10000.00)]
         public decimal? Price { get; set; }
 
         [Required(ErrorMessage = "Product in stock field is required")]
         [Display(Name = "Product in stock")]
-        [Range(minimum: 1, maximum: 100)]
+        [Range(minimum: 0, maximum:500)]
         public  int? ProductInStock { get; set; }
 
         [Required(ErrorMessage = "Currency type is required")]
@@ -31,16 +32,18 @@ namespace MagazineManagment.DTO.ViewModels
         public CurrencyTypeEnum? CurrencyType { get; set; }
 
         [Display(Name = "Product description")]
-        [StringLength(maximumLength: 30, MinimumLength = 4)]
+        [StringLength(maximumLength: 100, MinimumLength = 4)]
         public string? ProductDescription { get; set; }
 
         public string? Image { get; set; }
 
-        [Required(ErrorMessage = "Product imageis required")]
+        [Required(ErrorMessage = "Product image required")]
         [Display(Name = "Image")]
+        //[RegularExpression(@"([a-zA-Z0-9\s_\\.\-:])+(.png|.jpg|.gif)$", ErrorMessage = "Only Image files are allowed.")]
+        [ImageFileValidation]
         public IFormFile? ImageFile { get; set; }
 
-        [Required(ErrorMessage = "Category is required")]
+        //[Required(ErrorMessage = "Category is required")]
         [Display(Name = "Category")]
         public Guid? ProductCategoryId { get; set; }
         public string? CreatedBy { get; set; }

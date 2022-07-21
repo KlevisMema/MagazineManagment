@@ -2,6 +2,7 @@
 using MagazineManagment.DAL.Models.Base;
 using System.ComponentModel.DataAnnotations.Schema;
 using MagazineManagment.Shared.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace MagazineManagment.DAL.Models
 {

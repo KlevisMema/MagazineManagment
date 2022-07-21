@@ -1,8 +1,11 @@
 ﻿@using MagazineManagment.Shared.Enums;
 @model MagazineManagment.DTO.ViewModels.ProductCreateViewModel
 
-<form asp-action="Create" asp-controller="ProductApiCall" enctype="multipart/form-data" method="post">
+<form asp-action="Create" asp-controller="ProductApiCall" enctype="multipart/form-data" method="post" asp-antiforgery="true">
 
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group">
         <label asp-for="ProductName" ></label>
         <input asp-for="ProductName" type="text" placeholder="Product Name" class="form-control"/>

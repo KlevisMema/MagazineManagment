@@ -40,15 +40,25 @@ namespace MagazineManagment.Web.Controllers
 
         // Create a new product
         [HttpPost]
-        public async Task<ActionResult<ResponseService<ProductViewModel>>> CreateProductAsync(ProductCreateViewModelNoIFormFile product)
+        public async Task<HttpResponseMessage> CreateProductAsync(ProductCreateViewModelNoIFormFile product)
         {
             var resultCreateProduct = await _productRepository.CreateProductAsync(product);
 
             if (resultCreateProduct.Success)
-                return Ok(resultCreateProduct.Value);
+                return new HttpResponseMessage
+                {
+                    StatusCode = System.Net.HttpStatusCode.OK,
+                };
 
-            else
-                return BadRequest(resultCreateProduct.ErrorMessage);
+
+            //else
+           var test = new HttpResponseMessage
+            {
+                StatusCode = System.Net.HttpStatusCode.BadRequest,
+                ReasonPhrase = resultCreateProduct.ErrorMessage,
+                Content  = new StringContent(resultCreateProduct.ErrorMessage)
+            };
+            return test;
         }
 
         // Update Product 

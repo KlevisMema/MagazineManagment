@@ -11,6 +11,7 @@ namespace MagazineManagment.BLL.ResponseService
 
 
 
+
         public ResponseService(string? errorMessage)
         {
             ErrorMessage = errorMessage;

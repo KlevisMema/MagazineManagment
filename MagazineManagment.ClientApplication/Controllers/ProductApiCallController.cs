@@ -2,7 +2,7 @@
 using MagazineManagment.DTO.ViewModels;
 using MagazineManagment.Web.ApiCalls;
 using Microsoft.AspNetCore.Mvc.Rendering;
-
+using System.Collections;
 
 namespace MagazineManagment.ClientApplication.Controllers
 {
@@ -30,16 +30,29 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View();
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost]
-        public IActionResult Create(ProductCreateViewModel product)
+        public async Task<IActionResult> Create(ProductCreateViewModel product)
         {
-            var result =  _productApiCalls.PostCreateProduct(product);
-            if (result.IsSuccessStatusCode)
-                return RedirectToAction("Index");
+            Task<HttpResponseMessage> result = null;
+
+            if (ModelState.IsValid)
+            {
+                result = _productApiCalls.PostCreateProduct(product);
+
+                
+                if (result.IsCompletedSuccessfully)
+                    return RedirectToAction("Index");
+
+                var content = await result.Result.Content.ReadAsStringAsync();
+                var errorMessage = content.Split(@"""").ToList();
+                var errorMessageIndex = errorMessage.IndexOf("reasonPhrase") + 2;
+                ModelState.AddModelError(string.Empty, errorMessage[errorMessageIndex]);
+            }
+
 
             var categoryList = _productApiCalls.GetCreateProduct();
             ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
-            ModelState.AddModelError(string.Empty, result.Content.ToString());
             return View(product);
         }
 
