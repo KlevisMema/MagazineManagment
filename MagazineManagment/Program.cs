@@ -1,6 +1,12 @@
+using IdentityServer4.Services;
+using MagazineManagment.BLL.RepositoryServices;
+using MagazineManagment.DAL.Models;
 using MagazineManagment.Web.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+//builder.Services.AddScoped<IProfileService, ProfileService>();
+//builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser>>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

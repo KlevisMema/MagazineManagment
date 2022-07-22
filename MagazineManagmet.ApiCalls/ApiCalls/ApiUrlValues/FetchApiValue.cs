@@ -6,5 +6,7 @@
         public string GetProducts { get; set; }
         public string GetCreateProduct { get; set; }
         public string PostCreateProduct { get; set; }
+        public string PostEditProduct { get; set; }
+        public string GetProductImage { get; set; }
     }
 }

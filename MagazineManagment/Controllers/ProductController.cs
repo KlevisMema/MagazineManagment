@@ -40,30 +40,19 @@ namespace MagazineManagment.Web.Controllers
 
         // Create a new product
         [HttpPost]
-        public async Task<HttpResponseMessage> CreateProductAsync(ProductCreateViewModelNoIFormFile product)
+        public async Task<ActionResult<ResponseService<ProductViewModel>>> CreateProductAsync(ProductCreateViewModelNoIFormFile product)
         {
             var resultCreateProduct = await _productRepository.CreateProductAsync(product);
 
             if (resultCreateProduct.Success)
-                return new HttpResponseMessage
-                {
-                    StatusCode = System.Net.HttpStatusCode.OK,
-                };
+                return Ok(resultCreateProduct);
 
-
-            //else
-           var test = new HttpResponseMessage
-            {
-                StatusCode = System.Net.HttpStatusCode.BadRequest,
-                ReasonPhrase = resultCreateProduct.ErrorMessage,
-                Content  = new StringContent(resultCreateProduct.ErrorMessage)
-            };
-            return test;
+            return BadRequest(resultCreateProduct.ErrorMessage);
         }
 
         // Update Product 
         [HttpPut]
-        public async Task<ActionResult<ResponseService<ProductViewModel>>> UpdateProductAsync([FromForm] ProductUpdateViewModel product)
+        public async Task<ActionResult<ResponseService<ProductViewModel>>> UpdateProductAsync(ProductPostEditViewModel product)
         {
             var resultUpdateProduct = await _productRepository.UpdateProductAsync(product);
 
@@ -102,5 +91,14 @@ namespace MagazineManagment.Web.Controllers
             return BadRequest(resultGetProductByItsName.ErrorMessage);
         }
 
+        [HttpGet("GetProductImage/{id}")]
+        public async Task<ActionResult<ResponseService<ProductImageOnly>>> GetProductImageOnlyAsync(Guid id)
+        {
+            var getProductImage = await _productRepository.GetProductImage(id);
+
+            if (getProductImage.Success)
+                return Ok(getProductImage.Value);
+            return BadRequest(getProductImage.ErrorMessage);
+        }
     }
 }
