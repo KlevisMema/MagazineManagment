@@ -7,8 +7,8 @@ namespace MagazineManagment.Web.ApiCalls
         IEnumerable<ProductViewModel> GetAllProducts();
         IEnumerable<CategoryNameOnlyViewModel> GetCreateProduct();
         Task<HttpResponseMessage> PostCreateProduct(ProductCreateViewModel product);
-        ProductUpdateViewModel GetEdit(Guid id);
-        void PostEdit(ProductUpdateViewModel UpdateProduct);
+        Task<ProductUpdateViewModel> GetEditProduct(Guid id);
+        Task<HttpResponseMessage> PostEditProduct(ProductUpdateViewModel UpdateProduct);
         void Delete(Guid id);
     }
 }

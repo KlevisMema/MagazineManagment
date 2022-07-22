@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using MagazineManagment.DAL.DataContext;
 using MagazineManagment.Web.ApiCalls;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
-
+using IdentityServer4.Services;
+using MagazineManagment.BLL.RepositoryServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +18,10 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddTransient<IProductApiCalls, ProductApiCalls>();
-
 builder.Services.Configure<FetchApiValue>(builder.Configuration.GetSection(FetchApiValue.SectionName));
+
+
+
 
 builder.Services.AddControllersWithViews();
 
@@ -27,6 +30,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+    app.UseStatusCodePagesWithReExecute("/Error/{0}");
 }
 else
 {

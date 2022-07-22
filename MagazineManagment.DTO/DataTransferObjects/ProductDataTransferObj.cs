@@ -20,6 +20,7 @@ namespace MagazineManagment.DTO.DataTransferObjects
                 CurrencyType = product.CurrencyType,
                 SerialNumber = product.SerialNumber,
                 ProductInStock = product.ProductInStock,
+                CategoryName = product.ProductCategory.CategoryName
             };
         }
 
@@ -36,6 +37,15 @@ namespace MagazineManagment.DTO.DataTransferObjects
                 ProductDescription = product.ProductDescription,
                 CategoryId = product.ProductCategoryId,
                 CategoryName = product.ProductCategory.CategoryName,
+                Image = product.Image,
+            };
+        }
+
+        public static ProductImageOnly AsProductImageDto(this Product product)
+        {
+            return new ProductImageOnly
+            {
+                Id = product.Id,
                 Image = product.Image,
             };
         }

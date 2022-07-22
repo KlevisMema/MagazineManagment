@@ -5,15 +5,11 @@ using MagazineManagment.DTO.DataTransferObjects;
 using MagazineManagment.DAL.Models;
 using MagazineManagment.DTO.ViewModels;
 using Microsoft.EntityFrameworkCore;
-using System.Web.Http;
-using System.Web.Http.ModelBinding;
 
 namespace MagazineManagment.BLL.Services
 {
     public class ProductRepository : IProductRepository
     {
-
-
         private readonly ApplicationDbContext _context;
        
         public ProductRepository(ApplicationDbContext context)
@@ -24,14 +20,14 @@ namespace MagazineManagment.BLL.Services
         //Get all products
         public async Task<IEnumerable<ProductViewModel>> GetAllProductsAsync()
         {
-            var products = await _context.Products.Select(x => x.AsProductDto()).ToListAsync();
+            var products = await _context.Products.Include(p=>p.ProductCategory).Select(x => x.AsProductDto()).ToListAsync();
             return products;
         }
 
         //Get a single product by id
         public async Task<ResponseService<ProductViewModel>> GetProductAsync(Guid id)
         {
-            var product = await _context.Products/*.Include(p => p.ProductCategory)*/.FirstOrDefaultAsync(x => x.Id == id);
+            var product = await _context.Products.Include(p => p.ProductCategory).FirstOrDefaultAsync(x => x.Id == id);
 
             if (product is null)
             {
@@ -87,7 +83,7 @@ namespace MagazineManagment.BLL.Services
         }
 
         // Update a Product 
-        public async Task<ResponseService<ProductViewModel>> UpdateProductAsync(ProductUpdateViewModel product)
+        public async Task<ResponseService<ProductViewModel>> UpdateProductAsync(ProductPostEditViewModel product)
         {
             var productToBeUpdated = await _context.Products.FirstOrDefaultAsync(c => c.Id == product.Id);
 
@@ -96,13 +92,20 @@ namespace MagazineManagment.BLL.Services
                 return ResponseService<ProductViewModel>.NotFound("Product does not exists");
             }
 
+            bool ckeckIfExists = false;
+            if (productToBeUpdated.SerialNumber != product.SerialNumber)
+                ckeckIfExists = await _context.Products.AnyAsync(s => s.SerialNumber == product.SerialNumber);
+
+            if (ckeckIfExists)
+                return ResponseService<ProductViewModel>.ErrorMsg($"Serial number {product.SerialNumber} exists, please give another  serial number");
+
             productToBeUpdated.ProductName = product.ProductName;
             productToBeUpdated.Price = product.Price;
             productToBeUpdated.CreatedOn = DateTime.Now;
             productToBeUpdated.ProductDescription = product.ProductDescription;
-            productToBeUpdated.SerialNumber = product.SerialNumber;
+            productToBeUpdated.SerialNumber = product.SerialNumber.ToUpper();
             productToBeUpdated.CreatedBy = product.CreatedBy;
-            //productToBeUpdated.Image = BaseArrayImage;
+            productToBeUpdated.Image = product.Image;
             productToBeUpdated.ProductInStock = product.ProductInStock;
 
             try
@@ -124,7 +127,7 @@ namespace MagazineManagment.BLL.Services
             var productToBeDeleted = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
             if (productToBeDeleted is null)
             {
-                return ResponseService<ProductViewModel>.NotFound($"Produkti with id {id} does not excists !!");
+                return ResponseService<ProductViewModel>.NotFound($"Product with id {id} does not exists !!");
             }
             try
             {
@@ -137,7 +140,7 @@ namespace MagazineManagment.BLL.Services
                 return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
             }
 
-            return ResponseService<ProductViewModel>.Deleted($"Produkti with id : {id} has been deleted!!!!");
+            return ResponseService<ProductViewModel>.Deleted($"Product with id : {id} has been deleted!!!!");
         }
 
         // Display all products together with their category info
@@ -151,9 +154,18 @@ namespace MagazineManagment.BLL.Services
         {
             var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductName == ProductName);
             if (product == null)
-                return ResponseService<ProductViewModel>.NotFound("Produkti nuk egziston");
+                return ResponseService<ProductViewModel>.NotFound("Product does not exists");
             return ResponseService<ProductViewModel>.Ok(product.AsProductDto());
         }
 
+        public async Task<ResponseService<ProductImageOnly>> GetProductImage(Guid id)
+        {
+            
+            var productImage = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            if (productImage == null)
+                return ResponseService<ProductImageOnly>.NotFound("Image does not exists");
+            
+            return ResponseService<ProductImageOnly>.Ok(productImage.AsProductImageDto());
+        }
     }
 }

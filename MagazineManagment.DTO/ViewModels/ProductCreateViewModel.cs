@@ -37,7 +37,7 @@ namespace MagazineManagment.DTO.ViewModels
 
         public string? Image { get; set; }
 
-        [Required(ErrorMessage = "Product image required")]
+        //[Required(ErrorMessage = "Product image required")]
         [Display(Name = "Image")]
         //[RegularExpression(@"([a-zA-Z0-9\s_\\.\-:])+(.png|.jpg|.gif)$", ErrorMessage = "Only Image files are allowed.")]
         [ImageFileValidation]

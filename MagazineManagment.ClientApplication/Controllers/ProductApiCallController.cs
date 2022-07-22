@@ -2,7 +2,6 @@
 using MagazineManagment.DTO.ViewModels;
 using MagazineManagment.Web.ApiCalls;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections;
 
 namespace MagazineManagment.ClientApplication.Controllers
 {
@@ -34,22 +33,16 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(ProductCreateViewModel product)
         {
-            Task<HttpResponseMessage> result = null;
-
             if (ModelState.IsValid)
             {
-                result = _productApiCalls.PostCreateProduct(product);
+                HttpResponseMessage result = null;
+                result = await _productApiCalls.PostCreateProduct(product);
 
-                
-                if (result.IsCompletedSuccessfully)
+                if (result.IsSuccessStatusCode)
                     return RedirectToAction("Index");
 
-                var content = await result.Result.Content.ReadAsStringAsync();
-                var errorMessage = content.Split(@"""").ToList();
-                var errorMessageIndex = errorMessage.IndexOf("reasonPhrase") + 2;
-                ModelState.AddModelError(string.Empty, errorMessage[errorMessageIndex]);
+                ModelState.AddModelError(string.Empty,await result.Content.ReadAsStringAsync());
             }
-
 
             var categoryList = _productApiCalls.GetCreateProduct();
             ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
@@ -57,20 +50,31 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(Guid id)
+        public async Task<IActionResult> Edit(Guid id)
         {
-            var product =  _productApiCalls.GetEdit(id);
+            var product = await _productApiCalls.GetEditProduct(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
             return View(product);
         }
 
         [HttpPost]
-        public IActionResult Edit(ProductUpdateViewModel UpdateProduct)
+        public async Task<IActionResult> Edit(ProductUpdateViewModel UpdateProduct)
         {
-            var categoryList = _productApiCalls.GetCreateProduct();
-            ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
-            
-            _productApiCalls.PostEdit(UpdateProduct);
-            return RedirectToAction("Index");
+
+            if (ModelState.IsValid)
+            {
+                var  result  = await _productApiCalls.PostEditProduct(UpdateProduct);
+
+                if (result.IsSuccessStatusCode)
+                    return RedirectToAction("Index");
+                else
+                    ModelState.AddModelError(string.Empty, await result.Content.ReadAsStringAsync());
+            }
+            var product = await _productApiCalls.GetEditProduct(UpdateProduct.Id);
+            return View(product);
         }
 
         public IActionResult Delete(Guid id)
