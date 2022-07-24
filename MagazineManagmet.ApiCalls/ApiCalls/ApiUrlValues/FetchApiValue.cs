@@ -8,5 +8,7 @@
         public string PostCreateProduct { get; set; }
         public string PostEditProduct { get; set; }
         public string GetProductImage { get; set; }
+        public string GetCategories { get; set; }
+        public string PostCreateCategory { get; set; }
     }
 }

@@ -103,24 +103,6 @@ namespace MagazineManagment.Web.ApiCalls
                 var result = await client.PostAsJsonAsync(RequestDestination.PostCreateProductRoute, newProduct);
                 return result;
             }
-
-                
-            
-            //var content = await result.Content.ReadAsStringAsync();
-            //var contentSplitted = content.Split(@"""").ToList();
-            //var errorMessageIndex = contentSplitted.IndexOf("reasonPhrase") + 2;
-            //var ErrorMessage = contentSplitted[errorMessageIndex];
-
-            //if (contentSplitted.Contains("OK") == true)
-            //{
-            //    return new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.OK };
-            //}
-
-            //return new HttpResponseMessage
-            //{
-            //    ReasonPhrase = ErrorMessage,
-            //    StatusCode = System.Net.HttpStatusCode.BadRequest,
-            //};
         }
 
         public async Task<ProductUpdateViewModel> GetEditProduct(Guid id)

@@ -3,8 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MagazineManagment.DAL.DataContext;
 using MagazineManagment.Web.ApiCalls;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
-using IdentityServer4.Services;
-using MagazineManagment.BLL.RepositoryServices;
+using MagazineManagmet.ApiCalls.ApiCalls;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +17,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddTransient<IProductApiCalls, ProductApiCalls>();
+builder.Services.AddTransient<ICategoryApiCalls, CategoryApiCalls>();
 builder.Services.Configure<FetchApiValue>(builder.Configuration.GetSection(FetchApiValue.SectionName));
 
 

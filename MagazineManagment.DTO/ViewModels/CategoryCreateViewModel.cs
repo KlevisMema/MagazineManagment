@@ -6,6 +6,7 @@ namespace MagazineManagment.DTO.ViewModels
     {
         [Required(ErrorMessage = "Category name is required")]
         [Display(Name = "Category name")]
+        [StringLength(maximumLength:10,MinimumLength =2)]
         public string? CategoryName { get; set; }
     }
 }
