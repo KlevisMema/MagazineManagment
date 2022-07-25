@@ -35,7 +35,7 @@ namespace MagazineManagment.Web.Controllers
             if (resultGetProdut.Success)
                 return Ok(resultGetProdut.Value);
 
-            return BadRequest(resultGetProdut.ErrorMessage);
+            return BadRequest(resultGetProdut.Message);
         }
 
         // Create a new product
@@ -47,19 +47,19 @@ namespace MagazineManagment.Web.Controllers
             if (resultCreateProduct.Success)
                 return Ok(resultCreateProduct);
 
-            return BadRequest(resultCreateProduct.ErrorMessage);
+            return BadRequest(resultCreateProduct.Message);
         }
 
         // Update Product 
         [HttpPut]
-        public async Task<ActionResult<ResponseService<ProductViewModel>>> UpdateProductAsync(ProductPostEditViewModel product)
+        public async Task<ActionResult<ResponseService<ProductPostEditViewModel>>> UpdateProductAsync(ProductPostEditViewModel product)
         {
             var resultUpdateProduct = await _productRepository.UpdateProductAsync(product);
 
             if (resultUpdateProduct.Success)
                 return Ok(resultUpdateProduct.Value);
 
-            return BadRequest(resultUpdateProduct.ErrorMessage);
+            return BadRequest(resultUpdateProduct.Message);
         }
 
         // Delete a product
@@ -68,7 +68,7 @@ namespace MagazineManagment.Web.Controllers
         {
             var productToBeDeleted = await _productRepository.DeleteProductAsync(id);
 
-            return Ok(productToBeDeleted.ErrorMessage);
+            return Ok(productToBeDeleted.Message);
         }
 
         // Display all products together with their category info
@@ -88,7 +88,7 @@ namespace MagazineManagment.Web.Controllers
             if (resultGetProductByItsName.Success)
                 return Ok(resultGetProductByItsName.Value);
 
-            return BadRequest(resultGetProductByItsName.ErrorMessage);
+            return BadRequest(resultGetProductByItsName.Message);
         }
 
         [HttpGet("GetProductImage/{id}")]
@@ -98,7 +98,7 @@ namespace MagazineManagment.Web.Controllers
 
             if (getProductImage.Success)
                 return Ok(getProductImage.Value);
-            return BadRequest(getProductImage.ErrorMessage);
+            return BadRequest(getProductImage.Message);
         }
     }
 }

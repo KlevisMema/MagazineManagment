@@ -1,60 +1,98 @@
-﻿using IdentityServer4.Extensions;
-using IdentityServer4.Models;
-using IdentityServer4.Services;
-using MagazineManagment.DAL.Models;
+﻿using MagazineManagment.BLL.ResponseService;
+using MagazineManagment.DTO.DataTransferObjects;
+using MagazineManagment.DTO.ViewModels;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
+
 
 namespace MagazineManagment.BLL.RepositoryServices
 {
-
     public class ProfileService : IProfileService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
 
-        public ProfileService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory)
+        public ProfileService(RoleManager<IdentityRole> roleManager)
         {
-            _userManager = userManager;
             _roleManager = roleManager;
-            _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
         }
-        public async Task GetProfileDataAsync(ProfileDataRequestContext context)
+
+
+        public IEnumerable<RoleCreateViewModel> GetRoles()
         {
-            string sub = context.Subject.GetSubjectId();
-            ApplicationUser user = await _userManager.FindByIdAsync(sub);
-            ClaimsPrincipal userClaims = await _userClaimsPrincipalFactory.CreateAsync(user);
+            var getRoles = _roleManager.Roles.ToList();
+            return getRoles.Select(roles => roles.AsRoleCreateDto());
+        }
 
-            List<Claim> claims = userClaims.Claims.ToList();
-            claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
-
-            if (_userManager.SupportsUserRole)
+        public async Task<ResponseService<RoleCreateViewModel>> CreateRole(RoleCreateViewModel roleName)
+        {
+            try
             {
-                IList<string> roles = await _userManager.GetRolesAsync(user);
-                foreach (var roleName in roles)
+                IdentityRole identityRole = new()
                 {
-                    claims.Add(new Claim(ClaimTypes.Role, roleName));
-                    if (_roleManager.SupportsRoleClaims)
-                    {
-                        IdentityRole role = await _roleManager.FindByNameAsync(roleName);
-                        if (role != null)
-                        {
-                            claims.AddRange(await _roleManager.GetClaimsAsync(role));
-                        }
-                    }
-                }
+                    Name = roleName.RoleName,
+                };
+                await _roleManager.CreateAsync(identityRole);
+
+                return ResponseService<RoleCreateViewModel>.Ok(identityRole.AsRoleCreateDto());
             }
-            context.IssuedClaims = claims;
+            catch (Exception ex)
+            {
+
+                return ResponseService<RoleCreateViewModel>.ExceptioThrow(ex.Message);
+
+            }
         }
 
-        public async Task IsActiveAsync(IsActiveContext context)
+        public async Task<ResponseService<RoleFindViewModel>> FindRole(string roleId)
         {
-            string sub = context.Subject.GetSubjectId();
-            ApplicationUser user = await _userManager.FindByIdAsync(sub);
-            context.IsActive = user != null;
+            var findRole = await _roleManager.FindByIdAsync(roleId);
 
+            if (findRole == null)
+                return ResponseService<RoleFindViewModel>.NotFound($"The role with id {roleId} doesn't exists");
+
+            return ResponseService<RoleFindViewModel>.Ok(findRole.AsRoleEditDto());
         }
+
+        public async Task<ResponseService<RoleFindViewModel>> UpdateRole(RoleFindViewModel updateRole)
+        {
+            var findRole = await _roleManager.FindByIdAsync(updateRole.RoleId);
+
+            if (findRole == null)
+                return ResponseService<RoleFindViewModel>.NotFound($"The role with id {updateRole} doesn't exists");
+
+            try
+            {
+                findRole.Name = updateRole.RoleName;
+                findRole.NormalizedName = updateRole.RoleName.ToUpper();
+
+                var updateResult = await _roleManager.UpdateAsync(findRole);
+
+                return ResponseService<RoleFindViewModel>.Ok(findRole.AsRoleEditDto());
+            }
+            catch (Exception ex)
+            {
+                return ResponseService<RoleFindViewModel>.ErrorMsg(ex.Message);
+            }
+        }
+
+        public async Task<ResponseService<RoleFindViewModel>> DeleteRole(string id)
+        {
+            try
+            {
+                var findRole = await _roleManager.FindByIdAsync(id);
+
+                if (findRole == null)
+                    return ResponseService<RoleFindViewModel>.NotFound($"Role with id {id} does not exists");
+
+                var resultDelete = await _roleManager.DeleteAsync(findRole);
+
+                return ResponseService<RoleFindViewModel>.Deleted("Role has been deleted");
+            }
+            catch (Exception ex)
+            {
+                return ResponseService<RoleFindViewModel>.ExceptioThrow(ex.Message);
+            }
+        }
+
     }
 }
 

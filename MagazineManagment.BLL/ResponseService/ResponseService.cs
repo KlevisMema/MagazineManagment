@@ -4,7 +4,7 @@ namespace MagazineManagment.BLL.ResponseService
 {
     public class ResponseService<T>
     {
-        public string? ErrorMessage { get; set; }
+        public string? Message { get; set; }
         public T? Value { get; set; }
         public bool Success { get; set; }
         public HttpStatusCode StatusCode { get; set; }
@@ -14,12 +14,19 @@ namespace MagazineManagment.BLL.ResponseService
 
         public ResponseService(string? errorMessage)
         {
-            ErrorMessage = errorMessage;
+            Message = errorMessage;
         }
+
+        public ResponseService(string? errorMessage , bool success)
+        {
+            Message = errorMessage;
+            Success = success;
+        }
+
 
         public ResponseService(string? errorMessage, T? value, bool success, HttpStatusCode statusCode)
         {
-            ErrorMessage = errorMessage;
+            Message = errorMessage;
             Value = value;
             Success = success;
             StatusCode = statusCode;
@@ -27,7 +34,7 @@ namespace MagazineManagment.BLL.ResponseService
 
         public ResponseService(string? errorMessage, HttpStatusCode statusCode)
         {
-            ErrorMessage = errorMessage;
+            Message = errorMessage;
             Value = default;
             Success = false;
             StatusCode = statusCode;
@@ -45,7 +52,7 @@ namespace MagazineManagment.BLL.ResponseService
 
         public static ResponseService<T> Deleted(string Message)
         {
-            return new ResponseService<T>(Message);
+            return new ResponseService<T>(Message, true);
         }
 
         public static ResponseService<T> ExceptioThrow(string ThrowMessage)

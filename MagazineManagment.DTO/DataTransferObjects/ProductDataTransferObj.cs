@@ -41,6 +41,22 @@ namespace MagazineManagment.DTO.DataTransferObjects
             };
         }
 
+        public static ProductPostEditViewModel AsProductUpdateDto(this Product product)
+        {
+            return new ProductPostEditViewModel
+            {
+                Id = product.Id,
+                ProductName = product.ProductName,
+                SerialNumber = product.SerialNumber,
+                Price = product.Price,
+                ProductInStock= product.ProductInStock,
+                CurrencyType = product.CurrencyType,
+                ProductDescription = product.ProductDescription,
+                Image = product.Image,
+                CreatedBy= product.CreatedBy,
+            };
+        } 
+
         public static ProductImageOnly AsProductImageDto(this Product product)
         {
             return new ProductImageOnly

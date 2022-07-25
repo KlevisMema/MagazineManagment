@@ -30,8 +30,7 @@ namespace MagazineManagment.DTO.ViewModels
         [Display(Name = "Product description")]
         [StringLength(maximumLength: 100, MinimumLength = 4)]
         public string? ProductDescription { get; set; }
-
-        
+        //public Guid? CategoryId { get; set; }
         public string? Image { get; set; }
         [Display(Name = "Image")]
      

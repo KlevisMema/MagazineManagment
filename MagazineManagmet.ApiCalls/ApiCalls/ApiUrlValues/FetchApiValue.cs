@@ -3,12 +3,10 @@
     public class FetchApiValue
     {
         public const string SectionName = "ApiCalls";
-        public string GetProducts { get; set; }
-        public string GetCreateProduct { get; set; }
-        public string PostCreateProduct { get; set; }
-        public string PostEditProduct { get; set; }
-        public string GetProductImage { get; set; }
-        public string GetCategories { get; set; }
-        public string PostCreateCategory { get; set; }
+        public string ProductGet { get; set; }
+        public string GetAllCategories { get; set; }
+        public string ProductPostCreateOrEditDefaultUri { get; set; }
+        public string CategoryCreateOrEditDefaultUri { get; set; }
+        public string CategoryGetOrDeleteDefaultUri { get; set; }
     }
 }
