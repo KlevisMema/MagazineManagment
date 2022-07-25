@@ -1,5 +1,6 @@
 ﻿using MagazineManagment.DTO.ViewModels;
 using MagazineManagmet.ApiCalls.ApiCalls;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagazineManagment.ClientApplication.Controllers
@@ -12,7 +13,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             _categoryApiCalls = categoryApiCalls;
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -32,12 +33,12 @@ namespace MagazineManagment.ClientApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var postCategoryRespond = await _categoryApiCalls.CreateCategory(category);
+                var postResult = await _categoryApiCalls.PostCreateCategory(category);
 
-                if (postCategoryRespond.IsSuccessStatusCode)
+                if (postResult.IsSuccessStatusCode)
                     return RedirectToAction("Index");
 
-                ModelState.AddModelError(string.Empty , await postCategoryRespond.Content.ReadAsStringAsync());
+                ModelState.AddModelError(string.Empty , await postResult.Content.ReadAsStringAsync());
             }
             return View(category);
         }
@@ -45,15 +46,45 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var result = await _categoryApiCalls.EditCategory(id);
+            var category = await _categoryApiCalls.GetEditCategory(id);
             
-            return View(result);
+            return View(category);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CategoryUpdateViewModel categoryUpdate)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                var editResult = await _categoryApiCalls.PostEditCategory(categoryUpdate);
+
+                if (editResult.IsSuccessStatusCode)
+                    return RedirectToAction("Index");
+
+                ModelState.AddModelError(string.Empty, await editResult.Content.ReadAsStringAsync());
+            }
+
+            return View(categoryUpdate);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var category = await _categoryApiCalls.GetEditCategory(id);
+            return View(category);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(CategoryUpdateViewModel category)
+        {
+            var deleteResult = await _categoryApiCalls.PostDeleteCategory(category.Id);
+            if (deleteResult.IsSuccessStatusCode)
+                return RedirectToAction("index");
+
+            ModelState.AddModelError(string.Empty, await deleteResult.Content.ReadAsStringAsync());
+            return View(category);
         }
 
     }

@@ -32,7 +32,7 @@ namespace MagazineManagment.Web.Controllers
             if (result.Success)
                 return Ok(result.Value);
 
-            return BadRequest(result.ErrorMessage);
+            return BadRequest(result.Message);
         }
 
         // Create a category
@@ -42,7 +42,7 @@ namespace MagazineManagment.Web.Controllers
             var resultCreate = await _categoryRepository.CreateCategoryAsync(createCategory);
             if (resultCreate.Success)
                 return Ok(resultCreate.Value);
-            return BadRequest(resultCreate.ErrorMessage);
+            return BadRequest(resultCreate.Message);
         }
 
         // Update a category
@@ -54,7 +54,7 @@ namespace MagazineManagment.Web.Controllers
             if (result.Success)
                 return Ok(result.Value);
 
-            return BadRequest(result.ErrorMessage);
+            return BadRequest(result.Message);
         }
 
         // Delete a category
@@ -64,9 +64,9 @@ namespace MagazineManagment.Web.Controllers
             var resultDelete = await _categoryRepository.DeleteCategoryAsync(id);
 
             if (resultDelete.Success)
-                return Ok(resultDelete.ErrorMessage);
+                return Ok(resultDelete.Message);
 
-            return BadRequest(resultDelete.ErrorMessage);
+            return BadRequest(resultDelete.Message);
 
         }
 

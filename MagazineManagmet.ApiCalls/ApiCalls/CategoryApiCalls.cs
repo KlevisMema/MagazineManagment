@@ -19,9 +19,9 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             IEnumerable<CategoryViewModel> readResult = null;
             using (var client = new HttpClient())
             {
-                var uri = _options.Value.GetCategories;
+                var uri = _options.Value.CategoryGetOrDeleteDefaultUri;
                 client.BaseAddress = new Uri(uri);
-                var getCategoriesResponse = await client.GetAsync(RequestDestination.GetCategories);
+                var getCategoriesResponse = await client.GetAsync(RequestDestination.CategoryGetOrDeleteDefaultRoute);
 
                 readResult = await getCategoriesResponse.Content.ReadAsAsync<IList<CategoryViewModel>>();
                 client.Dispose();
@@ -29,32 +29,57 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             return readResult;
         }
 
-        public async Task<HttpResponseMessage> CreateCategory(CategoryCreateViewModel category)
+        public async Task<HttpResponseMessage> PostCreateCategory(CategoryCreateViewModel category)
         {
             HttpResponseMessage resultPostCategory = new();
             using (var client = new HttpClient())
             {
-                var uri = _options.Value.PostEditProduct;
+                var uri = _options.Value.CategoryCreateOrEditDefaultUri;
                 client.BaseAddress = new Uri(uri);
-                resultPostCategory = await client.PostAsJsonAsync(RequestDestination.PostCreateCategory, category);
+                resultPostCategory = await client.PostAsJsonAsync(RequestDestination.CategoryCreateOrEditDefaultRoute, category);
+                client.Dispose();
             }
             return resultPostCategory;
         }
 
-        public async Task<CategoryUpdateViewModel> EditCategory(Guid id)
+        public async Task<CategoryUpdateViewModel> GetEditCategory(Guid id)
         {
-            CategoryUpdateViewModel getContent = null;
+            CategoryUpdateViewModel? getContent = null;
             using (var client = new HttpClient())
             {
-                var uri = _options.Value.GetCategories;
+                var uri = _options.Value.CategoryGetOrDeleteDefaultUri;
                 client.BaseAddress = new Uri(uri);
-                var getCategoryResult = await client.GetAsync(RequestDestination.GetCategory + id);
-
-                if (getCategoryResult.IsSuccessStatusCode)
-                    getContent = await getCategoryResult.Content.ReadAsAsync<CategoryUpdateViewModel>();
-
+                var getCategoryResult = await client.GetAsync(RequestDestination.CategoryGetOrDeleteDefaultRoute + "/" + id);
+                getContent = await getCategoryResult.Content.ReadAsAsync<CategoryUpdateViewModel>();
+                client.Dispose();
             }
             return getContent;
+        }
+
+        public async Task<HttpResponseMessage> PostEditCategory(CategoryUpdateViewModel category)
+        {
+            HttpResponseMessage? getPostEditResult = null;
+            using (var client = new HttpClient())
+            {
+                var uri = _options.Value.CategoryCreateOrEditDefaultUri;
+                client.BaseAddress = new Uri(uri);
+                getPostEditResult = await client.PutAsJsonAsync(RequestDestination.CategoryCreateOrEditDefaultRoute, category);
+                client.Dispose();
+            }
+            return getPostEditResult;
+        }
+
+        public async Task<HttpResponseMessage> PostDeleteCategory(Guid id)
+        {
+            HttpResponseMessage? deleteResult = null;
+            using (var client = new HttpClient())
+            {
+                var uri = _options.Value.CategoryGetOrDeleteDefaultUri;
+                client.BaseAddress = new Uri(uri);
+                deleteResult = await client.DeleteAsync(RequestDestination.CategoryGetOrDeleteDefaultRoute + "/" + id);
+                client.Dispose();
+            }
+            return deleteResult;
         }
     }
 }

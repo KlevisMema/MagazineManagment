@@ -1,5 +1,4 @@
-﻿using MagazineManagment.DAL.Models;
-using MagazineManagment.Shared.Enums;
+﻿using MagazineManagment.Shared.Enums;
 using Microsoft.AspNetCore.Http;
 
 

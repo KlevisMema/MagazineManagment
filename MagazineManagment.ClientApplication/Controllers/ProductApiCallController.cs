@@ -15,36 +15,37 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var products = _productApiCalls.GetAllProducts();
+            var products = await _productApiCalls.GetAllProducts();
+            if (products == null)
+                return BadRequest();
             return View(products);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var categoryList = _productApiCalls.GetCreateProduct();
+            var categoryList = await _productApiCalls.GetCreateProduct();
             ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
             return View();
         }
 
-        [ValidateAntiForgeryToken]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductCreateViewModel product)
         {
             if (ModelState.IsValid)
             {
-                HttpResponseMessage result = null;
-                result = await _productApiCalls.PostCreateProduct(product);
+                var result = await _productApiCalls.PostCreateProduct(product);
 
                 if (result.IsSuccessStatusCode)
                     return RedirectToAction("Index");
 
-                ModelState.AddModelError(string.Empty,await result.Content.ReadAsStringAsync());
+                ModelState.AddModelError(string.Empty, await result.Content.ReadAsStringAsync());
             }
 
-            var categoryList = _productApiCalls.GetCreateProduct();
+            var categoryList = await _productApiCalls.GetCreateProduct();
             ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
             return View(product);
         }
@@ -61,12 +62,13 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProductUpdateViewModel UpdateProduct)
         {
 
             if (ModelState.IsValid)
             {
-                var  result  = await _productApiCalls.PostEditProduct(UpdateProduct);
+                var result = await _productApiCalls.PostEditProduct(UpdateProduct);
 
                 if (result.IsSuccessStatusCode)
                     return RedirectToAction("Index");
@@ -77,10 +79,25 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(product);
         }
 
-        public IActionResult Delete(Guid id)
+        [HttpGet]
+        public async Task<IActionResult> Delete(Guid id)
         {
-            _productApiCalls.Delete(id);
-            return RedirectToAction("Index");
+            var product = await _productApiCalls.GetEditProduct(id);
+            return View(product);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(ProductUpdateViewModel productToBeDeleted)
+        {
+            var deleteResult  = await _productApiCalls.Delete(productToBeDeleted.Id);
+
+            if(deleteResult.IsSuccessStatusCode)
+                return RedirectToAction("Index");
+
+            ModelState.AddModelError(string.Empty, await deleteResult.Content.ReadAsStringAsync());
+            return View(productToBeDeleted);
         }
     }
-}   
+}

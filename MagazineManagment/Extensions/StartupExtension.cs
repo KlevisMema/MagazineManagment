@@ -1,9 +1,7 @@
-﻿using IdentityServer4.Services;
-using MagazineManagment.BLL.RepositoryServices;
+﻿using MagazineManagment.BLL.RepositoryServices;
 using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.Services;
 using MagazineManagment.DAL.DataContext;
-using MagazineManagment.DAL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,12 +13,12 @@ namespace MagazineManagment.Web.Extensions
         {
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddDefaultIdentity<IdentityUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders(); ;
+            services.AddTransient<IProfileService, ProfileService>();
+
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
-            //services.AddScoped<IProfileService, ProfileService>();
-            //services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser>>();
-
-
+            //services.AddTransient<IProfileService, ProfileService>();
             return services;
         }
     }

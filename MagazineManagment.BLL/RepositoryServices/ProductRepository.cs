@@ -83,13 +83,13 @@ namespace MagazineManagment.BLL.Services
         }
 
         // Update a Product 
-        public async Task<ResponseService<ProductViewModel>> UpdateProductAsync(ProductPostEditViewModel product)
+        public async Task<ResponseService<ProductPostEditViewModel>> UpdateProductAsync(ProductPostEditViewModel product)
         {
             var productToBeUpdated = await _context.Products.FirstOrDefaultAsync(c => c.Id == product.Id);
 
             if (productToBeUpdated == null)
             {
-                return ResponseService<ProductViewModel>.NotFound("Product does not exists");
+                return ResponseService<ProductPostEditViewModel>.NotFound("Product does not exists");
             }
 
             bool ckeckIfExists = false;
@@ -97,7 +97,7 @@ namespace MagazineManagment.BLL.Services
                 ckeckIfExists = await _context.Products.AnyAsync(s => s.SerialNumber == product.SerialNumber);
 
             if (ckeckIfExists)
-                return ResponseService<ProductViewModel>.ErrorMsg($"Serial number {product.SerialNumber} exists, please give another  serial number");
+                return ResponseService<ProductPostEditViewModel>.ErrorMsg($"Serial number {product.SerialNumber} exists, please give another  serial number");
 
             productToBeUpdated.ProductName = product.ProductName;
             productToBeUpdated.Price = product.Price;
@@ -112,11 +112,12 @@ namespace MagazineManagment.BLL.Services
             {
                 _context.Products.Update(productToBeUpdated);
                 await _context.SaveChangesAsync();
-                return ResponseService<ProductViewModel>.Ok(productToBeUpdated.AsProductDto());
+                return ResponseService<ProductPostEditViewModel
+                    >.Ok(productToBeUpdated.AsProductUpdateDto());
             }
             catch (Exception ex)
             {
-                return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
+                return ResponseService<ProductPostEditViewModel>.ExceptioThrow(ex.Message);
             }
 
         }

@@ -16,71 +16,49 @@ namespace MagazineManagment.Web.ApiCalls
             _config = config;
         }
 
-        public IEnumerable<ProductViewModel> GetAllProducts()
+        public async Task<IEnumerable<ProductViewModel>> GetAllProducts()
         {
-            var uri = _config.Value.GetProducts;
+            using HttpClient client = new();
+            IEnumerable<ProductViewModel>? readResponse = null;
+            var uri = _config.Value.ProductGet;
+            client.BaseAddress = new Uri(uri);
 
-            IEnumerable<ProductViewModel> products = null;
-
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(uri);
-
-                var response = client.GetAsync(RequestDestination.Product);
-                response.Wait();
-
-                HttpResponseMessage result = response.Result;
-
-                if (result.IsSuccessStatusCode)
-                {
-                    var read = result.Content.ReadAsAsync<IList<ProductViewModel>>();
-                    read.Wait();
-                    products = read.Result;
-                }
-                return products;
-            }
+            var response = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute);
+            readResponse = await response.Content.ReadAsAsync<IList<ProductViewModel>>();
+            client.Dispose();
+            return readResponse;
         }
 
-        public IEnumerable<CategoryNameOnlyViewModel> GetCreateProduct()
+        public async Task<IEnumerable<CategoryNameOnlyViewModel>> GetCreateProduct()
         {
-            var uri = _config.Value.GetCreateProduct;
 
-            IEnumerable<CategoryNameOnlyViewModel> categories = null;
+            IEnumerable<CategoryNameOnlyViewModel>? readResponse = null;
 
             using (var client = new HttpClient())
             {
+                var uri = _config.Value.GetAllCategories;
                 client.BaseAddress = new Uri(uri);
 
-                var Response = client.GetAsync(RequestDestination.GetCreateProductRoute);
-                Response.Wait();
+                var response = await client.GetAsync(RequestDestination.GetCreateProductRoute);
 
-                var result = Response.Result;
-
-                if (result.IsSuccessStatusCode)
-                {
-                    var read = result.Content.ReadAsAsync<IList<CategoryNameOnlyViewModel>>();
-                    read.Wait();
-                    categories = read.Result;
-                }
-                else
-                {
-                    categories = Enumerable.Empty<CategoryNameOnlyViewModel>().ToList();
-                }
+                readResponse = await response.Content.ReadAsAsync<IList<CategoryNameOnlyViewModel>>();
+                client.Dispose();
             }
-
-            return categories;
+            return readResponse;
         }
 
         public async Task<HttpResponseMessage> PostCreateProduct(ProductCreateViewModel product)
         {
 
-            string BaseArrayImage = null;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                product.ImageFile.CopyTo(ms);
-                var fileBytes = ms.ToArray();
-                BaseArrayImage = Convert.ToBase64String(fileBytes);
-            }
+            //string? BaseArrayImage = null;
+            //using (MemoryStream ms = new())
+            //{
+            //    product.ImageFile.CopyTo(ms);
+            //    var fileBytes = ms.ToArray();
+            //    BaseArrayImage = Convert.ToBase64String(fileBytes);
+            //}
+
+            var BaseArrayImage = await ConvertImageToBase64(product.ImageFile);
 
             ProductCreateViewModelNoIFormFile newProduct = new()
             {
@@ -96,34 +74,28 @@ namespace MagazineManagment.Web.ApiCalls
             };
 
 
-            using (var client = new HttpClient())
-            {
-                var uri = _config.Value.PostCreateProduct;
-                client.BaseAddress = new Uri(uri);
-                var result = await client.PostAsJsonAsync(RequestDestination.PostCreateProductRoute, newProduct);
-                return result;
-            }
+            using var client = new HttpClient();
+            var uri = _config.Value.ProductPostCreateOrEditDefaultUri;
+            client.BaseAddress = new Uri(uri);
+            var result = await client.PostAsJsonAsync(RequestDestination.ProductCreateOrEditDefaultRoute, newProduct);
+            client.Dispose();
+            return result;
         }
 
         public async Task<ProductUpdateViewModel> GetEditProduct(Guid id)
         {
-            ProductUpdateViewModel editProduct = null;
+            ProductUpdateViewModel? readTask = null;
 
             using (var client = new HttpClient())
             {
-                var uri = _config.Value.GetProducts;
+                var uri = _config.Value.ProductGet;
                 client.BaseAddress = new Uri(uri);
 
-                var getTask = await client.GetAsync(RequestDestination.GetEditProduct + id);
-
-
-                if (getTask.IsSuccessStatusCode)
-                {
-                    var readTask = await getTask.Content.ReadAsAsync<ProductUpdateViewModel>();
-                    editProduct = readTask;
-                }
+                var getTask = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
+                readTask = await getTask.Content.ReadAsAsync<ProductUpdateViewModel>();
+                client.Dispose();
             }
-            return editProduct;
+            return readTask;
         }
 
         public async Task<HttpResponseMessage> PostEditProduct(ProductUpdateViewModel product)
@@ -163,44 +135,41 @@ namespace MagazineManagment.Web.ApiCalls
 
             using (var client = new HttpClient())
             {
-                var uri = _config.Value.PostEditProduct;
+                var uri = _config.Value.ProductPostCreateOrEditDefaultUri;
                 client.BaseAddress = new Uri(uri);
-                var postTask = await client.PutAsJsonAsync(RequestDestination.PostEditProduct, newUpdatedProduct);
+                var postTask = await client.PutAsJsonAsync(RequestDestination.ProductCreateOrEditDefaultRoute, newUpdatedProduct);
                 return postTask;
             }
         }
 
-        public void Delete(Guid id)
+        public async Task<HttpResponseMessage> Delete(Guid id)
         {
+            HttpResponseMessage? deleteResult = null;
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("https://localhost:7208/api/");
-                var deleteTask = client.DeleteAsync($"Product/{id}");
-                deleteTask.Wait();
+                var uri = _config.Value.ProductGet;
+                client.BaseAddress = new Uri(uri);
+                deleteResult = await client.DeleteAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
+                client.Dispose();
             }
+            return deleteResult;
         }
 
         public async Task<ProductImageOnly> GetProductImage(Guid id)
         {
-            ProductImageOnly productImageOnly = null;
-            using (var client = new HttpClient())
-            {
-                var uri = _config.Value.GetProductImage;
-                client.BaseAddress = new Uri(uri);
-                var getProduct = await client.GetAsync(RequestDestination.GetProductImage + id);
+           
+            using var client = new HttpClient();
+            var uri = _config.Value.ProductGet;
+            client.BaseAddress = new Uri(uri);
+            var getProduct = await client.GetAsync(RequestDestination.GetProductImage + id);
 
-                if (getProduct.IsSuccessStatusCode)
-                {
-                    var Task = await getProduct.Content.ReadAsAsync<ProductImageOnly>();
-                    productImageOnly = Task;
-                }
-                return productImageOnly;
-            }
+            var Task = await getProduct.Content.ReadAsAsync<ProductImageOnly>();
+            return Task;
         }
 
         public static async Task<string> ConvertImageToBase64(IFormFile image)
         {
-            string BaseArrayImage = null;
+            string? BaseArrayImage = null;
 
             using (MemoryStream ms = new())
             {

@@ -5,7 +5,9 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
     public interface ICategoryApiCalls
     {
         Task<IEnumerable<CategoryViewModel>> GetAllCategories();
-        Task<HttpResponseMessage> CreateCategory(CategoryCreateViewModel category);
-        Task<CategoryUpdateViewModel> EditCategory(Guid id);
+        Task<HttpResponseMessage> PostCreateCategory(CategoryCreateViewModel category);
+        Task<CategoryUpdateViewModel> GetEditCategory(Guid id);
+        Task<HttpResponseMessage> PostEditCategory(CategoryUpdateViewModel category);
+        Task<HttpResponseMessage> PostDeleteCategory(Guid id);
     }
 }
