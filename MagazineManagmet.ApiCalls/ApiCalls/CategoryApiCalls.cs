@@ -1,6 +1,7 @@
 ﻿using MagazineManagment.DTO.ViewModels;
 using MagazineManagment.Shared.ApiUrlDestinations;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
+using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.Extensions.Options;
 
 namespace MagazineManagmet.ApiCalls.ApiCalls

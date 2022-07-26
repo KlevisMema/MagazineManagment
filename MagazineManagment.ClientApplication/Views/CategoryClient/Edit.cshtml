@@ -1,10 +1,7 @@
 ﻿@using MagazineManagment.DTO.ViewModels
-@model CategoryCreateViewModel
-@{
-    ViewData["Title"] = "Create";
-}
+@model CategoryUpdateViewModel
 
-<form asp-action="Create" asp-controller="CategoryApiCall" method="post" asp-antiforgery="true">
+<form asp-action="Edit" asp-controller="CategoryClient" method="post" asp-antiforgery="true">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group">
         <label asp-for="CategoryName" ></label>
@@ -12,6 +9,5 @@
         <span asp-validation-for="CategoryName"  class="text-danger"></span>
     </div>
     <br />
-    <input type="submit" value="Create category" class="btn btn-primary" />
+    <input type="submit" value="Update category" class="btn btn-green" />
 </form>
-

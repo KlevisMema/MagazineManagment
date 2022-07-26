@@ -1,19 +1,18 @@
 ﻿using MagazineManagment.DTO.ViewModels;
-using MagazineManagmet.ApiCalls.ApiCalls;
+using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagazineManagment.ClientApplication.Controllers
 {
-    public class CategoryApiCallController : Controller
+    public class CategoryClientController : Controller
     {
         private readonly ICategoryApiCalls _categoryApiCalls;
-        public CategoryApiCallController(ICategoryApiCalls categoryApiCalls)
+        public CategoryClientController(ICategoryApiCalls categoryApiCalls)
         {
             _categoryApiCalls = categoryApiCalls;
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {

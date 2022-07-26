@@ -1,6 +1,6 @@
 ﻿using MagazineManagment.DTO.ViewModels;
 
-namespace MagazineManagmet.ApiCalls.ApiCalls
+namespace MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces
 {
     public interface ICategoryApiCalls
     {

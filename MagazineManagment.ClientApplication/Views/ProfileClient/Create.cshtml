@@ -1,0 +1,16 @@
+﻿@using MagazineManagment.DTO.ViewModels
+@model RoleCreateViewModel
+@{
+    ViewData["Title"] = "Create";
+}
+
+<form asp-action="Create" asp-controller="ProfileClient" method="post" asp-antiforgery="true">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="RoleName" ></label>
+        <input asp-for="RoleName" type="text" placeholder="Category Name" class="form-control"/>
+        <span asp-validation-for="RoleName"  class="text-danger"></span>
+    </div>
+    <br />
+    <input type="submit" value="Create role" class="btn btn-primary" />
+</form>

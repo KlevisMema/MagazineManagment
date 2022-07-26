@@ -1,6 +1,6 @@
 ﻿using MagazineManagment.DTO.ViewModels;
 
-namespace MagazineManagment.Web.ApiCalls
+namespace MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces
 {
     public interface IProductApiCalls
     {

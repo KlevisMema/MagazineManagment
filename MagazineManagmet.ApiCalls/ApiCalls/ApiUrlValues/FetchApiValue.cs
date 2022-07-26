@@ -8,5 +8,7 @@
         public string ProductPostCreateOrEditDefaultUri { get; set; }
         public string CategoryCreateOrEditDefaultUri { get; set; }
         public string CategoryGetOrDeleteDefaultUri { get; set; }
+        public string ProfilePostOrEditRole { get;set; }
+        public string ProfileGetOrDeleteProfile { get; set; }
     }
 }

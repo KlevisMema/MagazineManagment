@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MagazineManagment.DTO.ViewModels;
-using MagazineManagment.Web.ApiCalls;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 
 namespace MagazineManagment.ClientApplication.Controllers
 {
-    public class ProductApiCallController : Controller
+    public class ProductClientController : Controller
     {
         private readonly IProductApiCalls _productApiCalls;
 
-        public ProductApiCallController(IProductApiCalls productApiCalls)
+        public ProductClientController(IProductApiCalls productApiCalls)
         {
             _productApiCalls = productApiCalls;
         }
