@@ -1,3 +1,8 @@
+* {
+    font-family: 'Ubuntu', sans-serif;
+}
+
+
 html {
   font-size: 14px;
 }
@@ -15,4 +20,59 @@ html {
 
 body {
   margin-bottom: 60px;
+}
+
+.table {
+    border: 2px solid #fff;
+}
+
+.btn-green {
+    background-color: green;
+    color: #fff;
+}
+
+.btn-green:hover {
+    color: green;
+    background-color: #fff;
+    border-color: green;
+}
+
+.btn-danger:hover {
+    color: #dc3545;
+    background-color: #fff;
+}
+
+.btn-primary-plus {
+    background-color: #0d6efd;
+    color: #ffff;
+}
+
+.btn-primary-plus:hover {
+    background-color: #fff;
+    color: #0d6efd;
+}
+
+.btn-danger:hover {
+    color: #dc3545;
+    background-color: #fff;
+}
+
+.form-group-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-group-image h1 {
+    margin: 0px 30px;
+}
+
+.form-group-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-group-image h1 {
+    margin: 0px 30px;
 }

@@ -1,7 +1,7 @@
 ﻿@using MagazineManagment.Shared.Enums;
 @model MagazineManagment.DTO.ViewModels.ProductCreateViewModel
 
-<form asp-action="Create" asp-controller="ProductApiCall" enctype="multipart/form-data" method="post" asp-antiforgery="true">
+<form asp-action="Create" asp-controller="ProductClient" enctype="multipart/form-data" method="post" asp-antiforgery="true">
 
     @Html.AntiForgeryToken()
 

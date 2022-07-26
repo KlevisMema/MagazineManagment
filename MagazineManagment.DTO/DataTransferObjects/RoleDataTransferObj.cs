@@ -21,5 +21,45 @@ namespace MagazineManagment.DTO.DataTransferObjects
                 RoleName = role.Name,
             };
         }
+
+        public static RolesGetAllDetails AsRoleGetAllDetailsDto(this IdentityRole role)
+        {
+            return new RolesGetAllDetails
+            {
+                RoleNameNormalized = role.NormalizedName,
+                RoleName = role.Name,
+                RoleId = role.Id,
+            };
+        }
+
+        public static ProfileUpdateViewModel AsRoleUpdateDto(this IdentityRole role)
+        {
+            return new ProfileUpdateViewModel
+            {
+                RoleId = role.Id,
+                RoleName = role.Name,
+            };
+        }
+
+
+        public static UserInRoleViewModel AsUserInRoleDto(this IdentityUser userInRole)
+        {
+            return new UserInRoleViewModel
+            {
+               UserId = userInRole.Id,
+               Username = userInRole.UserName,
+               IsSelected = true
+            };
+        }
+
+        public static UserInRoleViewModel AsUsersDto(this IdentityUser user)
+        {
+            return new UserInRoleViewModel
+            {
+                UserId = user.Id,
+                Username = user.UserName,
+            };
+        }
+
     }
 }

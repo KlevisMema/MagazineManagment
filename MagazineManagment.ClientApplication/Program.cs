@@ -4,6 +4,7 @@ using MagazineManagment.DAL.DataContext;
 using MagazineManagment.Web.ApiCalls;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using MagazineManagmet.ApiCalls.ApiCalls;
+using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,11 +14,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddTransient<IProductApiCalls, ProductApiCalls>();
 builder.Services.AddTransient<ICategoryApiCalls, CategoryApiCalls>();
+builder.Services.AddTransient<IProfileApiCalls, ProfileApiCalls>();
 builder.Services.Configure<FetchApiValue>(builder.Configuration.GetSection(FetchApiValue.SectionName));
 
 
