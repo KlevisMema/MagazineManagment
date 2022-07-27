@@ -18,10 +18,10 @@
 <br />
 <div class="card">
     <div class="card-header">
-        <h2>Add or remove users from this role</h2>
+        <h2>Add users from this role</h2>
     </div>
     <div class="card-body">
-        <a asp-action="GetAllUsers" asp-controller="ProfileClient" asp-route-routeId="@Model.RoleId" class="btn btn-green">Add/Remove</a>
+        <a asp-action="AsingRoleToUsers" asp-controller="ProfileClient" asp-route-id="@Model.RoleId" class="btn btn-green">Add</a>
     </div>
 </div>
 

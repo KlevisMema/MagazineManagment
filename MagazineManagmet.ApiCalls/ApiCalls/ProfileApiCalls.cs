@@ -1,5 +1,6 @@
 ﻿using MagazineManagment.DTO.ViewModels;
 using MagazineManagment.Shared.ApiUrlDestinations;
+using MagazineManagment.Shared.MediaFormatter;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.Extensions.Options;
@@ -113,21 +114,35 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             return readResult;
         }
 
-        public async Task<IEnumerable<UserInRoleViewModel>> GetAllUsers()
+        public async Task<IEnumerable<UserInRoleViewModel>> GetAllUsers(string id)
         {
             IEnumerable<UserInRoleViewModel>? readResult = null;
             using (var client = new HttpClient())
             {
                 var uri = _options.Value.ProfileGetOrDeleteProfile;
                 client.BaseAddress = new Uri(uri);
-                var getUsersResponse = await client.GetAsync(RequestDestination.ProfileGetRoles + "/GetAllUsers");
+                var getUsersResponse = await client.GetAsync(RequestDestination.ProfileGetRoles + "/GetAllUsers/" + id);
 
-                readResult = await getUsersResponse.Content.ReadAsAsync<IList<UserInRoleViewModel>>();
-                client.Dispose();
+                if (getUsersResponse.IsSuccessStatusCode)
+                    readResult = await getUsersResponse.Content.ReadAsAsync<IList<UserInRoleViewModel>>();
+                //else
+                //    readResult.Clear();
+                
             }
             return readResult;
         }
 
-
+        public async Task<HttpResponseMessage> AssignRoleToUsers(List<UserInRoleViewModel> users, string id)
+        {
+            HttpResponseMessage resultPostRoleToUsers = new();
+            using (var client = new HttpClient())
+            {
+                var uri = _options.Value.ProfilePostOrEditRole;
+                client.BaseAddress = new Uri(uri);
+                resultPostRoleToUsers = await client.PostAsJsonAsync(RequestDestination.ProfileAssignRoleToUsers + id, users);
+                client.Dispose();
+            }
+            return resultPostRoleToUsers;
+        }
     }
 }

@@ -52,6 +52,16 @@ namespace MagazineManagment.DTO.DataTransferObjects
             };
         }
 
+        public static UserInRoleViewModel AsUserNotInRoleDto(this IdentityUser userInRole)
+        {
+            return new UserInRoleViewModel
+            {
+                UserId = userInRole.Id,
+                Username = userInRole.UserName,
+                IsSelected = false
+            };
+        }
+
         public static UserInRoleViewModel AsUsersDto(this IdentityUser user)
         {
             return new UserInRoleViewModel

@@ -1,5 +1,6 @@
 ﻿using MagazineManagment.DTO.ViewModels;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagazineManagment.ClientApplication.Controllers
@@ -18,6 +19,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(getAllRoles);
         }
 
+        [Authorize(Roles = "Admini")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -25,6 +27,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RoleCreateViewModel role)
         {
             if (ModelState.IsValid)
@@ -50,6 +53,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(ProfileUpdateViewModel role)
         {
             if (ModelState.IsValid)
@@ -76,6 +80,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(RolesGetAllDetails role)
         {
             var getRoleToDeleteResult = await _profileApiCalls.DeleteRole(role.RoleId);
@@ -96,17 +101,23 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllUsers(string routeId)
+        public async Task<IActionResult> AsingRoleToUsers(string id)
         {
-            var getUsers = await _profileApiCalls.GetAllUsers();
-            ViewBag.roleId = routeId;
+            var getUsers = await _profileApiCalls.GetAllUsers(id);
+            ViewBag.roleId = id;
             return View(getUsers);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AsingRoleToUsers(string routeId, List<UserInRoleViewModel> users )
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AsingRoleToUsers(List<UserInRoleViewModel> users, string id)
         {
-            return RedirectToAction("Index");
+            var asignRoleToUsersResult = await _profileApiCalls.AssignRoleToUsers(users, id);
+            if (asignRoleToUsersResult.IsSuccessStatusCode)
+                return RedirectToAction("Index");
+
+            ModelState.AddModelError(string.Empty,await asignRoleToUsersResult.Content.ReadAsStringAsync());
+            return RedirectToAction("AsingRoleToUsers");
         }
     }
 }

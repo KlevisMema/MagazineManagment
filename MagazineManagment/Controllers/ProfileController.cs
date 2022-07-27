@@ -85,14 +85,24 @@ namespace MagazineManagment.Web.Controllers
             return BadRequest(usersInRole.Message);
         }
 
-        [HttpGet("GetAllUsers")]
-        public async Task<ActionResult<IEnumerable<UserInRoleViewModel>>> GetAllUsers()
+        [HttpGet("GetAllUsers/{id}")]
+        public async Task<ActionResult<ResponseService<IEnumerable<UserInRoleViewModel>>>> GetAllUsers(string id)
         {
-            var getAllUsersResult = await _profileService.GettAllUsers();
+            var getAllUsersResult = await _profileService.GettAllUsers(id);
             if (getAllUsersResult.Success)
                 return Ok(getAllUsersResult.Value);
 
             return BadRequest(getAllUsersResult.Message);
+        }
+
+        [HttpPost("AssignRoleToUsers/{id}")]
+        public async Task<ActionResult<ResponseService<IEnumerable<UserInRoleViewModel>>>> AssignRoleToUsers(List<UserInRoleViewModel> users,[FromRoute] string id)
+        {
+            var asignResult =await _profileService.AssignRoleToUsers(users, id);
+            if (asignResult.Success)
+                return Ok(asignResult.Value);
+
+            return BadRequest(asignResult.Message);
         }
     }
 }
