@@ -36,5 +36,6 @@ namespace MagazineManagment.DTO.ViewModels
      
         public IFormFile? ImageFile { get; set; }
         public string? CreatedBy { get; set; }
+        public string? UserName { get; set; }
     }
 }

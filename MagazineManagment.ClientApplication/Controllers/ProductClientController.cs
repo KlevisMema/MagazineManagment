@@ -2,16 +2,27 @@
 using MagazineManagment.DTO.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
+using System.Security.Claims;
 
 namespace MagazineManagment.ClientApplication.Controllers
 {
     public class ProductClientController : Controller
     {
-        private readonly IProductApiCalls _productApiCalls;
 
-        public ProductClientController(IProductApiCalls productApiCalls)
+        private readonly IProductApiCalls _productApiCalls;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        private string GetIdentityUserName()
+        {
+            var identityUser = HttpContext.User.Identity as ClaimsIdentity;
+            var userName = identityUser.FindFirst(ClaimTypes.Name).Value;
+            return userName;
+        }
+
+        public ProductClientController(IProductApiCalls productApiCalls, IHttpContextAccessor httpContextAccessor)
         {
             _productApiCalls = productApiCalls;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet]
@@ -65,9 +76,11 @@ namespace MagazineManagment.ClientApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProductUpdateViewModel UpdateProduct)
         {
-
             if (ModelState.IsValid)
             {
+                var userName = GetIdentityUserName(); 
+                UpdateProduct.UserName = userName;
+
                 var result = await _productApiCalls.PostEditProduct(UpdateProduct);
 
                 if (result.IsSuccessStatusCode)
@@ -91,9 +104,9 @@ namespace MagazineManagment.ClientApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(ProductUpdateViewModel productToBeDeleted)
         {
-            var deleteResult  = await _productApiCalls.Delete(productToBeDeleted.Id);
+            var deleteResult = await _productApiCalls.Delete(productToBeDeleted.Id);
 
-            if(deleteResult.IsSuccessStatusCode)
+            if (deleteResult.IsSuccessStatusCode)
                 return RedirectToAction("Index");
 
             ModelState.AddModelError(string.Empty, await deleteResult.Content.ReadAsStringAsync());

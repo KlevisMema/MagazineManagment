@@ -6,12 +6,13 @@ namespace MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces
     {
         Task<IEnumerable<RolesGetAllDetails>> GetAllRoles();
         Task<HttpResponseMessage> PostCreateRole(RoleCreateViewModel role);
-        Task<RoleFindViewModel> GetEditRole(string id);
+        Task<ProfileUpdateViewModel> GetEditRole(string id);
         Task<HttpResponseMessage> PostUpdateRole(ProfileUpdateViewModel role);
         Task<RolesGetAllDetails> GetAllRolesDetails(string id);
         Task<HttpResponseMessage> DeleteRole(string id);
-        Task<IEnumerable<UserInRoleViewModel>> UsersInRole(string id);
-        Task<IEnumerable<UserInRoleViewModel>> GetAllUsers(string id);
+        Task<IEnumerable<UserInRoleViewModel>> GetAllUsersInRole(string id);
+        Task<IEnumerable<UserInRoleViewModel>> GetAllUsersNotInRole(string id);
         Task<HttpResponseMessage> AssignRoleToUsers(List<UserInRoleViewModel> users, string id);
+        Task<HttpResponseMessage> RemoveRoleFromUsers(List<UserInRoleViewModel> users, string id);
     }
 }

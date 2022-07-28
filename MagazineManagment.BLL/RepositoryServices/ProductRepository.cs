@@ -4,23 +4,27 @@ using MagazineManagment.DAL.DataContext;
 using MagazineManagment.DTO.DataTransferObjects;
 using MagazineManagment.DAL.Models;
 using MagazineManagment.DTO.ViewModels;
+
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace MagazineManagment.BLL.Services
 {
     public class ProductRepository : IProductRepository
     {
         private readonly ApplicationDbContext _context;
-       
-        public ProductRepository(ApplicationDbContext context)
+        private readonly UserManager<Microsoft.AspNetCore.Identity.IdentityUser> _user;
+
+        public ProductRepository(ApplicationDbContext context, UserManager<Microsoft.AspNetCore.Identity.IdentityUser> user)
         {
             _context = context;
+            _user = user;
         }
 
         //Get all products
         public async Task<IEnumerable<ProductViewModel>> GetAllProductsAsync()
         {
-            var products = await _context.Products.Include(p=>p.ProductCategory).Select(x => x.AsProductDto()).ToListAsync();
+            var products = await _context.Products.Include(p => p.ProductCategory).Select(x => x.AsProductDto()).ToListAsync();
             return products;
         }
 
@@ -49,7 +53,7 @@ namespace MagazineManagment.BLL.Services
             }
 
 
-            var checkIfSerialNrExists = await  _context.Products.AnyAsync(sNr => sNr.SerialNumber == product.SerialNumber.ToUpper());
+            var checkIfSerialNrExists = await _context.Products.AnyAsync(sNr => sNr.SerialNumber == product.SerialNumber.ToUpper());
             if (checkIfSerialNrExists)
             {
                 return ResponseService<ProductViewModel>.ErrorMsg($"Serial number {product.SerialNumber} exists, please give another  serial number");
@@ -85,6 +89,18 @@ namespace MagazineManagment.BLL.Services
         // Update a Product 
         public async Task<ResponseService<ProductPostEditViewModel>> UpdateProductAsync(ProductPostEditViewModel product)
         {
+            // find  the user by email
+            var findUser = await _user.FindByEmailAsync(product.UserName);
+
+            if (findUser == null)
+                return ResponseService<ProductPostEditViewModel>.NotFound("User not found");
+
+            // find the role of the user
+            var role = await _user.GetRolesAsync(findUser);
+            if (role == null)
+                return ResponseService<ProductPostEditViewModel>.NotFound("Role not found");
+
+
             var productToBeUpdated = await _context.Products.FirstOrDefaultAsync(c => c.Id == product.Id);
 
             if (productToBeUpdated == null)
@@ -112,8 +128,7 @@ namespace MagazineManagment.BLL.Services
             {
                 _context.Products.Update(productToBeUpdated);
                 await _context.SaveChangesAsync();
-                return ResponseService<ProductPostEditViewModel
-                    >.Ok(productToBeUpdated.AsProductUpdateDto());
+                return ResponseService<ProductPostEditViewModel>.Ok(productToBeUpdated.AsProductUpdateDto());
             }
             catch (Exception ex)
             {
@@ -159,13 +174,14 @@ namespace MagazineManagment.BLL.Services
             return ResponseService<ProductViewModel>.Ok(product.AsProductDto());
         }
 
+        // Get product image
         public async Task<ResponseService<ProductImageOnly>> GetProductImage(Guid id)
         {
-            
+
             var productImage = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
             if (productImage == null)
                 return ResponseService<ProductImageOnly>.NotFound("Image does not exists");
-            
+
             return ResponseService<ProductImageOnly>.Ok(productImage.AsProductImageDto());
         }
     }

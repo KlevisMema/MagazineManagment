@@ -2,6 +2,7 @@
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MagazineManagment.ClientApplication.Controllers
 {
@@ -94,7 +95,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public  async Task<IActionResult> Users(string id)
         {
-            var getUsersInRole = await _profileApiCalls.UsersInRole(id);
+            var getUsersInRole = await _profileApiCalls.GetAllUsersInRole(id);
             if (getUsersInRole == null)
                 return NotFound();
             return View(getUsersInRole);
@@ -103,7 +104,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> AsingRoleToUsers(string id)
         {
-            var getUsers = await _profileApiCalls.GetAllUsers(id);
+            var getUsers = await _profileApiCalls.GetAllUsersNotInRole(id);
             ViewBag.roleId = id;
             return View(getUsers);
         }
@@ -119,5 +120,26 @@ namespace MagazineManagment.ClientApplication.Controllers
             ModelState.AddModelError(string.Empty,await asignRoleToUsersResult.Content.ReadAsStringAsync());
             return RedirectToAction("AsingRoleToUsers");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> RemoveRoleFromUsers(string id)
+        {
+            var getUsers = await _profileApiCalls.GetAllUsersInRole(id);
+            ViewBag.roleId = id;
+            return View(getUsers);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveRoleFromUsers(List<UserInRoleViewModel> users, string id)
+        {
+            var removeRoleFromUsersResult = await _profileApiCalls.RemoveRoleFromUsers(users, id);
+            if (removeRoleFromUsersResult.IsSuccessStatusCode)
+                return RedirectToAction("Index");
+
+            ModelState.AddModelError(string.Empty, await removeRoleFromUsersResult.Content.ReadAsStringAsync());
+            return RedirectToAction("RemoveRoleFromUsers");
+        }
+
     }
 }

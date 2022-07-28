@@ -11,8 +11,8 @@ namespace MagazineManagment.BLL.RepositoryServices
     public class ProfileService : IProfileService
     {
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<IdentityUser> _user;
-        private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser>        _user;
+        private readonly ApplicationDbContext          _context;
 
         public ProfileService(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> user, ApplicationDbContext context)
         {
@@ -49,10 +49,20 @@ namespace MagazineManagment.BLL.RepositoryServices
 
         public async Task<ResponseService<RoleFindViewModel>> FindRole(string roleId)
         {
-            var findRole = await _roleManager.FindByIdAsync(roleId);
+            IdentityRole? findRole = null;
 
-            if (findRole == null)
-                return ResponseService<RoleFindViewModel>.NotFound($"The role with id {roleId} doesn't exists");
+            try
+            {
+                findRole = await _roleManager.FindByIdAsync(roleId);
+
+                if (findRole == null)
+                    return ResponseService<RoleFindViewModel>.NotFound($"The role with id {roleId} doesn't exists");
+            }
+            catch (Exception ex)
+            {
+                ResponseService<RoleFindViewModel>.ExceptioThrow(ex.Message);
+            }
+            
 
             return ResponseService<RoleFindViewModel>.Ok(findRole.AsRoleEditDto());
         }
@@ -81,11 +91,18 @@ namespace MagazineManagment.BLL.RepositoryServices
 
         public async Task<ResponseService<RolesGetAllDetails>> GetRolesDetails(string id)
         {
-            var findRole = await _roleManager.FindByIdAsync(id);
+            IdentityRole? findRole = null;
+            try
+            {
+                findRole = await _roleManager.FindByIdAsync(id);
 
-            if (findRole == null)
-                return ResponseService<RolesGetAllDetails>.NotFound($"The role with id {id} doesn't exists");
-
+                if (findRole == null)
+                    return ResponseService<RolesGetAllDetails>.NotFound($"The role with id {id} doesn't exists");
+            }
+            catch (Exception ex)
+            {
+                ResponseService<RolesGetAllDetails>.ExceptioThrow(ex.Message);
+            }
             return ResponseService<RolesGetAllDetails>.Ok(findRole.AsRoleGetAllDetailsDto());
         }
 
@@ -110,19 +127,24 @@ namespace MagazineManagment.BLL.RepositoryServices
 
         public async Task<ResponseService<IEnumerable<UserInRoleViewModel>>> GetUsersOfARole(string roleId)
         {
-            var role = await _roleManager.FindByIdAsync(roleId);
-
-            if (role == null)
+            IList<IdentityUser>? usersInRole = null;
+            try
             {
-                return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("Role doesn't exists");
+                var role = await _roleManager.FindByIdAsync(roleId);
+
+                if (role == null)
+                    return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("Role doesn't exists");
+
+                usersInRole = await _user.GetUsersInRoleAsync(role.Name);
+
+                if (usersInRole == null)
+                    return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("No users Found");
             }
-
-            var usersInRole = await _user.GetUsersInRoleAsync(role.Name);
-
-            if (usersInRole == null)
+            catch (Exception ex)
             {
-                return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("No users Found");
+                return ResponseService<IEnumerable<UserInRoleViewModel>>.ExceptioThrow(ex.Message);
             }
+            
 
             return ResponseService<IEnumerable<UserInRoleViewModel>>.Ok(usersInRole.Select(u => u.AsUserInRoleDto()));
 
@@ -130,22 +152,28 @@ namespace MagazineManagment.BLL.RepositoryServices
 
         public async Task<ResponseService<IEnumerable<UserInRoleViewModel>>> GettAllUsers(string id)
         {
-            var role = await _roleManager.FindByIdAsync(id);
-                
-            if (role == null)
-                return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("Role doesnt exists");
-
-            var Users = await _context.Users.ToListAsync();
-
             List<UserInRoleViewModel> usersNotInRole = new List<UserInRoleViewModel>();
-
-            foreach (var item in Users)
+            try
             {
-                var user = await _user.GetRolesAsync(item);
-                if (!user.Contains(role.Name))
-                    usersNotInRole.Add(item.AsUserNotInRoleDto());
-            }
+                var role = await _roleManager.FindByIdAsync(id);
 
+                if (role == null)
+                    return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("Role doesnt exists");
+
+                var Users = await _context.Users.ToListAsync();
+
+                foreach (var item in Users)
+                {
+                    var user = await _user.GetRolesAsync(item);
+                    if (!user.Contains(role.Name))
+                        usersNotInRole.Add(item.AsUserNotInRoleDto());
+                }
+            }
+            catch (Exception ex)
+            {
+                ResponseService<IEnumerable<UserInRoleViewModel>>.ExceptioThrow(ex.Message);
+            }
+            
             return ResponseService<IEnumerable<UserInRoleViewModel>>.Ok(usersNotInRole);
             
         }
@@ -162,17 +190,19 @@ namespace MagazineManagment.BLL.RepositoryServices
                 foreach (var item in users)
                 {
                     var user = await _user.FindByIdAsync(item.UserId);
+
                     if (user == null)
                         return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("User doesnt exists");
                     IdentityResult? assigningRoleResult = null;
+                    //IdentityResult? claimResult = null;
                     if (item.IsSelected && !(await _user.IsInRoleAsync(user, role.Name)))
+                    {
                         assigningRoleResult = await _user.AddToRoleAsync(user, role.Name);
-                    //else if (!item.IsSelected && await _user.IsInRoleAsync(user, role.Name))
-                    //    assigningRoleResult = await _user.RemoveFromRoleAsync(user, role.Name);
+                        //claimResult = await _user.AddClaimAsync(user, new Claim("Role", role.Name));
+                    }
                     else
                         continue;
-
-                    if (assigningRoleResult.Succeeded)
+                    if (assigningRoleResult.Succeeded /*&& claimResult.Succeeded*/)
                         return ResponseService<IEnumerable<UserInRoleViewModel>>.Ok(users);
                 }
             }
@@ -182,6 +212,36 @@ namespace MagazineManagment.BLL.RepositoryServices
             }
 
             return ResponseService<IEnumerable<UserInRoleViewModel>>.ErrorMsg("Could not assign role to users");
+        }
+
+        public async Task<ResponseService<IEnumerable<UserInRoleViewModel>>> RemoveUsersFromRole(List<UserInRoleViewModel> users, string id)
+        {
+            try
+            {
+                var role = await _roleManager.FindByIdAsync(id);
+                if (role == null)
+                    return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("Role doesn't exists");
+
+                IdentityUser? user = null;
+                IdentityResult assigningRoleResult = new();
+
+                foreach (var item in users)
+                {
+                    user = await _user.FindByIdAsync(item.UserId);
+
+                    if (user == null)
+                        return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("User doesnt exists");
+                    if (!item.IsSelected && await _user.IsInRoleAsync(user, role.Name))
+                        assigningRoleResult = await _user.RemoveFromRoleAsync(user, role.Name);
+                }
+                if (assigningRoleResult.Succeeded)
+                    return ResponseService<IEnumerable<UserInRoleViewModel>>.Deleted($"Users successfully removed from {role.Name} role");
+            }
+            catch (Exception ex)
+            {
+                ResponseService<UserInRoleViewModel>.ExceptioThrow(ex.Message);
+            }
+            return ResponseService<IEnumerable<UserInRoleViewModel>>.Ok(users);
         }
     }
 }
