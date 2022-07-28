@@ -4,6 +4,7 @@ using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace MagazineManagment.Web.ApiCalls
 {
@@ -50,14 +51,6 @@ namespace MagazineManagment.Web.ApiCalls
 
         public async Task<HttpResponseMessage> PostCreateProduct(ProductCreateViewModel product)
         {
-
-            //string? BaseArrayImage = null;
-            //using (MemoryStream ms = new())
-            //{
-            //    product.ImageFile.CopyTo(ms);
-            //    var fileBytes = ms.ToArray();
-            //    BaseArrayImage = Convert.ToBase64String(fileBytes);
-            //}
 
             var BaseArrayImage = await ConvertImageToBase64(product.ImageFile);
 
@@ -119,6 +112,7 @@ namespace MagazineManagment.Web.ApiCalls
                 newUpdatedProduct.ProductInStock = product.ProductInStock;
                 newUpdatedProduct.CurrencyType = product.CurrencyType;
                 newUpdatedProduct.ProductDescription = product.ProductDescription;
+                newUpdatedProduct.UserName = product.UserName;
             }
             else
             {
@@ -132,6 +126,7 @@ namespace MagazineManagment.Web.ApiCalls
                 newUpdatedProduct.ProductInStock = product.ProductInStock;
                 newUpdatedProduct.CurrencyType = product.CurrencyType;
                 newUpdatedProduct.ProductDescription = product.ProductDescription;
+                newUpdatedProduct.UserName = product.UserName;
             }
 
             using (var client = new HttpClient())
@@ -158,7 +153,7 @@ namespace MagazineManagment.Web.ApiCalls
 
         public async Task<ProductImageOnly> GetProductImage(Guid id)
         {
-           
+
             using var client = new HttpClient();
             var uri = _config.Value.ProductGet;
             client.BaseAddress = new Uri(uri);
@@ -168,7 +163,7 @@ namespace MagazineManagment.Web.ApiCalls
             return Task;
         }
 
-        public static async Task<string> ConvertImageToBase64(IFormFile image)
+        private async Task<string> ConvertImageToBase64(IFormFile image)
         {
             string? BaseArrayImage = null;
 

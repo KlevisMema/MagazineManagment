@@ -14,5 +14,6 @@ namespace MagazineManagment.BLL.RepositoryServices.ServiceInterfaces
         Task<ResponseService<IEnumerable<UserInRoleViewModel>>> GetUsersOfARole(string roleId);
         Task<ResponseService<IEnumerable<UserInRoleViewModel>>> GettAllUsers(string id);
         Task<ResponseService<IEnumerable<UserInRoleViewModel>>> AssignRoleToUsers(List<UserInRoleViewModel> users, string id);
+        Task<ResponseService<IEnumerable<UserInRoleViewModel>>> RemoveUsersFromRole(List<UserInRoleViewModel> users, string id);
     }
 }

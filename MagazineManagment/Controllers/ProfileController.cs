@@ -1,7 +1,6 @@
 ﻿using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DTO.ViewModels;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagazineManagment.Web.Controllers
@@ -75,8 +74,8 @@ namespace MagazineManagment.Web.Controllers
             return BadRequest(findRole.Message);
         }
 
-        [HttpGet("GetUsersInRole/{id}")]
-        public async Task<ActionResult<ResponseService<IEnumerable<UserInRoleViewModel>>>> GetUsersInRole(string id)
+        [HttpGet("GetUsersOfARole/{id}")]
+        public async Task<ActionResult<ResponseService<IEnumerable<UserInRoleViewModel>>>> GetUsersOfARole(string id)
         {
             var usersInRole = await _profileService.GetUsersOfARole(id);
             if (usersInRole.Success)
@@ -86,7 +85,7 @@ namespace MagazineManagment.Web.Controllers
         }
 
         [HttpGet("GetAllUsers/{id}")]
-        public async Task<ActionResult<ResponseService<IEnumerable<UserInRoleViewModel>>>> GetAllUsers(string id)
+        public async Task<ActionResult<ResponseService<IEnumerable<UserInRoleViewModel>>>> GetAllUsers([FromRoute] string id)
         {
             var getAllUsersResult = await _profileService.GettAllUsers(id);
             if (getAllUsersResult.Success)
@@ -99,6 +98,16 @@ namespace MagazineManagment.Web.Controllers
         public async Task<ActionResult<ResponseService<IEnumerable<UserInRoleViewModel>>>> AssignRoleToUsers(List<UserInRoleViewModel> users,[FromRoute] string id)
         {
             var asignResult =await _profileService.AssignRoleToUsers(users, id);
+            if (asignResult.Success)
+                return Ok(asignResult.Value);
+
+            return BadRequest(asignResult.Message);
+        }
+
+        [HttpPost("RemoveRoleFromUsers/{id}")]
+        public async Task<ActionResult<ResponseService<IEnumerable<UserInRoleViewModel>>>> RemoveRoleFromUsers(List<UserInRoleViewModel> users, [FromRoute] string id)
+        {
+            var asignResult = await _profileService.RemoveUsersFromRole(users, id);
             if (asignResult.Success)
                 return Ok(asignResult.Value);
 

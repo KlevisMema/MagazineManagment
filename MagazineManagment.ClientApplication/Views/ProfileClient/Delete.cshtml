@@ -53,3 +53,12 @@
         <input asp-for="RoleId" hidden />
     </div>
 </form>
+<br />
+<div class="card">
+    <div class="card-header">
+        <h2>Remove users from this role</h2>
+    </div>
+    <div class="card-body">
+        <a asp-action="RemoveRoleFromUsers" asp-controller="ProfileClient" asp-route-id="@Model.RoleId" class="btn btn-danger">Remove</a>
+    </div>
+</div>

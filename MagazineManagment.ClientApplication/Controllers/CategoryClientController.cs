@@ -1,6 +1,5 @@
 ﻿using MagazineManagment.DTO.ViewModels;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagazineManagment.ClientApplication.Controllers
@@ -85,6 +84,5 @@ namespace MagazineManagment.ClientApplication.Controllers
             ModelState.AddModelError(string.Empty, await deleteResult.Content.ReadAsStringAsync());
             return View(category);
         }
-
     }
 }

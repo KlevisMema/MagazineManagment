@@ -3,8 +3,6 @@ using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DTO.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-
-
 namespace MagazineManagment.Web.Controllers
 {
     [ApiController]
@@ -12,7 +10,8 @@ namespace MagazineManagment.Web.Controllers
     public class ProductController : Controller
     {
         private readonly IProductRepository _productRepository;
-        public ProductController(IProductRepository productRepository)
+
+        public ProductController(IProductRepository productRepository, IHttpContextAccessor httpContextAccessor)
         {
             _productRepository = productRepository;
         }

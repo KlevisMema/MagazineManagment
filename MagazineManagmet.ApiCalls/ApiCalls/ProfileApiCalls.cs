@@ -1,6 +1,5 @@
 ﻿using MagazineManagment.DTO.ViewModels;
 using MagazineManagment.Shared.ApiUrlDestinations;
-using MagazineManagment.Shared.MediaFormatter;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.Extensions.Options;
@@ -43,15 +42,15 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             return resultPostRole;
         }
 
-        public async Task<RoleFindViewModel> GetEditRole(string id)
+        public async Task<ProfileUpdateViewModel> GetEditRole(string id)
         {
-            RoleFindViewModel? getContent = null;
+            ProfileUpdateViewModel? getContent = null;
             using (var client = new HttpClient())
             {
                 var uri = _options.Value.ProfileGetOrDeleteProfile;
                 client.BaseAddress = new Uri(uri);
                 var getCategoryResult = await client.GetAsync(RequestDestination.ProfileGetRoles + "/FindRole/" + id);
-                getContent = await getCategoryResult.Content.ReadAsAsync<RoleFindViewModel>();
+                getContent = await getCategoryResult.Content.ReadAsAsync<ProfileUpdateViewModel>();
                 client.Dispose();
             }
             return getContent;
@@ -97,7 +96,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             return deleteResult;
         }
 
-        public async Task<IEnumerable<UserInRoleViewModel>> UsersInRole(string id)
+        public async Task<IEnumerable<UserInRoleViewModel>> GetAllUsersInRole(string id)
         {
 
             IEnumerable<UserInRoleViewModel>? readResult = null;
@@ -114,7 +113,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             return readResult;
         }
 
-        public async Task<IEnumerable<UserInRoleViewModel>> GetAllUsers(string id)
+        public async Task<IEnumerable<UserInRoleViewModel>> GetAllUsersNotInRole(string id)
         {
             IEnumerable<UserInRoleViewModel>? readResult = null;
             using (var client = new HttpClient())
@@ -125,9 +124,6 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
 
                 if (getUsersResponse.IsSuccessStatusCode)
                     readResult = await getUsersResponse.Content.ReadAsAsync<IList<UserInRoleViewModel>>();
-                //else
-                //    readResult.Clear();
-                
             }
             return readResult;
         }
@@ -140,6 +136,19 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
                 var uri = _options.Value.ProfilePostOrEditRole;
                 client.BaseAddress = new Uri(uri);
                 resultPostRoleToUsers = await client.PostAsJsonAsync(RequestDestination.ProfileAssignRoleToUsers + id, users);
+                client.Dispose();
+            }
+            return resultPostRoleToUsers;
+        }
+
+        public async Task<HttpResponseMessage> RemoveRoleFromUsers(List<UserInRoleViewModel> users, string id)
+        {
+            HttpResponseMessage resultPostRoleToUsers = new();
+            using (var client = new HttpClient())
+            {
+                var uri = _options.Value.ProfilePostOrEditRole;
+                client.BaseAddress = new Uri(uri);
+                resultPostRoleToUsers = await client.PostAsJsonAsync(RequestDestination.ProfileRemoveUsersFromRole + id, users);
                 client.Dispose();
             }
             return resultPostRoleToUsers;
