@@ -4,6 +4,7 @@ using MagazineManagment.DAL.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MagazineManagment.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220729081234_AddedProductSecondTableForChangesProperties")]
+    partial class AddedProductSecondTableForChangesProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,19 +106,36 @@ namespace MagazineManagment.DAL.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("CurrencyType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("ProductId")
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("ProductCategoryId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProductDescription")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ProductInStock")
                         .HasColumnType("int");
 
-                    b.Property<string>("UpdatedBy")
+                    b.Property<string>("ProductName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SerialNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductCategoryId");
 
                     b.ToTable("ProductRecordsChangeds");
                 });
@@ -327,6 +346,15 @@ namespace MagazineManagment.DAL.Migrations
                 {
                     b.HasOne("MagazineManagment.DAL.Models.Category", "ProductCategory")
                         .WithMany("Products")
+                        .HasForeignKey("ProductCategoryId");
+
+                    b.Navigation("ProductCategory");
+                });
+
+            modelBuilder.Entity("MagazineManagment.DAL.Models.ProductRecordsChanged", b =>
+                {
+                    b.HasOne("MagazineManagment.DAL.Models.Category", "ProductCategory")
+                        .WithMany()
                         .HasForeignKey("ProductCategoryId");
 
                     b.Navigation("ProductCategory");

@@ -126,10 +126,10 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    var findRole = await _roleManager.FindByNameAsync("User");
+                    var findRole = await _roleManager.FindByNameAsync("Employee");
 
                     if (findRole != null)
-                        await _userManager.AddToRoleAsync(user, "User");
+                        await _userManager.AddToRoleAsync(user, "Employee");
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

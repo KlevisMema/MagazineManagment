@@ -21,7 +21,6 @@ namespace MagazineManagment.Web.Controllers
         public async Task<ActionResult<IEnumerable<ProductViewModel>>> GetAllProductsAsync()
         {
             var allProducts = await _productRepository.GetAllProductsAsync();
-
             return Ok(allProducts);
         }
 
@@ -98,6 +97,13 @@ namespace MagazineManagment.Web.Controllers
             if (getProductImage.Success)
                 return Ok(getProductImage.Value);
             return BadRequest(getProductImage.Message);
+        }
+
+        [HttpGet("GetProducChangesByEmpolyees")]
+        public async Task<ActionResult<IEnumerable<ProductsRecordCopyViewModel>>> GetProducChangesByEmpolyees()
+        {
+            var changesByEmployees = await _productRepository.GetProducChangesByEmpolyees();
+            return Ok(changesByEmployees);
         }
     }
 }

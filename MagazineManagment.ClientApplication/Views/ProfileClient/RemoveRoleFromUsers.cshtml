@@ -11,32 +11,32 @@
     <div class="card">
         <div class="card-header">
             <h2>Users that are in this role</h2>
-            <h6>Click the checkboxes is you wish to remove a user from this role</h6>
+            <h6>Uncheck the checkboxes is you wish to remove a user from this role</h6>
         </div>
         <div class="card-body">
-        @if (Model.Count()  == 0)
-        {
-            <h4 style="color:red">There's no accounts to remove from this role</h4>
-            <a asp-action="Delete" asp-controller="ProfileClient" asp-route-id="@roleId" class="btn btn-green" style="width:auto">Go back</a>
-        }
-        else
-        {
-            @for (int i = 0; i < Model.Count; i++)
+            @if (Model.Count() == 0)
             {
-                <div class="form-check m-1">
-                    <input type="hidden" asp-for="@Model[i].UserId" />
-                    <input type="hidden" asp-for="@Model[i].Username" />
-                    <input asp-for="@Model[i].IsSelected" class="form-check-input" />
-                    <label class="form-check-label" asp-for="@Model[i].IsSelected">
-                        @Model[i].Username
-                    </label>
+                <h4 style="color:red">There's no accounts to remove from this role</h4>
+                <a asp-action="Delete" asp-controller="ProfileClient" asp-route-id="@roleId" class="btn btn-green" style="width:auto">Go back</a>
+            }
+            else
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <div class="form-check m-1">
+                        <input type="hidden" asp-for="@Model[i].UserId" />
+                        <input type="hidden" asp-for="@Model[i].Username" />
+                        <input asp-for="@Model[i].IsSelected" class="form-check-input" />
+                        <label class="form-check-label" asp-for="@Model[i].IsSelected">
+                            @Model[i].Username
+                        </label>
+                    </div>
+                }
+                <div class="card-footer">
+                    <input type="submit" value="Remove" class="btn btn-danger" style="width:auto" />
+                    <a asp-action="Delete" asp-controller="ProfileClient" asp-route-id="@roleId" class="btn btn-green" style="width:auto">Cancel</a>
                 </div>
             }
-                 <div class="card-footer">
-                    <input type="submit" value="Remove" class="btn btn-danger" style="width:auto" />
-                    <a asp-action="Delete"  asp-controller="ProfileClient" asp-route-id="@roleId" class="btn btn-green" style="width:auto">Cancel</a>
-                </div>
-        }
         </div>
     </div>
 </form>

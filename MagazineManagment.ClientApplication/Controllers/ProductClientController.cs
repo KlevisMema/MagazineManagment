@@ -14,7 +14,7 @@ namespace MagazineManagment.ClientApplication.Controllers
 
         private string GetIdentityUserName()
         {
-            var identityUser = HttpContext.User.Identity as ClaimsIdentity;
+            var identityUser = _httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
             var userName = identityUser.FindFirst(ClaimTypes.Name).Value;
             return userName;
         }
@@ -99,7 +99,6 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(product);
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(ProductUpdateViewModel productToBeDeleted)
@@ -111,6 +110,13 @@ namespace MagazineManagment.ClientApplication.Controllers
 
             ModelState.AddModelError(string.Empty, await deleteResult.Content.ReadAsStringAsync());
             return View(productToBeDeleted);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetChangesMadeByEmployees()
+        {
+            var productChanges = await _productApiCalls.GetProducChangesByEmpolyees();
+            return View(productChanges);
         }
     }
 }

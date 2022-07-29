@@ -4,10 +4,50 @@
 @{
     ViewData["Title"] = "Edit";
 }
-
+@if (User.IsInRole("Employee"))
+{
 <form asp-action="Edit" asp-controller="ProductClient" method="post" enctype="multipart/form-data" method="post" asp-antiforgery="true">
     
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="ProductName" ></label>
+        <input readonly asp-for="ProductName" type="text" placeholder="Product Name" class="form-control"/>
+        <span  asp-validation-for="ProductName"  class="text-danger"></span>
+        <br />
+        <label asp-for="SerialNumber" ></label>
+        <input readonly asp-for="SerialNumber" type="text" placeholder="Seial Number" class="form-control"/>
+        <span  asp-validation-for="SerialNumber" class="text-danger"></span>
+        <br />
+        <label asp-for="ProductInStock" ></label>
+        <input asp-for="ProductInStock" type="number" placeholder="Product in stock" class="form-control"/>
+        <span  asp-validation-for="ProductInStock" class="text-danger"></span>
+
+        @*Hidden properties*@
+        <select hidden asp-for="CurrencyType"       asp-items="Html.GetEnumSelectList<CurrencyTypeEnum>()" class="form-control"></select>
+        <input  hidden asp-for="Price"              type="number" placeholder="Price"                      class="form-control"/>
+        <input  hidden asp-for="ProductDescription" type="text"   placeholder="Product description"        class="form-control" />
+        <input  hidden asp-for="ImageFile"          type="file"   accept="image/*"                         class="form-control"     onchange="loadImage(event)" id="imgfile"/> 
+        <input  hidden asp-for="CreatedBy"          type="text"                                            class="form-control"/> 
+    </div>
+    <br />
+    <input type="submit" value="Update Product" class="btn btn-primary" />
+</form>
+
+<script>
+    var loadImage = function(event){
+        var image = document.getElementById('img2');
+        image.style.width = "400px";
+        image.src = URL.createObjectURL(event.target.files[0]);
+    }
+</script>
+}
+else
+{
+<form asp-action="Edit" asp-controller="ProductClient" method="post" enctype="multipart/form-data" method="post" asp-antiforgery="true">
+    
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
     <div class="form-group">
         <label asp-for="ProductName" ></label>
         <input asp-for="ProductName" type="text" placeholder="Product Name" class="form-control"/>
@@ -60,4 +100,4 @@
         image.src = URL.createObjectURL(event.target.files[0]);
     }
 </script>
-
+}

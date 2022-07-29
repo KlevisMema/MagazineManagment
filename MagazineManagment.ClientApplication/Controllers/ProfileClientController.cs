@@ -1,17 +1,19 @@
 ﻿using MagazineManagment.DTO.ViewModels;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace MagazineManagment.ClientApplication.Controllers
 {
     public class ProfileClientController : Controller
     {
         private readonly IProfileApiCalls _profileApiCalls;
-        public ProfileClientController(IProfileApiCalls profileApiCalls)
+        private readonly SignInManager<IdentityUser> _signInManager;
+        public ProfileClientController(IProfileApiCalls profileApiCalls, SignInManager<IdentityUser> signInManager)
         {
             _profileApiCalls = profileApiCalls;
+            _signInManager = signInManager;
         }
 
         public async Task<IActionResult> Index()
@@ -135,7 +137,10 @@ namespace MagazineManagment.ClientApplication.Controllers
         {
             var removeRoleFromUsersResult = await _profileApiCalls.RemoveRoleFromUsers(users, id);
             if (removeRoleFromUsersResult.IsSuccessStatusCode)
+                //await _signInManager.SignOutAsync();
                 return RedirectToAction("Index");
+
+
 
             ModelState.AddModelError(string.Empty, await removeRoleFromUsersResult.Content.ReadAsStringAsync());
             return RedirectToAction("RemoveRoleFromUsers");

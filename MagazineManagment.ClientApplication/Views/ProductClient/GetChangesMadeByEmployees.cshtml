@@ -1,0 +1,29 @@
+﻿@using MagazineManagment.DTO.ViewModels
+@model IEnumerable<ProductsRecordCopyViewModel>
+@{
+    ViewData["Title"] = "GetChangesMadeByEmployees";
+}
+
+<div class="table-wrapper">
+    <table class="fl-table">
+        <thead>
+            <tr>
+                <th>Product Id</th>
+                <th>Updated by</th>
+                <th>Changes in quantity</th>
+                <th>When was change made</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ProductId</td>
+                    <td>@item.UpdatedBy</td>
+                    <td>@item.ChangesInQunatity</td>
+                    <td>@item.UpdatedOn</td>
+                </tr>
+            }
+        <tbody>
+    </table>
+</div>
