@@ -7,6 +7,7 @@
         public const string GetProductImage = "Product/GetProductImage/";
         public const string GetCreateProductRoute = "CategoryNameOnly";
         public const string ProductCreateOrEditDefaultRoute = "api/Product";
+        public const string ProductChangesMadeByEmployee = "Product/GetProducChangesByEmpolyees";
         // Category
         public const string CategoryGetOrDeleteDefaultRoute = "Category";
         public const string CategoryCreateOrEditDefaultRoute = "api/Category";

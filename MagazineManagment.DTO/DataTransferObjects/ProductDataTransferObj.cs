@@ -49,13 +49,13 @@ namespace MagazineManagment.DTO.DataTransferObjects
                 ProductName = product.ProductName,
                 SerialNumber = product.SerialNumber,
                 Price = product.Price,
-                ProductInStock= product.ProductInStock,
+                ProductInStock = product.ProductInStock,
                 CurrencyType = product.CurrencyType,
                 ProductDescription = product.ProductDescription,
                 Image = product.Image,
-                CreatedBy= product.CreatedBy,
+                CreatedBy = product.CreatedBy,
             };
-        } 
+        }
 
         public static ProductImageOnly AsProductImageDto(this Product product)
         {
@@ -63,6 +63,17 @@ namespace MagazineManagment.DTO.DataTransferObjects
             {
                 Id = product.Id,
                 Image = product.Image,
+            };
+        }
+
+        public static ProductsRecordCopyViewModel AsProducChangesByEmpolyees(this ProductRecordsChanged product)
+        {
+            return new ProductsRecordCopyViewModel
+            {
+                ProductId = product.ProductId,
+                ChangesInQunatity = product.ProductInStock,
+                UpdatedBy = product.UpdatedBy,
+                UpdatedOn = product.CreatedOn
             };
         }
     }

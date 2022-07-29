@@ -4,7 +4,6 @@ using MagazineManagment.DAL.DataContext;
 using MagazineManagment.DTO.DataTransferObjects;
 using MagazineManagment.DAL.Models;
 using MagazineManagment.DTO.ViewModels;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 
@@ -89,11 +88,16 @@ namespace MagazineManagment.BLL.Services
         // Update a Product 
         public async Task<ResponseService<ProductPostEditViewModel>> UpdateProductAsync(ProductPostEditViewModel product)
         {
+            var productToBeUpdated = await _context.Products.FirstOrDefaultAsync(c => c.Id == product.Id);
+            if (productToBeUpdated == null)
+                return ResponseService<ProductPostEditViewModel>.NotFound("Product does not exists");
+
+
             // find  the user by email
             var findUser = await _user.FindByEmailAsync(product.UserName);
-
             if (findUser == null)
                 return ResponseService<ProductPostEditViewModel>.NotFound("User not found");
+
 
             // find the role of the user
             var role = await _user.GetRolesAsync(findUser);
@@ -101,40 +105,63 @@ namespace MagazineManagment.BLL.Services
                 return ResponseService<ProductPostEditViewModel>.NotFound("Role not found");
 
 
-            var productToBeUpdated = await _context.Products.FirstOrDefaultAsync(c => c.Id == product.Id);
+            // if empolyee role then check how many products is he removing
+            bool recordChangedByEmployee = false;
+            var amountOfProductsRemovedFromMagazine = productToBeUpdated.ProductInStock - product.ProductInStock;
+            if (role.Contains("Employee") && amountOfProductsRemovedFromMagazine >= 20)
+                return ResponseService<ProductPostEditViewModel>.ErrorMsg("You can not remove more than 20 products ");
+            else if (role.Contains("Employee") && amountOfProductsRemovedFromMagazine == 0)
+                recordChangedByEmployee = false;
+            else
+                recordChangedByEmployee = true;
 
-            if (productToBeUpdated == null)
-            {
-                return ResponseService<ProductPostEditViewModel>.NotFound("Product does not exists");
-            }
 
+            //  check if the serial number is changed, if yes  then check if does exists 
             bool ckeckIfExists = false;
             if (productToBeUpdated.SerialNumber != product.SerialNumber)
                 ckeckIfExists = await _context.Products.AnyAsync(s => s.SerialNumber == product.SerialNumber);
-
             if (ckeckIfExists)
                 return ResponseService<ProductPostEditViewModel>.ErrorMsg($"Serial number {product.SerialNumber} exists, please give another  serial number");
 
-            productToBeUpdated.ProductName = product.ProductName;
-            productToBeUpdated.Price = product.Price;
-            productToBeUpdated.CreatedOn = DateTime.Now;
-            productToBeUpdated.ProductDescription = product.ProductDescription;
-            productToBeUpdated.SerialNumber = product.SerialNumber.ToUpper();
-            productToBeUpdated.CreatedBy = product.CreatedBy;
-            productToBeUpdated.Image = product.Image;
-            productToBeUpdated.ProductInStock = product.ProductInStock;
 
             try
             {
+                if (recordChangedByEmployee)
+                {
+                    ProductRecordsChanged copyOfRecord = new()
+                    {
+                        ProductId = product.Id,
+                        ProductInStock = amountOfProductsRemovedFromMagazine,
+                        IsDeleted = false,
+                        CreatedBy = product.CreatedBy,
+                        CreatedOn = DateTime.Now,
+                        UpdatedBy = product.UserName
+                    };
+                    _context.ProductRecordsChangeds.Add(copyOfRecord);
+                    await _context.SaveChangesAsync();
+
+                    productToBeUpdated.ProductInStock = product.ProductInStock;
+                }
+                else
+                {
+                    productToBeUpdated.ProductName = product.ProductName;
+                    productToBeUpdated.Price = product.Price;
+                    productToBeUpdated.CreatedOn = DateTime.Now;
+                    productToBeUpdated.ProductDescription = product.ProductDescription;
+                    productToBeUpdated.SerialNumber = product.SerialNumber.ToUpper();
+                    productToBeUpdated.CreatedBy = "Admin";
+                    productToBeUpdated.Image = product.Image;
+                    productToBeUpdated.ProductInStock = product.ProductInStock;
+                }
                 _context.Products.Update(productToBeUpdated);
                 await _context.SaveChangesAsync();
+
                 return ResponseService<ProductPostEditViewModel>.Ok(productToBeUpdated.AsProductUpdateDto());
             }
             catch (Exception ex)
             {
                 return ResponseService<ProductPostEditViewModel>.ExceptioThrow(ex.Message);
             }
-
         }
 
         //Delete a product
@@ -184,5 +211,13 @@ namespace MagazineManagment.BLL.Services
 
             return ResponseService<ProductImageOnly>.Ok(productImage.AsProductImageDto());
         }
+
+        // get changes made by employee
+        public async Task<IEnumerable<ProductsRecordCopyViewModel>> GetProducChangesByEmpolyees()
+        {
+            var products = await _context.ProductRecordsChangeds.ToListAsync();
+            return products.Select(p => p.AsProducChangesByEmpolyees());
+        }
+
     }
 }

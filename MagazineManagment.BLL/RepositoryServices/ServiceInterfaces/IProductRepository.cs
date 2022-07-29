@@ -13,5 +13,6 @@ namespace MagazineManagment.BLL.RepositoryServices.ServiceInterfaces
         Task<IEnumerable<ProductsAndCategoryInfoViewModel>> ProductsAndCategoryAsync();
         Task<ResponseService<ProductPostEditViewModel>> UpdateProductAsync(ProductPostEditViewModel product);
         Task<ResponseService<ProductImageOnly>> GetProductImage(Guid id);
+        Task<IEnumerable<ProductsRecordCopyViewModel>> GetProducChangesByEmpolyees();
     }
 }

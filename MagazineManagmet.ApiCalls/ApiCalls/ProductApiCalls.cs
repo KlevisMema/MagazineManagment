@@ -4,7 +4,6 @@ using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using System.Security.Claims;
 
 namespace MagazineManagment.Web.ApiCalls
 {
@@ -16,6 +15,19 @@ namespace MagazineManagment.Web.ApiCalls
         public ProductApiCalls(IOptions<FetchApiValue> config)
         {
             _config = config;
+        }
+
+        private static async Task<string> ConvertImageToBase64(IFormFile image)
+        {
+            string? BaseArrayImage = null;
+
+            using (MemoryStream ms = new())
+            {
+                await image.CopyToAsync(ms);
+                var fileBytes = ms.ToArray();
+                BaseArrayImage = Convert.ToBase64String(fileBytes);
+            }
+            return BaseArrayImage;
         }
 
         public async Task<IEnumerable<ProductViewModel>> GetAllProducts()
@@ -163,17 +175,17 @@ namespace MagazineManagment.Web.ApiCalls
             return Task;
         }
 
-        private async Task<string> ConvertImageToBase64(IFormFile image)
+        public async Task<IEnumerable<ProductsRecordCopyViewModel>> GetProducChangesByEmpolyees()
         {
-            string? BaseArrayImage = null;
+            using HttpClient client = new();
+            IEnumerable<ProductsRecordCopyViewModel>? readResponse = null;
+            var uri = _config.Value.ProductGet;
+            client.BaseAddress = new Uri(uri);
 
-            using (MemoryStream ms = new())
-            {
-                await image.CopyToAsync(ms);
-                var fileBytes = ms.ToArray();
-                BaseArrayImage = Convert.ToBase64String(fileBytes);
-            }
-            return BaseArrayImage;
+            var response = await client.GetAsync(RequestDestination.ProductChangesMadeByEmployee);
+            readResponse = await response.Content.ReadAsAsync<IList<ProductsRecordCopyViewModel>>();
+            client.Dispose();
+            return readResponse;
         }
 
     }
