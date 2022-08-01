@@ -73,7 +73,8 @@ namespace MagazineManagment.DTO.DataTransferObjects
                 ProductId = product.ProductId,
                 ChangesInQunatity = product.ProductInStock,
                 UpdatedBy = product.UpdatedBy,
-                UpdatedOn = product.CreatedOn
+                UpdatedOn = product.CreatedOn,
+                Id = product.Id,
             };
         }
     }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MagazineManagment.ClientApplication.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ProfileClientController : Controller
     {
         private readonly IProfileApiCalls _profileApiCalls;
@@ -22,7 +23,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(getAllRoles);
         }
 
-        [Authorize(Roles = "Admini")]
+        //[Authorize(Roles = "Admini")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -95,7 +96,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [HttpGet]
-        public  async Task<IActionResult> Users(string id)
+        public async Task<IActionResult> Users(string id)
         {
             var getUsersInRole = await _profileApiCalls.GetAllUsersInRole(id);
             if (getUsersInRole == null)
@@ -119,7 +120,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             if (asignRoleToUsersResult.IsSuccessStatusCode)
                 return RedirectToAction("Index");
 
-            ModelState.AddModelError(string.Empty,await asignRoleToUsersResult.Content.ReadAsStringAsync());
+            ModelState.AddModelError(string.Empty, await asignRoleToUsersResult.Content.ReadAsStringAsync());
             return RedirectToAction("AsingRoleToUsers");
         }
 
@@ -145,6 +146,5 @@ namespace MagazineManagment.ClientApplication.Controllers
             ModelState.AddModelError(string.Empty, await removeRoleFromUsersResult.Content.ReadAsStringAsync());
             return RedirectToAction("RemoveRoleFromUsers");
         }
-
     }
 }

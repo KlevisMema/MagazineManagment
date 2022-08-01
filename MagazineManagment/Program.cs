@@ -1,3 +1,4 @@
+using MagazineManagment.DAL.DataSeeding;
 using MagazineManagment.Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.InjectServices(builder.Configuration);
 
 var app = builder.Build();
+
+
+
+await SeedData.SeedUsersAndRolesAsync(app);
+await SeedData.SeedCategories(app);
 
 if (app.Environment.IsDevelopment())
 {
@@ -22,5 +28,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
 
 app.Run();

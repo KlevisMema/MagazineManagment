@@ -219,5 +219,21 @@ namespace MagazineManagment.BLL.Services
             return products.Select(p => p.AsProducChangesByEmpolyees());
         }
 
+        // delete the change made by employee
+        public async Task<ResponseService<ProductsRecordCopyViewModel>> DeleteProductChangeByEmployee(Guid id)
+        {
+            try
+            {
+                var record = await _context.ProductRecordsChangeds.FirstOrDefaultAsync(p => p.Id == id);
+                _context.ProductRecordsChangeds.Remove(record);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return ResponseService<ProductsRecordCopyViewModel>.ExceptioThrow(ex.Message);
+            }
+            return ResponseService<ProductsRecordCopyViewModel>.Deleted($"Product with id : {id} has been deleted!!!!");
+        }
+
     }
 }

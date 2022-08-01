@@ -105,5 +105,16 @@ namespace MagazineManagment.Web.Controllers
             var changesByEmployees = await _productRepository.GetProducChangesByEmpolyees();
             return Ok(changesByEmployees);
         }
+
+        [HttpDelete("DeleteProducChangesByEmpolyees/{id}")]
+        public async Task<ActionResult<ResponseService<ProductsRecordCopyViewModel>>> DeleteProductChangeByEmployee(Guid id)
+        {
+            var productToBeDeleted = await _productRepository.DeleteProductChangeByEmployee(id);
+
+            if (productToBeDeleted.Success)
+                return Ok(productToBeDeleted.Message);
+
+            return BadRequest(productToBeDeleted.Message);
+        }
     }
 }
