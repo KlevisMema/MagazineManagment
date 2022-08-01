@@ -11,5 +11,6 @@ namespace MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces
         Task<HttpResponseMessage> PostEditProduct(ProductUpdateViewModel UpdateProduct);
         Task<HttpResponseMessage> Delete(Guid id);
         Task<IEnumerable<ProductsRecordCopyViewModel>> GetProducChangesByEmpolyees();
+        Task<HttpResponseMessage> DeleteProductChangeByEmployee(Guid id);
     }
 }

@@ -12,6 +12,7 @@
                 <th>Updated by</th>
                 <th>Changes in quantity</th>
                 <th>When was change made</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
@@ -22,6 +23,9 @@
                     <td>@item.UpdatedBy</td>
                     <td>@item.ChangesInQunatity</td>
                     <td>@item.UpdatedOn</td>
+                    <td>
+                        <a asp-action="DeleteProductChangeByEmployee" asp-controller="ProductClient" asp-route-id="@item.Id" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
+                    </td>
                 </tr>
             }
         <tbody>

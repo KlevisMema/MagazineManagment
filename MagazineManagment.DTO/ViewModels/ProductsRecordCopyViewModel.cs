@@ -2,6 +2,7 @@
 {
     public class ProductsRecordCopyViewModel
     {
+        public Guid Id { get; set; }
         public Guid ProductId { get; set; }
         public int? ChangesInQunatity { get; set; }
         public string? UpdatedBy { get; set; }

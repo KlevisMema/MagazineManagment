@@ -1,9 +1,11 @@
 ﻿using MagazineManagment.DTO.ViewModels;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagazineManagment.ClientApplication.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CategoryClientController : Controller
     {
         private readonly ICategoryApiCalls _categoryApiCalls;

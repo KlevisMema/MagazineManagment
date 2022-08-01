@@ -3,6 +3,7 @@ using MagazineManagment.DTO.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MagazineManagment.ClientApplication.Controllers
 {
@@ -25,6 +26,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -34,6 +36,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(products);
         }
 
+        [Authorize(Roles ="Admin")]
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -42,12 +45,15 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductCreateViewModel product)
         {
             if (ModelState.IsValid)
             {
+                var userName = GetIdentityUserName();
+                product.CreatedBy = userName;
                 var result = await _productApiCalls.PostCreateProduct(product);
 
                 if (result.IsSuccessStatusCode)
@@ -61,6 +67,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(product);
         }
 
+        [Authorize(Roles = "Admin,Employee")]
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
@@ -72,6 +79,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(product);
         }
 
+        [Authorize(Roles = "Admin,Employee")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProductUpdateViewModel UpdateProduct)
@@ -92,6 +100,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(product);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -99,6 +108,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(product);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(ProductUpdateViewModel productToBeDeleted)
@@ -112,11 +122,23 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(productToBeDeleted);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetChangesMadeByEmployees()
         {
             var productChanges = await _productApiCalls.GetProducChangesByEmpolyees();
             return View(productChanges);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteProductChangeByEmployee(Guid id)
+        {
+            var deleteResult = await _productApiCalls.DeleteProductChangeByEmployee(id);
+            if (deleteResult.IsSuccessStatusCode)
+                return RedirectToAction("GetChangesMadeByEmployees");
+
+            ModelState.AddModelError(string.Empty,await deleteResult.Content.ReadAsStringAsync());
+            return RedirectToAction("GetChangesMadeByEmployees");
         }
     }
 }

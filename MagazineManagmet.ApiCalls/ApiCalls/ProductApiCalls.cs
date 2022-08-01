@@ -188,5 +188,18 @@ namespace MagazineManagment.Web.ApiCalls
             return readResponse;
         }
 
+        public async Task<HttpResponseMessage> DeleteProductChangeByEmployee(Guid id)
+        {
+            HttpResponseMessage? deleteResult = null;
+            using (var client = new HttpClient())
+            {
+                var uri = _config.Value.ProductGet;
+                client.BaseAddress = new Uri(uri);
+                deleteResult = await client.DeleteAsync(RequestDestination.ProductChangesMadeByEmployeeDeleteRoute + id);
+                client.Dispose();
+            }
+            return deleteResult;
+        }
+
     }
 }
