@@ -38,10 +38,10 @@
         <label asp-for="CurrencyType" ></label>
         <select asp-for="CurrencyType" asp-items="Html.GetEnumSelectList<CurrencyTypeEnum>()" class="form-control"></select>
         <span asp-validation-for="CurrencyType" class="text-danger"></span>
-        <br />
+       @* <br />
         <label asp-for="CreatedBy" ></label>
         <input asp-for="CreatedBy" type="text" class="form-control"/> 
-        <span asp-validation-for="CreatedBy" class="text-danger"></span>
+        <span asp-validation-for="CreatedBy" class="text-danger"></span>*@
     </div>
     <br />
     <input type="submit" value="Create Product" class="btn btn-primary" />

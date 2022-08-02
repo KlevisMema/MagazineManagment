@@ -4,17 +4,23 @@ using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace MagazineManagment.Web.ApiCalls
 {
     public class ProductApiCalls : IProductApiCalls
     {
-
         private readonly IOptions<FetchApiValue> _config;
-
         public ProductApiCalls(IOptions<FetchApiValue> config)
         {
             _config = config;
+        }
+
+        private string GetIdentityUserName(HttpContext context)
+        {
+            var identityUser = context.User.Identity as ClaimsIdentity;
+            var userName = identityUser.FindFirst(ClaimTypes.Name).Value;
+            return userName;
         }
 
         private static async Task<string> ConvertImageToBase64(IFormFile image)
@@ -61,7 +67,7 @@ namespace MagazineManagment.Web.ApiCalls
             return readResponse;
         }
 
-        public async Task<HttpResponseMessage> PostCreateProduct(ProductCreateViewModel product)
+        public async Task<HttpResponseMessage> PostCreateProduct(ProductCreateViewModel product,HttpContext context)
         {
 
             var BaseArrayImage = await ConvertImageToBase64(product.ImageFile);
@@ -73,7 +79,7 @@ namespace MagazineManagment.Web.ApiCalls
                 Price = product.Price,
                 ProductCategoryId = product.ProductCategoryId,
                 Image = BaseArrayImage,
-                CreatedBy = product.CreatedBy,
+                CreatedBy = GetIdentityUserName(context),
                 ProductInStock = product.ProductInStock,
                 CurrencyType = product.CurrencyType,
                 ProductDescription = product.ProductDescription
@@ -107,6 +113,7 @@ namespace MagazineManagment.Web.ApiCalls
         public async Task<HttpResponseMessage> PostEditProduct(ProductUpdateViewModel product)
         {
             ProductPostEditViewModel newUpdatedProduct = new();
+            
             //case when user has not changed the image in the edit form
             if (product.ImageFile == null)
             {
@@ -175,7 +182,7 @@ namespace MagazineManagment.Web.ApiCalls
             return Task;
         }
 
-        public async Task<IEnumerable<ProductsRecordCopyViewModel>> GetProducChangesByEmpolyees()
+        public async Task<IEnumerable<ProductsRecordCopyViewModel>> GetProductChangesByEmpolyees()
         {
             using HttpClient client = new();
             IEnumerable<ProductsRecordCopyViewModel>? readResponse = null;
@@ -201,5 +208,20 @@ namespace MagazineManagment.Web.ApiCalls
             return deleteResult;
         }
 
+        public async Task<ProductViewModel> DetailsOfProductChangedByEmployee(Guid id)
+        {
+            ProductViewModel? readTask = null;
+
+            using (var client = new HttpClient())
+            {
+                var uri = _config.Value.ProductGet;
+                client.BaseAddress = new Uri(uri);
+
+                var getTask = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
+                readTask = await getTask.Content.ReadAsAsync<ProductViewModel>();
+                client.Dispose();
+            }
+            return readTask;
+        }
     }
 }

@@ -4,7 +4,67 @@
     ViewData["Title"] = "Access denied";
 }
 
-<header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">You do not have access to this resource.</p>
-</header>
+<style>
+    h1 {
+        font-size: 12vmin;
+        margin-bottom: 0;
+    }
+
+    h2 {
+        font-size: 5vmin;
+        margin-top: 0;
+        margin-bottom: 40px;
+        color:#dc3545;
+        letter-spacing: 3px;
+        text-shadow: 0 0 5px #dc5534;
+        animation: flux 2s linear infinite;
+    }
+
+    .forbidden {
+        height:80vh;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        background-color: white;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    h1 {
+        margin: 40px 0 20px;
+        color:#FF6184;
+    }
+    .jail{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+    }
+    h4{
+        text-align:center;
+    }
+    p,h4{
+        color:#FF6184;
+    }
+    @@keyframes flux
+    {
+        0%,
+        100% {
+            text-shadow: 0 0 5px #dc3545, 0 0 15px #dc3545, 0 0 50px #dc3545, 0 0 50px #dc3545, 0 0 2px #B9FFE8, 2px 2px 3px #dc3545;
+            color: #dc3545;
+        }
+        50% {
+            text-shadow: 0 0 3px #FF6184, 0 0 7px #FF6184, 0 0 25px #FF6184, 0 0 25px #FF6184, 0 0 2px #FF6184, 2px 2px 3px #FF6184;
+            color: #FF6184;
+        }
+    }
+</style>
+
+<div class="forbidden">
+    <h1>Forbidden!</h1>
+    <h2>Code 403</h2>
+    <div id="jail">
+        <h4>Access to this page is restricted</h4>
+        <p>Please check with the site admin if you believe this is amistake.</p>
+    </div>
+</div>

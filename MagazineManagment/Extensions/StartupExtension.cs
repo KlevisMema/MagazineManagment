@@ -2,7 +2,6 @@
 using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.Services;
 using MagazineManagment.DAL.DataContext;
-using MagazineManagment.Shared.UsersSeedValues;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,8 +16,6 @@ namespace MagazineManagment.Web.Extensions
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
-            services.Configure<AdminUser>(configuration.GetSection(AdminUser.SectionName));
-            services.Configure<EmployeeUser>(configuration.GetSection(EmployeeUser.SectionName));
             return services;
         }
     }

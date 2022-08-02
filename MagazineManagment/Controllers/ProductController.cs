@@ -26,7 +26,7 @@ namespace MagazineManagment.Web.Controllers
 
         // Get a single product with id
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseService<ProductsAndCategoryInfoViewModel>>> GetProductAsync(Guid id)
+        public async Task<ActionResult<ResponseService<ProductViewModel>>> GetProductAsync(Guid id)
         {
             var resultGetProdut = await _productRepository.GetProductAsync(id);
 

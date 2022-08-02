@@ -7,5 +7,6 @@ namespace MagazineManagment.DAL.Models
         public Guid ProductId { get; set; }
         public int? ProductInStock { get; set; }
         public string? UpdatedBy { get; set; }
+        public int QunatityBeforeRemoval { get; set; }
     }
 }

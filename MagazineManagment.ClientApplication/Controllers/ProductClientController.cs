@@ -11,19 +11,17 @@ namespace MagazineManagment.ClientApplication.Controllers
     {
 
         private readonly IProductApiCalls _productApiCalls;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private string GetIdentityUserName()
         {
-            var identityUser = _httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            var identityUser = HttpContext.User.Identity as ClaimsIdentity;
             var userName = identityUser.FindFirst(ClaimTypes.Name).Value;
             return userName;
         }
 
-        public ProductClientController(IProductApiCalls productApiCalls, IHttpContextAccessor httpContextAccessor)
+        public ProductClientController(IProductApiCalls productApiCalls)
         {
             _productApiCalls = productApiCalls;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         [Authorize]
@@ -36,7 +34,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(products);
         }
 
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -52,16 +50,11 @@ namespace MagazineManagment.ClientApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userName = GetIdentityUserName();
-                product.CreatedBy = userName;
-                var result = await _productApiCalls.PostCreateProduct(product);
-
+                var result = await _productApiCalls.PostCreateProduct(product, HttpContext);
                 if (result.IsSuccessStatusCode)
                     return RedirectToAction("Index");
-
                 ModelState.AddModelError(string.Empty, await result.Content.ReadAsStringAsync());
             }
-
             var categoryList = await _productApiCalls.GetCreateProduct();
             ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
             return View(product);
@@ -86,7 +79,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userName = GetIdentityUserName(); 
+                var userName = GetIdentityUserName();
                 UpdateProduct.UserName = userName;
 
                 var result = await _productApiCalls.PostEditProduct(UpdateProduct);
@@ -126,7 +119,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> GetChangesMadeByEmployees()
         {
-            var productChanges = await _productApiCalls.GetProducChangesByEmpolyees();
+            var productChanges = await _productApiCalls.GetProductChangesByEmpolyees();
             return View(productChanges);
         }
 
@@ -137,8 +130,20 @@ namespace MagazineManagment.ClientApplication.Controllers
             if (deleteResult.IsSuccessStatusCode)
                 return RedirectToAction("GetChangesMadeByEmployees");
 
-            ModelState.AddModelError(string.Empty,await deleteResult.Content.ReadAsStringAsync());
+            ModelState.AddModelError(string.Empty, await deleteResult.Content.ReadAsStringAsync());
             return RedirectToAction("GetChangesMadeByEmployees");
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> DetailsOfProductChangedByEmployee(Guid id)
+        {
+            var product = await _productApiCalls.DetailsOfProductChangedByEmployee(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return View(product);
         }
     }
 }

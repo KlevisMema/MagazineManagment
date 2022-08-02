@@ -6,6 +6,7 @@ using MagazineManagment.DAL.Models;
 using MagazineManagment.DTO.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using MagazineManagment.Shared.UsersSeedValues;
 
 namespace MagazineManagment.BLL.Services
 {
@@ -107,13 +108,17 @@ namespace MagazineManagment.BLL.Services
 
             // if empolyee role then check how many products is he removing
             bool recordChangedByEmployee = false;
-            var amountOfProductsRemovedFromMagazine = productToBeUpdated.ProductInStock - product.ProductInStock;
-            if (role.Contains("Employee") && amountOfProductsRemovedFromMagazine >= 20)
+            if (product.ProductInStock > productToBeUpdated.ProductInStock && role.Contains(RoleName.Employee))
+                return ResponseService<ProductPostEditViewModel>.ErrorMsg("You can't insert products in quantity");
+
+            var amountOfProductsRemovedFromMagazine = product.ProductInStock - productToBeUpdated.ProductInStock;
+            if (role.Contains(RoleName.Employee) && amountOfProductsRemovedFromMagazine <= -20)
                 return ResponseService<ProductPostEditViewModel>.ErrorMsg("You can not remove more than 20 products ");
-            else if (role.Contains("Employee") && amountOfProductsRemovedFromMagazine == 0)
+            else if (role.Contains(RoleName.Employee) && amountOfProductsRemovedFromMagazine == 0)
                 recordChangedByEmployee = false;
-            else
+            else if (role.Contains(RoleName.Employee) && amountOfProductsRemovedFromMagazine > -20)
                 recordChangedByEmployee = true;
+
 
 
             //  check if the serial number is changed, if yes  then check if does exists 
@@ -135,7 +140,8 @@ namespace MagazineManagment.BLL.Services
                         IsDeleted = false,
                         CreatedBy = product.CreatedBy,
                         CreatedOn = DateTime.Now,
-                        UpdatedBy = product.UserName
+                        UpdatedBy = product.UserName,
+                        QunatityBeforeRemoval = (int)productToBeUpdated.ProductInStock
                     };
                     _context.ProductRecordsChangeds.Add(copyOfRecord);
                     await _context.SaveChangesAsync();
@@ -215,7 +221,7 @@ namespace MagazineManagment.BLL.Services
         // get changes made by employee
         public async Task<IEnumerable<ProductsRecordCopyViewModel>> GetProducChangesByEmpolyees()
         {
-            var products = await _context.ProductRecordsChangeds.ToListAsync();
+            var products = await _context.ProductRecordsChangeds.OrderByDescending(p => p.CreatedOn).ToListAsync();
             return products.Select(p => p.AsProducChangesByEmpolyees());
         }
 
@@ -234,6 +240,7 @@ namespace MagazineManagment.BLL.Services
             }
             return ResponseService<ProductsRecordCopyViewModel>.Deleted($"Product with id : {id} has been deleted!!!!");
         }
+
 
     }
 }
