@@ -7,5 +7,6 @@
         public int? ChangesInQunatity { get; set; }
         public string? UpdatedBy { get; set; }
         public DateTime UpdatedOn { get; set; }
+        public int? QuantityBeforeChange { get; set; }
     }
 }

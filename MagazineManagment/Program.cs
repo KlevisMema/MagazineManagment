@@ -13,8 +13,8 @@ var app = builder.Build();
 
 
 
-await SeedData.SeedUsersAndRolesAsync(app);
-await SeedData.SeedCategories(app);
+await UsersSeed.SeedUsersAndRolesAsync(app,builder.Configuration);
+await CategoriesSeed.SeedCategories(app);
 
 if (app.Environment.IsDevelopment())
 {

@@ -37,13 +37,10 @@ namespace MagazineManagment.DTO.ViewModels
 
         public string? Image { get; set; }
 
-        //[Required(ErrorMessage = "Product image required")]
         [Display(Name = "Image")]
-        //[RegularExpression(@"([a-zA-Z0-9\s_\\.\-:])+(.png|.jpg|.gif)$", ErrorMessage = "Only Image files are allowed.")]
         [ImageFileValidation]
         public IFormFile? ImageFile { get; set; }
 
-        //[Required(ErrorMessage = "Category is required")]
         [Display(Name = "Category")]
         public Guid? ProductCategoryId { get; set; }
         public string? CreatedBy { get; set; }
