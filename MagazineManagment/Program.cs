@@ -12,9 +12,9 @@ builder.Services.InjectServices(builder.Configuration);
 var app = builder.Build();
 
 
+await CategoriesSeed.SeedCategories(app);
 
 await UsersSeed.SeedUsersAndRolesAsync(app,builder.Configuration);
-await CategoriesSeed.SeedCategories(app);
 
 if (app.Environment.IsDevelopment())
 {
