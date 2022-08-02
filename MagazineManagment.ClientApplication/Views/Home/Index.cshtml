@@ -3,23 +3,31 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4" style="color:white">Welcome</h1>
+    <h1 class="display-4" style="color:#000">Welcome</h1>
+    <p>If fist time runnig use these credentials to log in </p>
+    <h5>Admin</h5>
+    <p>
+        Username: admin@MagazineManagment.com |
+        Password: Admin1234$
+    </p>
+    <h5>Employee</h5>
+    <p>
+        Username: employee@MagazineManagment.com |
+        Password: Employee1234$
+    </p>
+</div>
+<div class="container1">
+    <div class="card1">
+        <a asp-action="Index" asp-controller="ProductClient">Products</a>
+    </div>
+    <div class="card1">
+        <a asp-action="Index" asp-controller="CategoryClient">Categories</a>
+    </div>
+    <div class="card1">
+        <a asp-action="Index" asp-controller="ProfileClient">Roles</a>
+    </div>
+    <div class="card1">
+        <a asp-action="GetChangesMadeByEmployees" asp-controller="ProductClient">Employees Work</a>
+    </div>
 </div>
 
-<a asp-action="Index" asp-controller="ProductClient">Products</a>
-
-<br />
-
-<a asp-action="Index" asp-controller="CategoryClient">Categories</a>
-
-<br />
-
-<a asp-action="Index" asp-controller="ProfileClient">Roles</a>
-
-<br />
-
-<a asp-action="Claims" asp-controller="ProfileClient">claims</a>
-
-<br />
-
-<a asp-action="GetChangesMadeByEmployees" asp-controller="ProductClient">channges to products by employees</a>
