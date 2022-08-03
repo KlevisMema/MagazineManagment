@@ -16,6 +16,7 @@
             <tr>
                 <th scope="col">Category name</th>
                 <th scope="col">Created on</th>
+                <th scope="col">Created by</th>
                 <th scope="col">Operations</th>
             </tr>
         </thead>
@@ -25,6 +26,7 @@
                 <tr>
                     <td>@item.CategoryName</td>
                     <td>@item.CreatedOn?.ToString("MMMM dd, yyyy")</td>
+                    <td>@item.CreatedBy</td>
                     <td>
                         <a asp-action="Edit" asp-controller="CategoryClient" asp-route-id="@item.Id" class="btn btn-green"><i class="fa-solid fa-pen-to-square"></i></a> |
                         <a asp-action="Delete" asp-controller="CategoryClient" asp-route-id="@item.Id" class=" btn btn-danger"><i class="fa-solid fa-trash"></i></a>

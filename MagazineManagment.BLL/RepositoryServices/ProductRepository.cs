@@ -1,12 +1,12 @@
 ﻿using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DAL.DataContext;
-using MagazineManagment.DTO.DataTransferObjects;
 using MagazineManagment.DAL.Models;
 using MagazineManagment.DTO.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using MagazineManagment.Shared.UsersSeedValues;
+using AutoMapper;
 
 namespace MagazineManagment.BLL.Services
 {
@@ -14,76 +14,65 @@ namespace MagazineManagment.BLL.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Microsoft.AspNetCore.Identity.IdentityUser> _user;
+        private readonly IMapper _mapper;
 
-        public ProductRepository(ApplicationDbContext context, UserManager<Microsoft.AspNetCore.Identity.IdentityUser> user)
+        public ProductRepository(ApplicationDbContext context, UserManager<Microsoft.AspNetCore.Identity.IdentityUser> user, IMapper mapper)
         {
             _context = context;
             _user = user;
+            _mapper = mapper;
         }
 
         //Get all products
         public async Task<IEnumerable<ProductViewModel>> GetAllProductsAsync()
         {
-            var products = await _context.Products.Include(p => p.ProductCategory).Select(x => x.AsProductDto()).ToListAsync();
-            return products;
+            var products = await _context.Products.Include(p => p.ProductCategory).ToListAsync();
+            return _mapper.Map<IEnumerable<ProductViewModel>>(products);
         }
 
         //Get a single product by id
         public async Task<ResponseService<ProductViewModel>> GetProductAsync(Guid id)
         {
-            var product = await _context.Products.Include(p => p.ProductCategory).FirstOrDefaultAsync(x => x.Id == id);
-
-            if (product is null)
-            {
-                return ResponseService<ProductViewModel>.NotFound("Product doesnt exists");
-            }
-
-            return ResponseService<ProductViewModel>.Ok(product.AsProductDto());
-        }
-
-        //Create a product
-        public async Task<ResponseService<ProductViewModel>> CreateProductAsync(ProductCreateViewModelNoIFormFile product)
-        {
-
-            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == product.ProductCategoryId);
-
-            if (category is null)
-            {
-                return ResponseService<ProductViewModel>.NotFound("Category not found");
-            }
-
-
-            var checkIfSerialNrExists = await _context.Products.AnyAsync(sNr => sNr.SerialNumber == product.SerialNumber.ToUpper());
-            if (checkIfSerialNrExists)
-            {
-                return ResponseService<ProductViewModel>.ErrorMsg($"Serial number {product.SerialNumber} exists, please give another  serial number");
-            }
-
             try
             {
-                Product newProduct = new()
-                {
-                    ProductName = product.ProductName,
-                    Price = product.Price,
-                    CreatedOn = DateTime.Now,
-                    ProductDescription = product.ProductDescription,
-                    ProductCategoryId = product.ProductCategoryId,
-                    Image = product.Image,
-                    CreatedBy = product.CreatedBy,
-                    CurrencyType = product.CurrencyType,
-                    SerialNumber = product.SerialNumber.ToUpper(),
-                    ProductInStock = product.ProductInStock
-                };
+                var product = await _context.Products.Include(p => p.ProductCategory).FirstOrDefaultAsync(x => x.Id == id);
 
-                _context.Products.Add(newProduct);
-                await _context.SaveChangesAsync();
-                return ResponseService<ProductViewModel>.Ok(newProduct.AsProductDto());
+                if (product is null)
+                    return ResponseService<ProductViewModel>.NotFound("Product doesnt exists");
+
+                return ResponseService<ProductViewModel>.Ok(_mapper.Map<ProductViewModel>(product));
             }
             catch (Exception ex)
             {
                 return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
             }
 
+        }
+
+        //Create a product
+        public async Task<ResponseService<ProductViewModel>> CreateProductAsync(ProductCreateViewModelNoIFormFile product)
+        {
+            try
+            {
+                var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == product.ProductCategoryId);
+
+                if (category is null)
+                    return ResponseService<ProductViewModel>.NotFound("Category not found");
+
+                var checkIfSerialNrExists = await _context.Products.AnyAsync(sNr => sNr.SerialNumber == product.SerialNumber.ToUpper());
+
+                if (checkIfSerialNrExists)
+                    return ResponseService<ProductViewModel>.ErrorMsg($"Serial number {product.SerialNumber} exists, please give another  serial number");
+                var newProduct = _mapper.Map<Product>(product);
+
+                _context.Products.Add(newProduct);
+                await _context.SaveChangesAsync();
+                return ResponseService<ProductViewModel>.Ok(_mapper.Map<ProductViewModel>(newProduct));
+            }
+            catch (Exception ex)
+            {
+                return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
+            }
         }
 
         // Update a Product 
@@ -150,19 +139,22 @@ namespace MagazineManagment.BLL.Services
                 }
                 else
                 {
-                    productToBeUpdated.ProductName = product.ProductName;
-                    productToBeUpdated.Price = product.Price;
-                    productToBeUpdated.CreatedOn = DateTime.Now;
-                    productToBeUpdated.ProductDescription = product.ProductDescription;
-                    productToBeUpdated.SerialNumber = product.SerialNumber.ToUpper();
-                    productToBeUpdated.CreatedBy = "Admin";
-                    productToBeUpdated.Image = product.Image;
-                    productToBeUpdated.ProductInStock = product.ProductInStock;
+                    productToBeUpdated = _mapper.Map<Product>(product);
+
+                    //productToBeUpdated.ProductName = product.ProductName;
+                    //productToBeUpdated.Price = product.Price;
+                    //productToBeUpdated.CreatedOn = DateTime.Now;
+                    //productToBeUpdated.ProductDescription = product.ProductDescription;
+                    //productToBeUpdated.SerialNumber = product.SerialNumber.ToUpper();
+                    //productToBeUpdated.CreatedBy = "Admin";
+                    //productToBeUpdated.Image = product.Image;
+                    //productToBeUpdated.ProductInStock = product.ProductInStock;
+
                 }
                 _context.Products.Update(productToBeUpdated);
                 await _context.SaveChangesAsync();
 
-                return ResponseService<ProductPostEditViewModel>.Ok(productToBeUpdated.AsProductUpdateDto());
+                return ResponseService<ProductPostEditViewModel>.Ok(_mapper.Map<ProductPostEditViewModel>(productToBeUpdated));
             }
             catch (Exception ex)
             {
@@ -173,56 +165,65 @@ namespace MagazineManagment.BLL.Services
         //Delete a product
         public async Task<ResponseService<ProductViewModel>> DeleteProductAsync(Guid id)
         {
-            var productToBeDeleted = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-            if (productToBeDeleted is null)
-            {
-                return ResponseService<ProductViewModel>.NotFound($"Product with id {id} does not exists !!");
-            }
             try
             {
+                var productToBeDeleted = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+                if (productToBeDeleted is null)
+                    return ResponseService<ProductViewModel>.NotFound($"Product with id {id} does not exists !!");
                 _context.Products.Remove(productToBeDeleted);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-
                 return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
             }
-
             return ResponseService<ProductViewModel>.Deleted($"Product with id : {id} has been deleted!!!!");
         }
 
         // Display all products together with their category info
         public async Task<IEnumerable<ProductsAndCategoryInfoViewModel>> ProductsAndCategoryAsync()
         {
-            return await _context.Products.Include(c => c.ProductCategory).Select(x => x.AsProductCategoryDto()).ToListAsync();
+            var products = await _context.Products.Include(c => c.ProductCategory).ToListAsync();
+            return _mapper.Map<List<ProductsAndCategoryInfoViewModel>>(products);
         }
 
         // Serach a product by its name
         public async Task<ResponseService<ProductViewModel>> GetProductByNameAsync(string ProductName)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductName == ProductName);
-            if (product == null)
-                return ResponseService<ProductViewModel>.NotFound("Product does not exists");
-            return ResponseService<ProductViewModel>.Ok(product.AsProductDto());
+            try
+            {
+                var product = await _context.Products.Include(c => c.ProductCategory).FirstOrDefaultAsync(p => p.ProductName == ProductName);
+                if (product == null)
+                    return ResponseService<ProductViewModel>.NotFound("Product does not exists");
+                return ResponseService<ProductViewModel>.Ok(_mapper.Map<ProductViewModel>(product));
+            }
+            catch (Exception ex)
+            {
+                return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
+            }
         }
 
         // Get product image
         public async Task<ResponseService<ProductImageOnly>> GetProductImage(Guid id)
         {
-
-            var productImage = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-            if (productImage == null)
-                return ResponseService<ProductImageOnly>.NotFound("Image does not exists");
-
-            return ResponseService<ProductImageOnly>.Ok(productImage.AsProductImageDto());
+            try
+            {
+                var productImage = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+                if (productImage == null)
+                    return ResponseService<ProductImageOnly>.NotFound("Image does not exists");
+                return ResponseService<ProductImageOnly>.Ok(_mapper.Map<ProductImageOnly>(productImage));
+            }
+            catch (Exception ex)
+            {
+                return ResponseService<ProductImageOnly>.ExceptioThrow(ex.Message);
+            }
         }
 
         // get changes made by employee
         public async Task<IEnumerable<ProductsRecordCopyViewModel>> GetProducChangesByEmpolyees()
         {
             var products = await _context.ProductRecordsChangeds.OrderByDescending(p => p.CreatedOn).ToListAsync();
-            return products.Select(p => p.AsProducChangesByEmpolyees());
+            return _mapper.Map<List<ProductsRecordCopyViewModel>>(products);
         }
 
         // delete the change made by employee
@@ -240,7 +241,5 @@ namespace MagazineManagment.BLL.Services
             }
             return ResponseService<ProductsRecordCopyViewModel>.Deleted($"Product with id : {id} has been deleted!!!!");
         }
-
-
     }
 }
