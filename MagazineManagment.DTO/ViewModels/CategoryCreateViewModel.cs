@@ -8,5 +8,6 @@ namespace MagazineManagment.DTO.ViewModels
         [Display(Name = "Category name")]
         [StringLength(maximumLength:10,MinimumLength =2)]
         public string? CategoryName { get; set; }
+        public string? CreatedBy { get; set; }
     }
 }

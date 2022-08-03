@@ -113,9 +113,9 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             return readResult;
         }
 
-        public async Task<IEnumerable<UserInRoleViewModel>> GetAllUsersNotInRole(string id)
+        public async Task<IEnumerable<UserNotInRoleViewModel>> GetAllUsersNotInRole(string id)
         {
-            IEnumerable<UserInRoleViewModel>? readResult = null;
+            IEnumerable<UserNotInRoleViewModel>? readResult = null;
             using (var client = new HttpClient())
             {
                 var uri = _options.Value.ProfileGetOrDeleteProfile;
@@ -123,7 +123,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
                 var getUsersResponse = await client.GetAsync(RequestDestination.ProfileGetRoles + "/GetAllUsers/" + id);
 
                 if (getUsersResponse.IsSuccessStatusCode)
-                    readResult = await getUsersResponse.Content.ReadAsAsync<IList<UserInRoleViewModel>>();
+                    readResult = await getUsersResponse.Content.ReadAsAsync<IList<UserNotInRoleViewModel>>();
             }
             return readResult;
         }

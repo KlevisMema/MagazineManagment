@@ -11,7 +11,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces
         Task<RolesGetAllDetails> GetAllRolesDetails(string id);
         Task<HttpResponseMessage> DeleteRole(string id);
         Task<IEnumerable<UserInRoleViewModel>> GetAllUsersInRole(string id);
-        Task<IEnumerable<UserInRoleViewModel>> GetAllUsersNotInRole(string id);
+        Task<IEnumerable<UserNotInRoleViewModel>> GetAllUsersNotInRole(string id);
         Task<HttpResponseMessage> AssignRoleToUsers(List<UserInRoleViewModel> users, string id);
         Task<HttpResponseMessage> RemoveRoleFromUsers(List<UserInRoleViewModel> users, string id);
     }

@@ -17,7 +17,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var categories =  await _categoryApiCalls.GetAllCategories();
+            var categories = await _categoryApiCalls.GetAllCategories();
             return View(categories);
         }
 
@@ -33,12 +33,12 @@ namespace MagazineManagment.ClientApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var postResult = await _categoryApiCalls.PostCreateCategory(category);
+                var postResult = await _categoryApiCalls.PostCreateCategory(category, HttpContext);
 
                 if (postResult.IsSuccessStatusCode)
                     return RedirectToAction("Index");
 
-                ModelState.AddModelError(string.Empty , await postResult.Content.ReadAsStringAsync());
+                ModelState.AddModelError(string.Empty, await postResult.Content.ReadAsStringAsync());
             }
             return View(category);
         }
@@ -47,7 +47,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Edit(Guid id)
         {
             var category = await _categoryApiCalls.GetEditCategory(id);
-            
+
             return View(category);
         }
 
@@ -57,7 +57,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var editResult = await _categoryApiCalls.PostEditCategory(categoryUpdate);
+                var editResult = await _categoryApiCalls.PostEditCategory(categoryUpdate, HttpContext);
 
                 if (editResult.IsSuccessStatusCode)
                     return RedirectToAction("Index");

@@ -2,6 +2,7 @@
 using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.Services;
 using MagazineManagment.DAL.DataContext;
+using MagazineManagment.DTO.Mappings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,7 @@ namespace MagazineManagment.Web.Extensions
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
+            services.AddAutoMapper(typeof(MappingProfile));
             return services;
         }
     }

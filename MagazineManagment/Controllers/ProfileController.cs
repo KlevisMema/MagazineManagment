@@ -16,9 +16,9 @@ namespace MagazineManagment.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<RolesGetAllDetails>> GetRoles()
+        public async Task<ActionResult<IEnumerable<RolesGetAllDetails>>> GetRoles()
         {
-            var roles = _profileService.GetRoles();
+            var roles = await _profileService.GetRoles();
             return roles.ToList();
         }
 
@@ -85,7 +85,7 @@ namespace MagazineManagment.Web.Controllers
         }
 
         [HttpGet("GetAllUsers/{id}")]
-        public async Task<ActionResult<ResponseService<IEnumerable<UserInRoleViewModel>>>> GetAllUsers([FromRoute] string id)
+        public async Task<ActionResult<ResponseService<IEnumerable<UserNotInRoleViewModel>>>> GetAllUsers([FromRoute] string id)
         {
             var getAllUsersResult = await _profileService.GettAllUsers(id);
             if (getAllUsersResult.Success)
