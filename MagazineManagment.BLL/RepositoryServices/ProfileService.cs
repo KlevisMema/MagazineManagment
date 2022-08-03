@@ -1,7 +1,7 @@
-﻿using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
+﻿using AutoMapper;
+using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DAL.DataContext;
-using MagazineManagment.DTO.DataTransferObjects;
 using MagazineManagment.DTO.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,33 +11,33 @@ namespace MagazineManagment.BLL.RepositoryServices
     public class ProfileService : IProfileService
     {
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<IdentityUser>        _user;
-        private readonly ApplicationDbContext          _context;
+        private readonly UserManager<IdentityUser> _user;
+        private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ProfileService(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> user, ApplicationDbContext context)
+        public ProfileService(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> user, ApplicationDbContext context, IMapper mapper)
         {
             _roleManager = roleManager;
             _user = user;
             _context = context;
+            _mapper = mapper;
         }
 
-        public IEnumerable<RolesGetAllDetails> GetRoles()
+        public async Task<IEnumerable<RolesGetAllDetails>> GetRoles()
         {
-            var getRoles = _roleManager.Roles.ToList();
-            return getRoles.Select(roles => roles.AsRoleGetAllDetailsDto());
+            var getRoles = await _roleManager.Roles.ToListAsync();
+            return _mapper.Map<List<RolesGetAllDetails>>(getRoles);
         }
 
         public async Task<ResponseService<RoleCreateViewModel>> CreateRole(RoleCreateViewModel roleName)
         {
             try
             {
-                IdentityRole identityRole = new()
-                {
-                    Name = roleName.RoleName,
-                };
+                IdentityRole identityRole = _mapper.Map<IdentityRole>(roleName);
+
                 await _roleManager.CreateAsync(identityRole);
 
-                return ResponseService<RoleCreateViewModel>.Ok(identityRole.AsRoleCreateDto());
+                return ResponseService<RoleCreateViewModel>.Ok(_mapper.Map<RoleCreateViewModel>(identityRole));
             }
             catch (Exception ex)
             {
@@ -62,9 +62,9 @@ namespace MagazineManagment.BLL.RepositoryServices
             {
                 ResponseService<RoleFindViewModel>.ExceptioThrow(ex.Message);
             }
-            
 
-            return ResponseService<RoleFindViewModel>.Ok(findRole.AsRoleEditDto());
+
+            return ResponseService<RoleFindViewModel>.Ok(_mapper.Map<RoleFindViewModel>(findRole));
         }
 
         public async Task<ResponseService<ProfileUpdateViewModel>> UpdateRole(ProfileUpdateViewModel updateRole)
@@ -76,12 +76,13 @@ namespace MagazineManagment.BLL.RepositoryServices
 
             try
             {
-                findRole.Name = updateRole.RoleName;
-                findRole.NormalizedName = updateRole.RoleName.ToUpper();
+                findRole = _mapper.Map<IdentityRole>(updateRole);
+                //findRole.Name = updateRole.RoleName;
+                //findRole.NormalizedName = updateRole.RoleName.ToUpper();
 
                 var updateResult = await _roleManager.UpdateAsync(findRole);
 
-                return ResponseService<ProfileUpdateViewModel>.Ok(findRole.AsRoleUpdateDto());
+                return ResponseService<ProfileUpdateViewModel>.Ok(_mapper.Map<ProfileUpdateViewModel>(findRole));
             }
             catch (Exception ex)
             {
@@ -103,7 +104,7 @@ namespace MagazineManagment.BLL.RepositoryServices
             {
                 ResponseService<RolesGetAllDetails>.ExceptioThrow(ex.Message);
             }
-            return ResponseService<RolesGetAllDetails>.Ok(findRole.AsRoleGetAllDetailsDto());
+            return ResponseService<RolesGetAllDetails>.Ok(_mapper.Map<RolesGetAllDetails>(findRole));
         }
 
         public async Task<ResponseService<RoleFindViewModel>> DeleteRole(string id)
@@ -144,21 +145,21 @@ namespace MagazineManagment.BLL.RepositoryServices
             {
                 return ResponseService<IEnumerable<UserInRoleViewModel>>.ExceptioThrow(ex.Message);
             }
-            
 
-            return ResponseService<IEnumerable<UserInRoleViewModel>>.Ok(usersInRole.Select(u => u.AsUserInRoleDto()));
+
+            return ResponseService<IEnumerable<UserInRoleViewModel>>.Ok(_mapper.Map<IEnumerable<UserInRoleViewModel>>(usersInRole));
 
         }
 
-        public async Task<ResponseService<IEnumerable<UserInRoleViewModel>>> GettAllUsers(string id)
+        public async Task<ResponseService<IEnumerable<UserNotInRoleViewModel>>> GettAllUsers(string id)
         {
-            List<UserInRoleViewModel> usersNotInRole = new List<UserInRoleViewModel>();
+            List<UserNotInRoleViewModel> usersNotInRole = new List<UserNotInRoleViewModel>();
             try
             {
                 var role = await _roleManager.FindByIdAsync(id);
 
                 if (role == null)
-                    return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("Role doesnt exists");
+                    return ResponseService<IEnumerable<UserNotInRoleViewModel>>.NotFound("Role doesnt exists");
 
                 var Users = await _context.Users.ToListAsync();
 
@@ -166,16 +167,17 @@ namespace MagazineManagment.BLL.RepositoryServices
                 {
                     var user = await _user.GetRolesAsync(item);
                     if (!user.Contains(role.Name))
-                        usersNotInRole.Add(item.AsUserNotInRoleDto());
+                        usersNotInRole.Add(_mapper.Map<UserNotInRoleViewModel>(item));
                 }
+
             }
             catch (Exception ex)
             {
-                ResponseService<IEnumerable<UserInRoleViewModel>>.ExceptioThrow(ex.Message);
+                ResponseService<IEnumerable<UserNotInRoleViewModel>>.ExceptioThrow(ex.Message);
             }
-            
-            return ResponseService<IEnumerable<UserInRoleViewModel>>.Ok(usersNotInRole);
-            
+
+            return ResponseService<IEnumerable<UserNotInRoleViewModel>>.Ok(usersNotInRole);
+
         }
 
         public async Task<ResponseService<IEnumerable<UserInRoleViewModel>>> AssignRoleToUsers(List<UserInRoleViewModel> users, string id)
@@ -194,19 +196,17 @@ namespace MagazineManagment.BLL.RepositoryServices
                     if (user == null)
                         return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("User doesnt exists");
                     IdentityResult? assigningRoleResult = null;
-                    //IdentityResult? claimResult = null;
                     if (item.IsSelected && !(await _user.IsInRoleAsync(user, role.Name)))
                     {
                         assigningRoleResult = await _user.AddToRoleAsync(user, role.Name);
-                        //claimResult = await _user.AddClaimAsync(user, new Claim("Role", role.Name));
                     }
                     else
                         continue;
-                    if (assigningRoleResult.Succeeded /*&& claimResult.Succeeded*/)
+                    if (assigningRoleResult.Succeeded)
                         return ResponseService<IEnumerable<UserInRoleViewModel>>.Ok(users);
                 }
             }
-            catch (Exception  ex)
+            catch (Exception ex)
             {
                 return ResponseService<IEnumerable<UserInRoleViewModel>>.ExceptioThrow(ex.Message);
             }

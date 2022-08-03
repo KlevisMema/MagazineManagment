@@ -1,10 +1,13 @@
 ﻿using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DTO.ViewModels;
+using MagazineManagment.Shared.CustomAuthorizationFilter;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagazineManagment.Web.Controllers
 {
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CategoryController : Controller
@@ -16,6 +19,7 @@ namespace MagazineManagment.Web.Controllers
         }
 
         // Get all categories
+        [Auth]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryViewModel>>> GetAllCategories()
         {

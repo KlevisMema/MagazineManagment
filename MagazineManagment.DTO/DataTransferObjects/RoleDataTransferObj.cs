@@ -52,9 +52,9 @@ namespace MagazineManagment.DTO.DataTransferObjects
             };
         }
 
-        public static UserInRoleViewModel AsUserNotInRoleDto(this IdentityUser userInRole)
+        public static UserNotInRoleViewModel AsUserNotInRoleDto(this IdentityUser userInRole)
         {
-            return new UserInRoleViewModel
+            return new UserNotInRoleViewModel
             {
                 UserId = userInRole.Id,
                 Username = userInRole.UserName,

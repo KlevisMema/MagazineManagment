@@ -1,6 +1,7 @@
 ﻿using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DTO.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagazineManagment.Web.Controllers
@@ -11,7 +12,7 @@ namespace MagazineManagment.Web.Controllers
     {
         private readonly IProductRepository _productRepository;
 
-        public ProductController(IProductRepository productRepository, IHttpContextAccessor httpContextAccessor)
+        public ProductController(IProductRepository productRepository)
         {
             _productRepository = productRepository;
         }

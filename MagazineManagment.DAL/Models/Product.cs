@@ -2,7 +2,6 @@
 using MagazineManagment.DAL.Models.Base;
 using System.ComponentModel.DataAnnotations.Schema;
 using MagazineManagment.Shared.Enums;
-using System.ComponentModel.DataAnnotations;
 
 namespace MagazineManagment.DAL.Models
 {
@@ -13,13 +12,10 @@ namespace MagazineManagment.DAL.Models
         public decimal? Price { get; set; }
         public CurrencyTypeEnum? CurrencyType { get; set; }
         public string? ProductDescription { get; set; }
-
-        // images prop
         public string? Image { get; set; }
         [NotMapped]
         public IFormFile? ImageFile { get; set; }
         public int? ProductInStock { get; set; }
-        // relations prop
         public Guid? ProductCategoryId { get; set; }
         public virtual Category? ProductCategory { get; set; }
     }

@@ -1,5 +1,4 @@
 ﻿using MagazineManagment.Shared.Enums;
-using System.ComponentModel.DataAnnotations;
 
 namespace MagazineManagment.DTO.ViewModels
 {
