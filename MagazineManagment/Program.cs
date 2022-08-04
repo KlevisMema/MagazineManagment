@@ -5,16 +5,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddAuthentication();
+
 builder.Services.InjectServices(builder.Configuration);
 
 var app = builder.Build();
 
-
 await CategoriesSeed.SeedCategories(app);
-
-await UsersSeed.SeedUsersAndRolesAsync(app,builder.Configuration);
+await UsersSeed.SeedUsersAndRolesAsync(app, builder.Configuration);
 
 if (app.Environment.IsDevelopment())
 {
@@ -28,7 +25,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-
 
 app.Run();

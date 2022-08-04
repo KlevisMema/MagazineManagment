@@ -1,9 +1,11 @@
 ﻿using MagazineManagment.DTO.ViewModels;
+using MagazineManagment.Shared;
 using MagazineManagment.Shared.ApiUrlDestinations;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 
 namespace MagazineManagmet.ApiCalls.ApiCalls
@@ -30,6 +32,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             {
                 var uri = _options.Value.CategoryGetOrDeleteDefaultUri;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 var getCategoriesResponse = await client.GetAsync(RequestDestination.CategoryGetOrDeleteDefaultRoute);
 
                 readResult = await getCategoriesResponse.Content.ReadAsAsync<IList<CategoryViewModel>>();
@@ -46,6 +49,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
                 var uri = _options.Value.CategoryCreateOrEditDefaultUri;
                 client.BaseAddress = new Uri(uri);
                 category.CreatedBy = GetIdentityUserName(context);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 resultPostCategory = await client.PostAsJsonAsync(RequestDestination.CategoryCreateOrEditDefaultRoute, category);
                 client.Dispose();
             }
@@ -59,6 +63,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             {
                 var uri = _options.Value.CategoryGetOrDeleteDefaultUri;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 var getCategoryResult = await client.GetAsync(RequestDestination.CategoryGetOrDeleteDefaultRoute + "/" + id);
                 getContent = await getCategoryResult.Content.ReadAsAsync<CategoryUpdateViewModel>();
                 client.Dispose();
@@ -74,6 +79,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
                 var uri = _options.Value.CategoryCreateOrEditDefaultUri;
                 client.BaseAddress = new Uri(uri);
                 category.UpdatedBy = GetIdentityUserName(context);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 getPostEditResult = await client.PutAsJsonAsync(RequestDestination.CategoryCreateOrEditDefaultRoute, category);
                 client.Dispose();
             }
@@ -87,6 +93,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             {
                 var uri = _options.Value.CategoryGetOrDeleteDefaultUri;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 deleteResult = await client.DeleteAsync(RequestDestination.CategoryGetOrDeleteDefaultRoute + "/" + id);
                 client.Dispose();
             }

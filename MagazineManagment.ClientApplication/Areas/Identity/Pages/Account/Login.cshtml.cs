@@ -2,18 +2,18 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using MagazineManagment.ClientApplication.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using MagazineManagment.Shared;
+using System.Security.Claims;
 
 namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
 {
@@ -21,11 +21,17 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly JwtConfig _jwtConfig;
+        private readonly UserManager<IdentityUser> _user;
+        private readonly RoleManager<IdentityRole> _role;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, IOptions<JwtConfig> jwtConfig, UserManager<IdentityUser> user, RoleManager<IdentityRole> role)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _jwtConfig = jwtConfig.Value;
+            _user = user;
+            _role = role;
         }
 
         /// <summary>
@@ -92,8 +98,6 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
             }
 
             returnUrl ??= Url.Content("~/");
-
-            // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -109,12 +113,18 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
+                    var AppUser = await _user.FindByEmailAsync(Input.Email);
+
+                    var role = (await _user.GetRolesAsync(AppUser)).FirstOrDefault();
+
+                    TokenHolder.Token = GenerateToken(AppUser,role);
+
+                    _logger.LogInformation($"User logged in Token {TokenHolder.Token}");
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -132,9 +142,27 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
                     return Page();
                 }
             }
-
-            // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        private string GenerateToken(IdentityUser user, string role )
+        {
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_jwtConfig.Key);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(JwtRegisteredClaimNames.NameId, user.Id),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Role,role),
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
+            return jwtTokenHandler.WriteToken(token);
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using MagazineManagment.DTO.ViewModels;
+using MagazineManagment.Shared;
 using MagazineManagment.Shared.ApiUrlDestinations;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
 
 namespace MagazineManagmet.ApiCalls.ApiCalls
 {
@@ -21,6 +23,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             {
                 var uri = _options.Value.ProfileGetOrDeleteProfile;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 var getCategoriesResponse = await client.GetAsync(RequestDestination.ProfileGetRoles);
 
                 readResult = await getCategoriesResponse.Content.ReadAsAsync<IList<RolesGetAllDetails>>();
@@ -36,6 +39,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             {
                 var uri = _options.Value.ProfilePostOrEditRole;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 resultPostRole = await client.PostAsJsonAsync(RequestDestination.ProfilePostOrEditRoleRoute, role);
                 client.Dispose();
             }
@@ -49,6 +53,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             {
                 var uri = _options.Value.ProfileGetOrDeleteProfile;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 var getCategoryResult = await client.GetAsync(RequestDestination.ProfileGetRoles + "/FindRole/" + id);
                 getContent = await getCategoryResult.Content.ReadAsAsync<ProfileUpdateViewModel>();
                 client.Dispose();
@@ -63,6 +68,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             {
                 var uri = _options.Value.ProfilePostOrEditRole;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 getPostEditResult = await client.PutAsJsonAsync(RequestDestination.ProfilePostOrEditRoleRoute, role);
                 client.Dispose();
             }
@@ -76,6 +82,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             {
                 var uri = _options.Value.ProfileGetOrDeleteProfile;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 var getCategoryResult = await client.GetAsync(RequestDestination.ProfileGetRoleDetailsRoute + id);
                 getContent = await getCategoryResult.Content.ReadAsAsync<RolesGetAllDetails>();
                 client.Dispose();
@@ -90,6 +97,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             {
                 var uri = _options.Value.ProfileGetOrDeleteProfile;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 deleteResult = await client.DeleteAsync(RequestDestination.ProfileGetRoles + "/" + id);
                 client.Dispose();
             }
@@ -104,6 +112,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             {
                 var uri = _options.Value.ProfileGetOrDeleteProfile;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 var getCategoriesResponse = await client.GetAsync(RequestDestination.ProfileGetUsersInRole + id);
 
                 readResult = await getCategoriesResponse.Content.ReadAsAsync<IList<UserInRoleViewModel>>();
@@ -120,6 +129,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             {
                 var uri = _options.Value.ProfileGetOrDeleteProfile;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 var getUsersResponse = await client.GetAsync(RequestDestination.ProfileGetRoles + "/GetAllUsers/" + id);
 
                 if (getUsersResponse.IsSuccessStatusCode)
@@ -135,6 +145,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             {
                 var uri = _options.Value.ProfilePostOrEditRole;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 resultPostRoleToUsers = await client.PostAsJsonAsync(RequestDestination.ProfileAssignRoleToUsers + id, users);
                 client.Dispose();
             }
@@ -148,6 +159,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             {
                 var uri = _options.Value.ProfilePostOrEditRole;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 resultPostRoleToUsers = await client.PostAsJsonAsync(RequestDestination.ProfileRemoveUsersFromRole + id, users);
                 client.Dispose();
             }

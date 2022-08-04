@@ -1,7 +1,7 @@
 ﻿using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DTO.ViewModels;
-using MagazineManagment.Shared.CustomAuthorizationFilter;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,8 +18,14 @@ namespace MagazineManagment.Web.Controllers
             _categoryRepository = categoryRepository;
         }
 
-        // Get all categories
-        [Auth]
+
+        /// <summary>
+        /// Get all categories
+        /// </summary>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryViewModel>>> GetAllCategories()
         {
@@ -28,6 +34,11 @@ namespace MagazineManagment.Web.Controllers
         }
 
         // Get a single category by id
+        /// <summary>
+        ///  Get category by id
+        /// </summary>
+        /// <param name="id">The category id</param>
+        /// <returns> The category </returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<ResponseService<CategoryViewModel>>> GetCategory(Guid id)
         {
