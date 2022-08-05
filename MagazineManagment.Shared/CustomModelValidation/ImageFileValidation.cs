@@ -7,30 +7,22 @@ namespace MagazineManagment.Shared.CustomModelValidation
     {
         protected override ValidationResult IsValid(object? file , ValidationContext context)
         {
-
             try
             {
-                IFormFile formFile = file as IFormFile;
-
-                if(formFile == null)
-                {
+                if (file is not IFormFile formFile)
                     return new ValidationResult("Image is required");
-                }
 
                 var image = formFile.FileName;
 
                 if (!image.Contains(".jpg") && !image.Contains(".jepg") && !image.Contains(".png"))
-                {
                     return new ValidationResult("File format incorrect");
-                }
+
                 return ValidationResult.Success;
             }
             catch (Exception ex)
             {
-
                 return new ValidationResult(ex.Message);
             }
-           
         }
     }
 }

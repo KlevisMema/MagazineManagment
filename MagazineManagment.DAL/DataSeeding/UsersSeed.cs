@@ -11,52 +11,50 @@ namespace MagazineManagment.DAL.DataSeeding
         // seeding users and roles
         public static async Task SeedUsersAndRolesAsync(IApplicationBuilder applicationBuilder, IConfiguration configuration)
         {
-            var test = configuration.GetSection(Users.SectionName).GetChildren().ToList().Select(x => new Users
+            using var serviceScope = applicationBuilder.ApplicationServices.CreateScope();
+
+            //Roles//
+            var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            if (!await roleManager.RoleExistsAsync(RoleName.Admin))
+                await roleManager.CreateAsync(new IdentityRole(RoleName.Admin));
+            if (!await roleManager.RoleExistsAsync(RoleName.Employee))
+                await roleManager.CreateAsync(new IdentityRole(RoleName.Employee));
+
+            //Users//
+            var getUsers = configuration.GetSection(Users.SectionName).GetChildren().ToList().Select(x => new Users
             {
                 UserName = x.GetValue<string>("UserName"),
                 Password = x.GetValue<string>("Password"),
             });
 
-            using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
+            var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+            foreach (var item in getUsers)
             {
+                var User = await userManager.FindByEmailAsync(item.UserName);
 
-                //Roles//
-                var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-                if (!await roleManager.RoleExistsAsync(RoleName.Admin))
-                    await roleManager.CreateAsync(new IdentityRole(RoleName.Admin));
-                if (!await roleManager.RoleExistsAsync(RoleName.Employee))
-                    await roleManager.CreateAsync(new IdentityRole(RoleName.Employee));
-
-                //Users//
-                var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-
-                foreach (var item in test)
+                if (User == null && item.UserName.Contains("admin"))
                 {
-                    var User = await userManager.FindByEmailAsync(item.UserName);
-
-                    if (User == null && item.UserName.Contains("admin"))
+                    var newAdminUser = new IdentityUser()
                     {
-                        var newAdminUser = new IdentityUser()
-                        {
-                            UserName = item.UserName,
-                            Email = item.UserName,
-                            EmailConfirmed = true
-                        };
-                        await userManager.CreateAsync(newAdminUser, item.Password);
-                        await userManager.AddToRoleAsync(newAdminUser, RoleName.Admin);
-                    }
-                    else if (User == null && item.UserName.Contains("employee"))
+                        UserName = item.UserName,
+                        Email = item.UserName,
+                        EmailConfirmed = true
+                    };
+                    await userManager.CreateAsync(newAdminUser, item.Password);
+                    await userManager.AddToRoleAsync(newAdminUser, RoleName.Admin);
+                }
+                else if (User == null && item.UserName.Contains("employee"))
+                {
+                    var newManagerUser = new IdentityUser()
                     {
-                        var newAdminUser = new IdentityUser()
-                        {
-                            UserName = item.UserName,
-                            Email = item.UserName,
-                            EmailConfirmed = true
-                        };
-                        await userManager.CreateAsync(newAdminUser, item.Password);
-                        await userManager.AddToRoleAsync(newAdminUser, RoleName.Employee);
-                    }
+                        UserName = item.UserName,
+                        Email = item.UserName,
+                        EmailConfirmed = true
+                    };
+                    await userManager.CreateAsync(newManagerUser, item.Password);
+                    await userManager.AddToRoleAsync(newManagerUser, RoleName.Employee);
                 }
             }
         }
