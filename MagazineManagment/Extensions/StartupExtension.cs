@@ -23,7 +23,6 @@ namespace MagazineManagment.Web.Extensions
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddAutoMapper(typeof(MappingProfile));
-
             services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
@@ -54,9 +53,6 @@ namespace MagazineManagment.Web.Extensions
                     }
                 });
             });
-
-
-
             services.AddAuthentication(a =>
             {
                 a.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

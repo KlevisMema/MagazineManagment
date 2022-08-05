@@ -19,6 +19,5 @@
         public const string ProfileRemoveUsersFromRole = "api/Profile/RemoveRoleFromUsers/";
         public const string ProfileGetRoleDetailsRoute = "Profile/GetRole/";
         public const string ProfileGetUsersInRole = "Profile/GetUsersOfARole/";
-
     }
 }
