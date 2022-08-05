@@ -6,27 +6,43 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MagazineManagment.Web.Controllers
 {
+    /// <summary>
+    /// Product controller
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class ProductController : Controller
     {
         private readonly IProductRepository _productRepository;
-
+        /// <summary>
+        /// Inject product service  interface
+        /// </summary>
+        /// <param name="productRepository"></param>
         public ProductController(IProductRepository productRepository)
         {
             _productRepository = productRepository;
         }
-
-        // Get all products
+        /// <summary>
+        /// Get all products
+        /// </summary>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<IEnumerable<ProductViewModel>>> GetAllProductsAsync()
         {
             var allProducts = await _productRepository.GetAllProductsAsync();
             return Ok(allProducts);
         }
-
-        // Get a single product with id
+        /// <summary>
+        /// Get a product by id 
+        /// </summary>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<ProductViewModel>>> GetProductAsync(Guid id)
         {
             var resultGetProdut = await _productRepository.GetProductAsync(id);
@@ -36,9 +52,14 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(resultGetProdut.Message);
         }
-
-        // Create a new product
+        /// <summary>
+        /// Create a product
+        /// </summary>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<ProductViewModel>>> CreateProductAsync(ProductCreateViewModelNoIFormFile product)
         {
             var resultCreateProduct = await _productRepository.CreateProductAsync(product);
@@ -48,9 +69,14 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(resultCreateProduct.Message);
         }
-
-        // Update Product 
+        /// <summary>
+        /// Update a product
+        /// </summary>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductPostEditViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<ProductPostEditViewModel>>> UpdateProductAsync(ProductPostEditViewModel product)
         {
             var resultUpdateProduct = await _productRepository.UpdateProductAsync(product);
@@ -60,26 +86,41 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(resultUpdateProduct.Message);
         }
-
-        // Delete a product
+        /// <summary>
+        /// Delete a product
+        /// </summary>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin,Employee")]
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<ProductViewModel>>> DeleteProductAsync(Guid id)
         {
             var productToBeDeleted = await _productRepository.DeleteProductAsync(id);
 
             return Ok(productToBeDeleted.Message);
         }
-
-        // Display all products together with their category info
+        /// <summary>
+        /// Get full info about a product 
+        /// </summary>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetProductsAndCategory")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductsAndCategoryInfoViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<IEnumerable<ProductsAndCategoryInfoViewModel>>> ProductsAndCategoryAsync()
         {
             var getProductWithCategoryIncluded = await _productRepository.ProductsAndCategoryAsync();
             return Ok(getProductWithCategoryIncluded);
         }
-
-        // serach a product by its name
+        /// <summary>
+        /// Get a product by name
+        /// </summary>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetProductByName/{productName}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<ProductViewModel>>> GetPorductByNameAsync(string productName)
         {
             var resultGetProductByItsName = await _productRepository.GetProductByNameAsync(productName);
@@ -89,8 +130,14 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(resultGetProductByItsName.Message);
         }
-
+        /// <summary>
+        /// Get product image 
+        /// </summary>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetProductImage/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductImageOnly))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<ProductImageOnly>>> GetProductImageOnlyAsync(Guid id)
         {
             var getProductImage = await _productRepository.GetProductImage(id);
@@ -99,15 +146,27 @@ namespace MagazineManagment.Web.Controllers
                 return Ok(getProductImage.Value);
             return BadRequest(getProductImage.Message);
         }
-
+        /// <summary>
+        /// Get all products changes made by employees
+        /// </summary>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetProducChangesByEmpolyees")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductsRecordCopyViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<IEnumerable<ProductsRecordCopyViewModel>>> GetProducChangesByEmpolyees()
         {
             var changesByEmployees = await _productRepository.GetProducChangesByEmpolyees();
             return Ok(changesByEmployees);
         }
-
+        /// <summary>
+        /// Delete the changes that employye made 
+        /// </summary>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("DeleteProducChangesByEmpolyees/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductsRecordCopyViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<ProductsRecordCopyViewModel>>> DeleteProductChangeByEmployee(Guid id)
         {
             var productToBeDeleted = await _productRepository.DeleteProductChangeByEmployee(id);

@@ -17,19 +17,21 @@ namespace MagazineManagment.ClientApplication.Controllers
             _signInManager = signInManager;
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var getAllRoles = await _profileApiCalls.GetAllRoles();
             return View(getAllRoles);
         }
 
-        //[Authorize(Roles = "Admini")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RoleCreateViewModel role)
@@ -45,6 +47,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(role);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Update(string id)
         {
@@ -56,6 +59,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return NotFound("Role doesnt exists");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(ProfileUpdateViewModel role)
@@ -72,6 +76,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(role);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
@@ -83,6 +88,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return NotFound("Role doesnt exists");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(RolesGetAllDetails role)
@@ -95,6 +101,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(role);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Users(string id)
         {
@@ -104,6 +111,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(getUsersInRole);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> AsingRoleToUsers(string id)
         {
@@ -112,6 +120,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(getUsers);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AsingRoleToUsers(List<UserInRoleViewModel> users, string id)
@@ -124,6 +133,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return RedirectToAction("AsingRoleToUsers");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> RemoveRoleFromUsers(string id)
         {
@@ -132,6 +142,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(getUsers);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveRoleFromUsers(List<UserInRoleViewModel> users, string id)

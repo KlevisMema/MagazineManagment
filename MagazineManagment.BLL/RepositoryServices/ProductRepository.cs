@@ -139,7 +139,7 @@ namespace MagazineManagment.BLL.Services
                 }
                 else
                 {
-                    productToBeUpdated = _mapper.Map<Product>(product);
+                   _mapper.Map(product,productToBeUpdated);
 
                     //productToBeUpdated.ProductName = product.ProductName;
                     //productToBeUpdated.Price = product.Price;

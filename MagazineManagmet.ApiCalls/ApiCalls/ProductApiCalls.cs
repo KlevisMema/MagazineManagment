@@ -1,9 +1,11 @@
 ﻿using MagazineManagment.DTO.ViewModels;
+using MagazineManagment.Shared;
 using MagazineManagment.Shared.ApiUrlDestinations;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 
 namespace MagazineManagment.Web.ApiCalls
@@ -42,7 +44,7 @@ namespace MagazineManagment.Web.ApiCalls
             IEnumerable<ProductViewModel>? readResponse = null;
             var uri = _config.Value.ProductGet;
             client.BaseAddress = new Uri(uri);
-
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
             var response = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute);
             readResponse = await response.Content.ReadAsAsync<IList<ProductViewModel>>();
             client.Dispose();
@@ -58,7 +60,7 @@ namespace MagazineManagment.Web.ApiCalls
             {
                 var uri = _config.Value.GetAllCategories;
                 client.BaseAddress = new Uri(uri);
-
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 var response = await client.GetAsync(RequestDestination.GetCreateProductRoute);
 
                 readResponse = await response.Content.ReadAsAsync<IList<CategoryNameOnlyViewModel>>();
@@ -89,6 +91,7 @@ namespace MagazineManagment.Web.ApiCalls
             using var client = new HttpClient();
             var uri = _config.Value.ProductPostCreateOrEditDefaultUri;
             client.BaseAddress = new Uri(uri);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
             var result = await client.PostAsJsonAsync(RequestDestination.ProductCreateOrEditDefaultRoute, newProduct);
             client.Dispose();
             return result;
@@ -102,7 +105,7 @@ namespace MagazineManagment.Web.ApiCalls
             {
                 var uri = _config.Value.ProductGet;
                 client.BaseAddress = new Uri(uri);
-
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 var getTask = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
                 readTask = await getTask.Content.ReadAsAsync<ProductUpdateViewModel>();
                 client.Dispose();
@@ -152,6 +155,7 @@ namespace MagazineManagment.Web.ApiCalls
             {
                 var uri = _config.Value.ProductPostCreateOrEditDefaultUri;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 var postTask = await client.PutAsJsonAsync(RequestDestination.ProductCreateOrEditDefaultRoute, newUpdatedProduct);
                 return postTask;
             }
@@ -164,6 +168,7 @@ namespace MagazineManagment.Web.ApiCalls
             {
                 var uri = _config.Value.ProductGet;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 deleteResult = await client.DeleteAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
                 client.Dispose();
             }
@@ -176,6 +181,7 @@ namespace MagazineManagment.Web.ApiCalls
             using var client = new HttpClient();
             var uri = _config.Value.ProductGet;
             client.BaseAddress = new Uri(uri);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
             var getProduct = await client.GetAsync(RequestDestination.GetProductImage + id);
 
             var Task = await getProduct.Content.ReadAsAsync<ProductImageOnly>();
@@ -188,7 +194,7 @@ namespace MagazineManagment.Web.ApiCalls
             IEnumerable<ProductsRecordCopyViewModel>? readResponse = null;
             var uri = _config.Value.ProductGet;
             client.BaseAddress = new Uri(uri);
-
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
             var response = await client.GetAsync(RequestDestination.ProductChangesMadeByEmployee);
             readResponse = await response.Content.ReadAsAsync<IList<ProductsRecordCopyViewModel>>();
             client.Dispose();
@@ -202,6 +208,7 @@ namespace MagazineManagment.Web.ApiCalls
             {
                 var uri = _config.Value.ProductGet;
                 client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 deleteResult = await client.DeleteAsync(RequestDestination.ProductChangesMadeByEmployeeDeleteRoute + id);
                 client.Dispose();
             }
@@ -216,7 +223,7 @@ namespace MagazineManagment.Web.ApiCalls
             {
                 var uri = _config.Value.ProductGet;
                 client.BaseAddress = new Uri(uri);
-
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 var getTask = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
                 readTask = await getTask.Content.ReadAsAsync<ProductViewModel>();
                 client.Dispose();

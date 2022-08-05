@@ -23,15 +23,13 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
         private readonly ILogger<LoginModel> _logger;
         private readonly JwtConfig _jwtConfig;
         private readonly UserManager<IdentityUser> _user;
-        private readonly RoleManager<IdentityRole> _role;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, IOptions<JwtConfig> jwtConfig, UserManager<IdentityUser> user, RoleManager<IdentityRole> role)
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, IOptions<JwtConfig> jwtConfig, UserManager<IdentityUser> user)
         {
             _signInManager = signInManager;
             _logger = logger;
             _jwtConfig = jwtConfig.Value;
             _user = user;
-            _role = role;
         }
 
         /// <summary>
@@ -120,9 +118,7 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
                     var AppUser = await _user.FindByEmailAsync(Input.Email);
 
                     var role = (await _user.GetRolesAsync(AppUser)).FirstOrDefault();
-
                     TokenHolder.Token = GenerateToken(AppUser,role);
-
                     _logger.LogInformation($"User logged in Token {TokenHolder.Token}");
 
                     return LocalRedirect(returnUrl);

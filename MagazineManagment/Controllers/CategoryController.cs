@@ -1,45 +1,48 @@
 ﻿using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DTO.ViewModels;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagazineManagment.Web.Controllers
 {
-    //[Authorize]
+    /// <summary>
+    /// Category Controller
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class CategoryController : Controller
     {
         private readonly ICategoryRepository _categoryRepository;
+        /// <summary>
+        /// Inject category service
+        /// </summary>
         public CategoryController(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }
-
-
         /// <summary>
         /// Get all categories
         /// </summary>
         /// <response code="401"> Unauthorized </response>
         [Authorize(Roles = "Admin")]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryViewModel>>> GetAllCategories()
         {
             var getAllCategories = await _categoryRepository.GetAllCategoriesAsync();
             return Ok(getAllCategories);
         }
-
-        // Get a single category by id
         /// <summary>
         ///  Get category by id
         /// </summary>
         /// <param name="id">The category id</param>
-        /// <returns> The category </returns>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<CategoryViewModel>>> GetCategory(Guid id)
         {
             var result = await _categoryRepository.GetCategoryAsync(id);
@@ -49,9 +52,14 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(result.Message);
         }
-
-        // Create a category
+        /// <summary>
+        ///  Create a  category
+        /// </summary>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<CategoryViewModel>>> CreateCategory(CategoryCreateViewModel createCategory)
         {
             var resultCreate = await _categoryRepository.CreateCategoryAsync(createCategory);
@@ -59,9 +67,15 @@ namespace MagazineManagment.Web.Controllers
                 return Ok(resultCreate.Value);
             return BadRequest(resultCreate.Message);
         }
-
-        // Update a category
+        /// <summary>
+        /// Update a category
+        /// </summary>
+        /// <param name="category"></param>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<CategoryViewModel>>> UpdateCategory(CategoryUpdateViewModel category)
         {
             var result = await _categoryRepository.UpdateCategoryAsync(category);
@@ -71,9 +85,15 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(result.Message);
         }
-
-        // Delete a category
+        /// <summary>
+        /// Delete a category
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<CategoryViewModel>>> DeleteCategory(Guid id)
         {
             var resultDelete = await _categoryRepository.DeleteCategoryAsync(id);
@@ -84,13 +104,18 @@ namespace MagazineManagment.Web.Controllers
             return BadRequest(resultDelete.Message);
 
         }
-
+        /// <summary>
+        /// Get category names
+        /// </summary>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
         [HttpGet("CategoryNameOnly")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryNameOnlyViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<CategoryNameOnlyViewModel>> GetNamesOnlyCategories()
         {
             var result = await _categoryRepository.GetNamesOnlyCategories();
             return Ok(result);
         }
-
     }
 }

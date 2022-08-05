@@ -14,7 +14,9 @@ namespace MagazineManagment.DTO.Mappings
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.ProductCategory.CategoryName));
             CreateMap<ProductCreateViewModelNoIFormFile, Product>()
                 .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => DateTime.UtcNow));
+
             CreateMap<Product, ProductPostEditViewModel>();
+                
             CreateMap<ProductPostEditViewModel, Product>();
             CreateMap<Product, ProductsAndCategoryInfoViewModel>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.ProductCategory.CategoryName))
@@ -65,7 +67,6 @@ namespace MagazineManagment.DTO.Mappings
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.IsSelected, opt => opt.MapFrom(src => false));
-
         }
     }
 }
