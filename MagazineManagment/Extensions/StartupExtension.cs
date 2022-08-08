@@ -1,4 +1,5 @@
-﻿using MagazineManagment.BLL.RepositoryServices;
+﻿using MagazineManagment.BLL;
+using MagazineManagment.BLL.RepositoryServices;
 using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.Services;
 using MagazineManagment.DAL.DataContext;
@@ -10,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
+
 
 namespace MagazineManagment.Web.Extensions
 {
@@ -23,6 +25,11 @@ namespace MagazineManagment.Web.Extensions
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddAutoMapper(typeof(MappingProfile));
+
+            services.AddIdentityServer().AddProfileService<ProfileService2>()/*.AddApiAuthorization<IdentityUser, ApplicationDbContext>()*/;
+            //services.AddAuthentication().AddIdentityServerJwt();
+
+
             services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
@@ -49,7 +56,7 @@ namespace MagazineManagment.Web.Extensions
                                 Id = "bearerAuth",
                             },
                         },
-                        new string[]{}
+                        Array.Empty<string>()
                     }
                 });
             });
