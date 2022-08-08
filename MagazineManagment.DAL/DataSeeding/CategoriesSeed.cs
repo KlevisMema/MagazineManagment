@@ -10,15 +10,14 @@ namespace MagazineManagment.DAL.DataSeeding
         // seeding category data
         public static async Task SeedCategories(IApplicationBuilder applicationBuilder)
         {
-            using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
+            using var serviceScope = applicationBuilder.ApplicationServices.CreateScope();
+            var _context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+
+            _context.Database.EnsureCreated();
+
+            if (!_context.Categories.Any())
             {
-                var _context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
-
-                _context.Database.EnsureCreated();
-
-                if (!_context.Categories.Any())
-                {
-                    await _context.Categories.AddRangeAsync(new List<Category>()
+                await _context.Categories.AddRangeAsync(new List<Category>()
                     {
                         new Category
                         {
@@ -77,8 +76,7 @@ namespace MagazineManagment.DAL.DataSeeding
                             IsDeleted = false,
                         },
                     });
-                    await _context.SaveChangesAsync();
-                }
+                await _context.SaveChangesAsync();
             }
         }
     }
