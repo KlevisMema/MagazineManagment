@@ -1,4 +1,4 @@
-﻿namespace MagazineManagment.Shared
+﻿namespace MagazineManagment.Shared.Jwtbearer
 {
     public class TokenHolder
     {

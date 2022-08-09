@@ -1,6 +1,6 @@
 ﻿using MagazineManagment.DTO.ViewModels;
-using MagazineManagment.Shared;
 using MagazineManagment.Shared.ApiUrlDestinations;
+using MagazineManagment.Shared.Jwtbearer;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Http;
