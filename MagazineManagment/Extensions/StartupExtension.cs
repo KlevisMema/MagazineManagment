@@ -26,7 +26,7 @@ namespace MagazineManagment.Web.Extensions
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddAutoMapper(typeof(MappingProfile));
 
-            services.AddIdentityServer().AddProfileService<ProfileService2>()/*.AddApiAuthorization<IdentityUser, ApplicationDbContext>()*/;
+            /*services.AddIdentityServer().AddProfileService<ProfileService2>()*//*.AddApiAuthorization<IdentityUser, ApplicationDbContext>()*/;
             //services.AddAuthentication().AddIdentityServerJwt();
 
 
@@ -60,11 +60,13 @@ namespace MagazineManagment.Web.Extensions
                     }
                 });
             });
+
             services.AddAuthentication(a =>
             {
                 a.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 a.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
+
             .AddJwtBearer(options =>
             {
                 var key = Encoding.ASCII.GetBytes(configuration["JWTConfig:Key"]);

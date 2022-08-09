@@ -5,11 +5,16 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using MagazineManagment.ClientApplication.Models;
+using MagazineManagment.Shared.Jwtbearer;
+using MagazineManagment.Shared.UsersSeedValues;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,7 +22,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
 {
@@ -30,6 +36,7 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly JwtConfig _jwtConfig;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -37,7 +44,8 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            RoleManager<IdentityRole> roleManager
+            RoleManager<IdentityRole> roleManager,
+            IOptions<JwtConfig> jwtConfig
             )
         {
             _userManager = userManager;
@@ -47,6 +55,7 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            _jwtConfig = jwtConfig.Value;
         }
 
         /// <summary>
@@ -55,19 +64,16 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
-
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public string ReturnUrl { get; set; }
-
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
-
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -102,8 +108,6 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
         }
-
-
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
@@ -124,13 +128,17 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
-
-                    var findRole = await _roleManager.FindByNameAsync("Employee");
-
+                    var findRole = await _roleManager.FindByNameAsync(RoleName.Employee);
                     if (findRole != null)
-                        await _userManager.AddToRoleAsync(user, "Employee");
+                        await _userManager.AddToRoleAsync(user, RoleName.Employee);
 
+                    //var AppUser = await _userManager.FindByEmailAsync(Input.Email);
+
+                    //var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+
+                    TokenHolder.Token = GenerateToken(user, RoleName.Employee);
+
+                    _logger.LogInformation("User created a new account with password.");
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -163,6 +171,29 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
             return Page();
         }
 
+
+        private string GenerateToken(IdentityUser user, string role)
+        {
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_jwtConfig.Key);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(JwtRegisteredClaimNames.NameId, user.Id),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Role,role),
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
+            return jwtTokenHandler.WriteToken(token);
+        }
+
+
+
         private IdentityUser CreateUser()
         {
             try
@@ -176,7 +207,6 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
-
         private IUserEmailStore<IdentityUser> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)

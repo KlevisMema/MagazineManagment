@@ -17,17 +17,22 @@
     </p>
 </div>
 <div class="container1">
-    <div class="card1">
-        <a asp-action="Index" asp-controller="ProductClient">Products</a>
-    </div>
-    <div class="card1">
-        <a asp-action="Index" asp-controller="CategoryClient">Categories</a>
-    </div>
-    <div class="card1">
-        <a asp-action="Index" asp-controller="ProfileClient">Roles</a>
-    </div>
-    <div class="card1">
-        <a asp-action="GetChangesMadeByEmployees" asp-controller="ProductClient">Employees Work</a>
-    </div>
+    @if (User.IsInRole("Employee") || User.IsInRole("Admin"))
+    {
+         <div class="card1">
+            <a asp-action="Index" asp-controller="ProductClient">Products</a>
+        </div>
+    }
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="card1">
+            <a asp-action="Index" asp-controller="CategoryClient">Categories</a>
+        </div>
+        <div class="card1">
+            <a asp-action="Index" asp-controller="ProfileClient">Roles</a>
+        </div>
+        <div class="card1">
+            <a asp-action="GetChangesMadeByEmployees" asp-controller="ProductClient">Employees Work</a>
+        </div>
+    }
 </div>
-

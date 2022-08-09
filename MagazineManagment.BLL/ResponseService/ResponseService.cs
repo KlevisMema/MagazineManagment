@@ -9,9 +9,6 @@ namespace MagazineManagment.BLL.ResponseService
         public bool Success { get; set; }
         public HttpStatusCode StatusCode { get; set; }
 
-
-
-
         public ResponseService(string? errorMessage)
         {
             Message = errorMessage;

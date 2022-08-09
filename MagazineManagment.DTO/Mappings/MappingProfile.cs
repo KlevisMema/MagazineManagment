@@ -21,7 +21,9 @@ namespace MagazineManagment.DTO.Mappings
             CreateMap<Product, ProductsAndCategoryInfoViewModel>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.ProductCategory.CategoryName))
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.ProductCategoryId));
+
             CreateMap<Product, ProductImageOnly>();
+
             CreateMap<ProductRecordsChanged, ProductsRecordCopyViewModel>()
                 .ForMember(dest => dest.ChangesInQunatity, opt => opt.MapFrom(src => src.ProductInStock))
                 .ForMember(dest => dest.QuantityBeforeChange, opt => opt.MapFrom(src => src.QunatityBeforeRemoval))

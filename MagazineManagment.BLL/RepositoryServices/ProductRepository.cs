@@ -117,7 +117,6 @@ namespace MagazineManagment.BLL.Services
             if (ckeckIfExists)
                 return ResponseService<ProductPostEditViewModel>.ErrorMsg($"Serial number {product.SerialNumber} exists, please give another  serial number");
 
-
             try
             {
                 if (recordChangedByEmployee)
@@ -140,16 +139,6 @@ namespace MagazineManagment.BLL.Services
                 else
                 {
                    _mapper.Map(product,productToBeUpdated);
-
-                    //productToBeUpdated.ProductName = product.ProductName;
-                    //productToBeUpdated.Price = product.Price;
-                    //productToBeUpdated.CreatedOn = DateTime.Now;
-                    //productToBeUpdated.ProductDescription = product.ProductDescription;
-                    //productToBeUpdated.SerialNumber = product.SerialNumber.ToUpper();
-                    //productToBeUpdated.CreatedBy = "Admin";
-                    //productToBeUpdated.Image = product.Image;
-                    //productToBeUpdated.ProductInStock = product.ProductInStock;
-
                 }
                 _context.Products.Update(productToBeUpdated);
                 await _context.SaveChangesAsync();
