@@ -26,7 +26,7 @@ namespace MagazineManagment.Web.Extensions
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddAutoMapper(typeof(MappingProfile));
 
-            services.AddIdentityServer().AddProfileService<ProfileService2>()/*.AddApiAuthorization<IdentityUser, ApplicationDbContext>()*/;
+            //services.AddIdentityServer().AddProfileService<ProfileService2>()/*.AddApiAuthorization<IdentityUser, ApplicationDbContext>()*/;
             //services.AddAuthentication().AddIdentityServerJwt();
 
 
