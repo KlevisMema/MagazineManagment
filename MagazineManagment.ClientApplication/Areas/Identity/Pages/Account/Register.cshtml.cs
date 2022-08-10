@@ -2,21 +2,15 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
 using MagazineManagment.ClientApplication.Models;
 using MagazineManagment.Shared.Jwtbearer;
 using MagazineManagment.Shared.UsersSeedValues;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -131,13 +125,7 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
                     var findRole = await _roleManager.FindByNameAsync(RoleName.Employee);
                     if (findRole != null)
                         await _userManager.AddToRoleAsync(user, RoleName.Employee);
-
-                    //var AppUser = await _userManager.FindByEmailAsync(Input.Email);
-
-                    //var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
-
                     TokenHolder.Token = GenerateToken(user, RoleName.Employee);
-
                     _logger.LogInformation("User created a new account with password.");
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -147,7 +135,6 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
                         pageHandler: null,
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
-
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                     $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
@@ -166,8 +153,6 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-
-            // If we got this far, something failed, redisplay form
             return Page();
         }
 
@@ -191,8 +176,6 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
             var token = jwtTokenHandler.CreateToken(tokenDescriptor);
             return jwtTokenHandler.WriteToken(token);
         }
-
-
 
         private IdentityUser CreateUser()
         {

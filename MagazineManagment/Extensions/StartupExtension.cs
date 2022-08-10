@@ -1,5 +1,4 @@
-﻿using MagazineManagment.BLL;
-using MagazineManagment.BLL.RepositoryServices;
+﻿using MagazineManagment.BLL.RepositoryServices;
 using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.Services;
 using MagazineManagment.DAL.DataContext;
