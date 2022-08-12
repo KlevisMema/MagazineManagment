@@ -1,7 +1,10 @@
 ﻿@using MagazineManagment.DTO.ViewModels
-@model CategoryUpdateViewModel
+@model CategoryViewModel
 
-<form asp-action="Edit" asp-controller="CategoryClient" method="post" asp-antiforgery="true">
+@using FormHelper
+@addTagHelper *, FormHelper
+
+<form asp-formhelper="true" asp-action="Edit" asp-controller="CategoryClient" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group">
         <label asp-for="CategoryName" ></label>

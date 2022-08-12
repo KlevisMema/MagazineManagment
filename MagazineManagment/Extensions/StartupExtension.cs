@@ -1,8 +1,11 @@
-﻿using MagazineManagment.BLL.RepositoryServices;
+﻿using FluentValidation;
+using MagazineManagment.BLL.RepositoryServices;
 using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.Services;
 using MagazineManagment.DAL.DataContext;
+using MagazineManagment.DTO.FluentValidators;
 using MagazineManagment.DTO.Mappings;
+using MagazineManagment.DTO.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +27,10 @@ namespace MagazineManagment.Web.Extensions
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddAutoMapper(typeof(MappingProfile));
+
+           
+
+            services.AddScoped<IValidator<CategoryCreateViewModel>, CategoryCreateValidator>();
 
             //services.AddIdentityServer().AddProfileService<ProfileService2>()/*.AddApiAuthorization<IdentityUser, ApplicationDbContext>()*/;
             //services.AddAuthentication().AddIdentityServerJwt();

@@ -5,6 +5,8 @@ using MagazineManagment.DAL.Models;
 using MagazineManagment.DTO.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Http;
 
 namespace MagazineManagment.BLL.Services
 {
@@ -13,6 +15,16 @@ namespace MagazineManagment.BLL.Services
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
+        private static string GetUser(HttpContext context)
+        {
+            var headers = context.Request.Headers["Authorization"].ToString().Remove(0, 7);
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(headers);
+            var getUsername = token.Claims.Where(t => t.Type == "email").Select(v => v.Value).ToArray();
+
+            return getUsername[0].ToString();
+        }
+
         public CategoryRepository(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
@@ -20,10 +32,11 @@ namespace MagazineManagment.BLL.Services
         }
 
         //Create a category
-        public async Task<ResponseService<CategoryViewModel>> CreateCategoryAsync(CategoryCreateViewModel category)
+        public async Task<ResponseService<CategoryViewModel>> CreateCategoryAsync(CategoryCreateViewModel category, HttpContext context)
         {
             try
             {
+                category.CreatedBy = GetUser(context);
                 Category Newcategory = _mapper.Map<Category>(category);
 
                 _context.Categories.Add(Newcategory);
@@ -51,7 +64,7 @@ namespace MagazineManagment.BLL.Services
             {
                 var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
                 if (category == null)
-                    return ResponseService<CategoryViewModel>.NotFound($"Category with id of {id} does not exists");
+                    return ResponseService<CategoryViewModel>.NotFound("Category does not exists");
 
                 return ResponseService<CategoryViewModel>.Ok(_mapper.Map<CategoryViewModel>(category));
             }
@@ -59,11 +72,10 @@ namespace MagazineManagment.BLL.Services
             {
                 return ResponseService<CategoryViewModel>.ExceptioThrow(ex.Message);
             }
-
         }
 
         // update a category
-        public async Task<ResponseService<CategoryViewModel>> UpdateCategoryAsync(CategoryUpdateViewModel category)
+        public async Task<ResponseService<CategoryViewModel>> UpdateCategoryAsync(CategoryUpdateViewModel category,HttpContext context)
         {
             try
             {
@@ -74,6 +86,7 @@ namespace MagazineManagment.BLL.Services
 
                 findCategory.CategoryName = category.CategoryName;
                 findCategory.CreatedOn = DateTime.Now;
+                findCategory.CreatedBy = GetUser(context);
 
                 _context.Categories.Update(findCategory);
                 await _context.SaveChangesAsync();

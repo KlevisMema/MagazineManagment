@@ -1,4 +1,5 @@
-﻿using MagazineManagment.DTO.ViewModels;
+﻿using FormHelper;
+using MagazineManagment.DTO.ViewModels;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,24 +23,22 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             return View();
         }
 
-        [HttpPost]
+        [HttpPost, FormValidator]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CategoryCreateViewModel category)
         {
-            if (ModelState.IsValid)
-            {
-                var postResult = await _categoryApiCalls.PostCreateCategory(category, HttpContext);
 
-                if (postResult.IsSuccessStatusCode)
-                    return RedirectToAction("Index");
+            var postResult = await _categoryApiCalls.PostCreateCategory(category);
 
-                ModelState.AddModelError(string.Empty, await postResult.Content.ReadAsStringAsync());
-            }
+            if (postResult.IsSuccessStatusCode)
+                return FormResult.CreateSuccessResult("Category created successfully", Url.Action("Index", 1000));
+
+            ModelState.AddModelError(string.Empty, await postResult.Content.ReadAsStringAsync());
             return View(category);
         }
 
@@ -47,24 +46,22 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Edit(Guid id)
         {
             var category = await _categoryApiCalls.GetEditCategory(id);
-
+            if (category.CategoryName == null)
+                return RedirectToAction("Index", "ErrorHandler"); 
             return View(category);
         }
 
-        [HttpPost]
+        [HttpPost, FormValidator]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CategoryUpdateViewModel categoryUpdate)
         {
-            if (ModelState.IsValid)
-            {
-                var editResult = await _categoryApiCalls.PostEditCategory(categoryUpdate, HttpContext);
 
-                if (editResult.IsSuccessStatusCode)
-                    return RedirectToAction("Index");
+            var editResult = await _categoryApiCalls.PostEditCategory(categoryUpdate);
 
-                ModelState.AddModelError(string.Empty, await editResult.Content.ReadAsStringAsync());
-            }
+            if (editResult.IsSuccessStatusCode)
+                return FormResult.CreateSuccessResult("Category updated successfully", Url.Action("Index", 1000));
 
+            ModelState.AddModelError(string.Empty, await editResult.Content.ReadAsStringAsync());
             return View(categoryUpdate);
         }
 

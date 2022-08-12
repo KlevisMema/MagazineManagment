@@ -1,4 +1,5 @@
-﻿using MagazineManagment.DTO.ViewModels;
+﻿using MagazineManagment.BLL.ResponseService;
+using MagazineManagment.DTO.ViewModels;
 using MagazineManagment.Shared.ApiUrlDestinations;
 using MagazineManagment.Shared.Jwtbearer;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
@@ -6,19 +7,12 @@ using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
-using System.Security.Claims;
 
 namespace MagazineManagmet.ApiCalls.ApiCalls
 {
     public class CategoryApiCalls : ICategoryApiCalls
     {
         private readonly IOptions<FetchApiValue> _options;
-        private string GetIdentityUserName(HttpContext context)
-        {
-            var identityUser = context.User.Identity as ClaimsIdentity;
-            var userName = identityUser.FindFirst(ClaimTypes.Name).Value;
-            return userName;
-        }
 
         public CategoryApiCalls(IOptions<FetchApiValue> options)
         {
@@ -41,14 +35,13 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             return readResult;
         }
 
-        public async Task<HttpResponseMessage> PostCreateCategory(CategoryCreateViewModel category, HttpContext context)
+        public async Task<HttpResponseMessage> PostCreateCategory(CategoryCreateViewModel category)
         {
             HttpResponseMessage resultPostCategory = new();
             using (var client = new HttpClient())
             {
                 var uri = _options.Value.CategoryCreateOrEditDefaultUri;
                 client.BaseAddress = new Uri(uri);
-                category.CreatedBy = GetIdentityUserName(context);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 resultPostCategory = await client.PostAsJsonAsync(RequestDestination.CategoryCreateOrEditDefaultRoute, category);
                 client.Dispose();
@@ -56,29 +49,28 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             return resultPostCategory;
         }
 
-        public async Task<CategoryUpdateViewModel> GetEditCategory(Guid id)
+        public async Task<CategoryViewModel> GetEditCategory(Guid id)
         {
-            CategoryUpdateViewModel? getContent = null;
+            CategoryViewModel? getContent = null;
             using (var client = new HttpClient())
             {
                 var uri = _options.Value.CategoryGetOrDeleteDefaultUri;
                 client.BaseAddress = new Uri(uri);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 var getCategoryResult = await client.GetAsync(RequestDestination.CategoryGetOrDeleteDefaultRoute + "/" + id);
-                getContent = await getCategoryResult.Content.ReadAsAsync<CategoryUpdateViewModel>();
+                getContent = await getCategoryResult.Content.ReadAsAsync<CategoryViewModel>();
                 client.Dispose();
             }
             return getContent;
         }
 
-        public async Task<HttpResponseMessage> PostEditCategory(CategoryUpdateViewModel category, HttpContext context)
+        public async Task<HttpResponseMessage> PostEditCategory(CategoryUpdateViewModel category)
         {
             HttpResponseMessage? getPostEditResult = null;
             using (var client = new HttpClient())
             {
                 var uri = _options.Value.CategoryCreateOrEditDefaultUri;
                 client.BaseAddress = new Uri(uri);
-                category.UpdatedBy = GetIdentityUserName(context);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
                 getPostEditResult = await client.PutAsJsonAsync(RequestDestination.CategoryCreateOrEditDefaultRoute, category);
                 client.Dispose();

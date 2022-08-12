@@ -20,6 +20,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+//app.UseFormHelper();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
