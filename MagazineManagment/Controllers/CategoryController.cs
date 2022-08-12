@@ -1,4 +1,5 @@
-﻿using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
+﻿using FluentValidation;
+using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DTO.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -14,13 +15,17 @@ namespace MagazineManagment.Web.Controllers
     public class CategoryController : Controller
     {
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IValidator<CategoryCreateViewModel> _validator;
+
         /// <summary>
         /// Inject category service
         /// </summary>
-        public CategoryController(ICategoryRepository categoryRepository)
+        public CategoryController(ICategoryRepository categoryRepository, IValidator<CategoryCreateViewModel> validator)
         {
             _categoryRepository = categoryRepository;
+            _validator = validator;
         }
+
         /// <summary>
         /// Get all categories
         /// </summary>
@@ -34,6 +39,7 @@ namespace MagazineManagment.Web.Controllers
             var getAllCategories = await _categoryRepository.GetAllCategoriesAsync();
             return Ok(getAllCategories);
         }
+
         /// <summary>
         ///  Get category by id
         /// </summary>
@@ -50,8 +56,9 @@ namespace MagazineManagment.Web.Controllers
             if (result.Success)
                 return Ok(result.Value);
 
-            return BadRequest(result.Message);
+            return BadRequest(result);
         }
+
         /// <summary>
         ///  Create a  category
         /// </summary>
@@ -62,11 +69,17 @@ namespace MagazineManagment.Web.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<CategoryViewModel>>> CreateCategory(CategoryCreateViewModel createCategory)
         {
-            var resultCreate = await _categoryRepository.CreateCategoryAsync(createCategory);
+            var result = await _validator.ValidateAsync(createCategory);
+
+            if (!result.IsValid)
+                return BadRequest(result.ToDictionary());
+
+            var resultCreate = await _categoryRepository.CreateCategoryAsync(createCategory,HttpContext);
             if (resultCreate.Success)
                 return Ok(resultCreate.Value);
             return BadRequest(resultCreate.Message);
         }
+
         /// <summary>
         /// Update a category
         /// </summary>
@@ -78,13 +91,14 @@ namespace MagazineManagment.Web.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<CategoryViewModel>>> UpdateCategory(CategoryUpdateViewModel category)
         {
-            var result = await _categoryRepository.UpdateCategoryAsync(category);
+            var result = await _categoryRepository.UpdateCategoryAsync(category,HttpContext);
 
             if (result.Success)
                 return Ok(result.Value);
 
             return BadRequest(result.Message);
         }
+
         /// <summary>
         /// Delete a category
         /// </summary>
@@ -104,6 +118,7 @@ namespace MagazineManagment.Web.Controllers
             return BadRequest(resultDelete.Message);
 
         }
+
         /// <summary>
         /// Get category names
         /// </summary>

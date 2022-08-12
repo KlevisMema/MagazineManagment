@@ -1,5 +1,4 @@
-﻿using MagazineManagment.Shared.CustomModelValidation;
-using MagazineManagment.Shared.Enums;
+﻿using MagazineManagment.Shared.Enums;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,10 +10,12 @@ namespace MagazineManagment.DTO.ViewModels
         [Required(ErrorMessage = "Product name is required")]
         [Display(Name = "Product name")]
         [StringLength(maximumLength: 20, MinimumLength = 2)]
+        [RegularExpression("^[a-zA-Z ]*$", ErrorMessage = "Please ensure that the product name doesn't contain special characters ex:(-/?><) etc.")]
         public string? ProductName { get; set; }
         [Required(ErrorMessage = "Serial number is required")]
         [Display(Name = "Serial number")]
         [StringLength(maximumLength: 5, MinimumLength = 5)]
+        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Please ensure that the serial number doesn't contain special characters ex:(-/?><) etc.")]
         public string? SerialNumber { get; set; }
         [Required(ErrorMessage = "Price is required")]
         [DataType(DataType.Currency)]
@@ -29,8 +30,8 @@ namespace MagazineManagment.DTO.ViewModels
         public CurrencyTypeEnum? CurrencyType { get; set; }
         [Display(Name = "Product description")]
         [StringLength(maximumLength: 100, MinimumLength = 4)]
+        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Please ensure that the product description doesn't contain special characters ex:(-/?><) etc.")]
         public string? ProductDescription { get; set; }
-        //public Guid? CategoryId { get; set; }
         public string? Image { get; set; }
         [Display(Name = "Image")]
      

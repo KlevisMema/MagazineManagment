@@ -46,7 +46,6 @@ namespace MagazineManagment.BLL.Services
             {
                 return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
             }
-
         }
 
         //Create a product

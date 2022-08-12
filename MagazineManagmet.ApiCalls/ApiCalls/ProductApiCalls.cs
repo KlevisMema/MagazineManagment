@@ -47,6 +47,7 @@ namespace MagazineManagment.Web.ApiCalls
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
             var response = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute);
             readResponse = await response.Content.ReadAsAsync<IList<ProductViewModel>>();
+            
             client.Dispose();
             return readResponse;
         }
