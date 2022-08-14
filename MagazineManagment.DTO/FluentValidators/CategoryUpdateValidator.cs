@@ -3,7 +3,7 @@ using MagazineManagment.DTO.ViewModels;
 
 namespace MagazineManagment.DTO.FluentValidators
 {
-    public class CategoryUpdateValidator : AbstractValidator<CategoryUpdateViewModel>
+    public class CategoryUpdateValidator : AbstractValidator<CategoryViewModel>
     {
         public CategoryUpdateValidator()
         {

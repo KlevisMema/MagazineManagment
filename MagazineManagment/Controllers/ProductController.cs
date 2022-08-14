@@ -39,7 +39,7 @@ namespace MagazineManagment.Web.Controllers
         /// Get a product by id 
         /// </summary>
         /// <response code="401"> Unauthorized </response>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Employee")]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -73,7 +73,7 @@ namespace MagazineManagment.Web.Controllers
         /// Update a product
         /// </summary>
         /// <response code="401"> Unauthorized </response>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Employee")]
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductPostEditViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -134,7 +134,7 @@ namespace MagazineManagment.Web.Controllers
         /// Get product image 
         /// </summary>
         /// <response code="401"> Unauthorized </response>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Employee")]
         [HttpGet("GetProductImage/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductImageOnly))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
