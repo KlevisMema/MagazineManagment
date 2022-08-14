@@ -69,6 +69,8 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var category = await _categoryApiCalls.GetEditCategory(id);
+            if (category.CategoryName is null)
+                return RedirectToAction("Index", "ErrorHandler");
             return View(category);
         }
 
@@ -77,6 +79,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Delete(CategoryUpdateViewModel category)
         {
             var deleteResult = await _categoryApiCalls.PostDeleteCategory(category.Id);
+            
             if (deleteResult.IsSuccessStatusCode)
                 return RedirectToAction("index");
 

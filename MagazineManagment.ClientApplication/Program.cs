@@ -1,3 +1,4 @@
+using FormHelper;
 using MagazineManagment.ClientApplication.StartUpExtension;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +21,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-//app.UseFormHelper();
+app.UseFormHelper();
 
 app.UseAuthentication();
 app.UseAuthorization();

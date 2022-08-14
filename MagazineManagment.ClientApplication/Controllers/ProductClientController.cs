@@ -66,9 +66,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         {
             var product = await _productApiCalls.GetEditProduct(id);
             if (product == null)
-            {
                 return NotFound();
-            }
             return View(product);
         }
 

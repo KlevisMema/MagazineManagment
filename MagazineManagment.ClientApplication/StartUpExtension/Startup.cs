@@ -39,7 +39,7 @@ namespace MagazineManagment.ClientApplication.StartUpExtension
             services.AddSession();
 
             services.AddTransient<IValidator<CategoryCreateViewModel>, CategoryCreateValidator>();
-            services.AddTransient<IValidator<CategoryUpdateViewModel>, CategoryUpdateValidator>();
+            services.AddTransient<IValidator<CategoryViewModel>, CategoryUpdateValidator>();
 
 
             return services;
