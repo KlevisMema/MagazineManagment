@@ -1,12 +1,18 @@
-﻿@using MagazineManagment.Shared.Enums
+﻿@using MagazineManagment.Shared.Enums;
 @model MagazineManagment.DTO.ViewModels.ProductUpdateViewModel
+
+@using FormHelper
+@addTagHelper *, FormHelper
 
 @{
     ViewData["Title"] = "Edit";
 }
+
+<link rel="stylesheet" href="/formhelper/formhelper.min.css" />
+
 @if (User.IsInRole("Employee"))
 {
-<form asp-action="Edit" asp-controller="ProductClient" method="post" enctype="multipart/form-data" method="post" asp-antiforgery="true">
+<form asp-formhelper="true" asp-action="Edit" asp-controller="ProductClient" method="post" enctype="multipart/form-data" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
     
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -44,7 +50,7 @@
 }
 else
 {
-<form asp-action="Edit" asp-controller="ProductClient" method="post" enctype="multipart/form-data" method="post" asp-antiforgery="true">
+    <form asp-formhelper="true" asp-action="Edit" asp-controller="ProductClient" method="post" enctype="multipart/form-data" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
     
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -101,3 +107,5 @@ else
     }
 </script>
 }
+
+<script src="/formhelper/formhelper.bundle.min.js"></script>

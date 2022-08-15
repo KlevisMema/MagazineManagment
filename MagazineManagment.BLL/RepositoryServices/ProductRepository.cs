@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using MagazineManagment.Shared.UsersSeedValues;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace MagazineManagment.BLL.Services
 {
@@ -21,6 +23,17 @@ namespace MagazineManagment.BLL.Services
             _context = context;
             _user = user;
             _mapper = mapper;
+        }
+
+        //Get user name
+        private static string GetUser(HttpContext context)
+        {
+            var headers = context.Request.Headers["Authorization"].ToString().Remove(0, 7);
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(headers);
+            var getUsername = token.Claims.Where(t => t.Type == "email").Select(v => v.Value).ToArray();
+
+            return getUsername[0].ToString();
         }
 
         //Get all products
@@ -49,7 +62,7 @@ namespace MagazineManagment.BLL.Services
         }
 
         //Create a product
-        public async Task<ResponseService<ProductViewModel>> CreateProductAsync(ProductCreateViewModelNoIFormFile product)
+        public async Task<ResponseService<ProductViewModel>> CreateProductAsync(ProductCreateViewModelNoIFormFile product, HttpContext context)
         {
             try
             {
@@ -75,7 +88,7 @@ namespace MagazineManagment.BLL.Services
         }
 
         // Update a Product 
-        public async Task<ResponseService<ProductPostEditViewModel>> UpdateProductAsync(ProductPostEditViewModel product)
+        public async Task<ResponseService<ProductPostEditViewModel>> UpdateProductAsync(ProductPostEditViewModel product, HttpContext context)
         {
             var productToBeUpdated = await _context.Products.FirstOrDefaultAsync(c => c.Id == product.Id);
             if (productToBeUpdated == null)
@@ -83,7 +96,7 @@ namespace MagazineManagment.BLL.Services
 
 
             // find  the user by email
-            var findUser = await _user.FindByEmailAsync(product.UserName);
+            var findUser = await _user.FindByEmailAsync(GetUser(context));
             if (findUser == null)
                 return ResponseService<ProductPostEditViewModel>.NotFound("User not found");
 
@@ -125,10 +138,11 @@ namespace MagazineManagment.BLL.Services
                         ProductId = product.Id,
                         ProductInStock = amountOfProductsRemovedFromMagazine,
                         IsDeleted = false,
-                        CreatedBy = product.CreatedBy,
+                        CreatedBy = product.UserName,
                         CreatedOn = DateTime.Now,
-                        UpdatedBy = product.UserName,
-                        QunatityBeforeRemoval = (int)productToBeUpdated.ProductInStock
+                        UpdatedBy = GetUser(context),
+                        QunatityBeforeRemoval = (int)productToBeUpdated.ProductInStock,
+                        
                     };
                     _context.ProductRecordsChangeds.Add(copyOfRecord);
                     await _context.SaveChangesAsync();

@@ -2,8 +2,8 @@
 using MagazineManagment.DTO.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using FormHelper;
 
 namespace MagazineManagment.ClientApplication.Controllers
 {
@@ -11,13 +11,6 @@ namespace MagazineManagment.ClientApplication.Controllers
     {
 
         private readonly IProductApiCalls _productApiCalls;
-
-        private string GetIdentityUserName()
-        {
-            var identityUser = HttpContext.User.Identity as ClaimsIdentity;
-            var userName = identityUser.FindFirst(ClaimTypes.Name).Value;
-            return userName;
-        }
 
         public ProductClientController(IProductApiCalls productApiCalls)
         {
@@ -44,17 +37,16 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost, FormValidator]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductCreateViewModel product)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _productApiCalls.PostCreateProduct(product, HttpContext);
-                if (result.IsSuccessStatusCode)
-                    return RedirectToAction("Index");
-                ModelState.AddModelError(string.Empty, await result.Content.ReadAsStringAsync());
-            }
+            
+            var result = await _productApiCalls.PostCreateProduct(product, HttpContext);
+            if (result.IsSuccessStatusCode)
+                return FormResult.CreateSuccessResult("Product created successfully", Url.Action("Index", 1000));
+
+            ModelState.AddModelError(string.Empty, await result.Content.ReadAsStringAsync());
             var categoryList = await _productApiCalls.GetCreateProduct();
             ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
             return View(product);
@@ -65,28 +57,22 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Edit(Guid id)
         {
             var product = await _productApiCalls.GetEditProduct(id);
-            if (product == null)
+            if (product.ProductName is null)
                 return NotFound();
             return View(product);
         }
 
         [Authorize(Roles = "Admin,Employee")]
-        [HttpPost]
+        [HttpPost, FormValidator]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProductUpdateViewModel UpdateProduct)
         {
-            if (ModelState.IsValid)
-            {
-                var userName = GetIdentityUserName();
-                UpdateProduct.UserName = userName;
+            var result = await _productApiCalls.PostEditProduct(UpdateProduct);
 
-                var result = await _productApiCalls.PostEditProduct(UpdateProduct);
-
-                if (result.IsSuccessStatusCode)
-                    return RedirectToAction("Index");
-                else
-                    ModelState.AddModelError(string.Empty, await result.Content.ReadAsStringAsync());
-            }
+            if (result.IsSuccessStatusCode)
+                return FormResult.CreateSuccessResult("Product edited successfully", Url.Action("Index", 1000));
+            
+            ModelState.AddModelError(string.Empty, await result.Content.ReadAsStringAsync());
             var product = await _productApiCalls.GetEditProduct(UpdateProduct.Id);
             return View(product);
         }
@@ -96,6 +82,8 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var product = await _productApiCalls.GetEditProduct(id);
+            if (product.ProductName is null)
+                return NotFound();
             return View(product);
         }
 
@@ -107,7 +95,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             var deleteResult = await _productApiCalls.Delete(productToBeDeleted.Id);
 
             if (deleteResult.IsSuccessStatusCode)
-                return RedirectToAction("Index");
+                return FormResult.CreateSuccessResult("Product deleted successfully", Url.Action("Index", 1000));
 
             ModelState.AddModelError(string.Empty, await deleteResult.Content.ReadAsStringAsync());
             return View(productToBeDeleted);
@@ -137,10 +125,8 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> DetailsOfProductChangedByEmployee(Guid id)
         {
             var product = await _productApiCalls.DetailsOfProductChangedByEmployee(id);
-            if (product == null)
-            {
+            if (product.ProductName is null)
                 return NotFound();
-            }
             return View(product);
         }
     }

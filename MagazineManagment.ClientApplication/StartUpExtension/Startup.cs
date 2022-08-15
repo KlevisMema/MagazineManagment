@@ -24,8 +24,8 @@ namespace MagazineManagment.ClientApplication.StartUpExtension
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<IdentityUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
-            
-            
+
+
             services.AddTransient<IProductApiCalls, ProductApiCalls>();
             services.AddTransient<ICategoryApiCalls, CategoryApiCalls>();
             services.AddTransient<IProfileApiCalls, ProfileApiCalls>();
@@ -40,7 +40,7 @@ namespace MagazineManagment.ClientApplication.StartUpExtension
 
             services.AddTransient<IValidator<CategoryCreateViewModel>, CategoryCreateValidator>();
             services.AddTransient<IValidator<CategoryViewModel>, CategoryUpdateValidator>();
-
+            services.AddTransient<IValidator<ProductCreateViewModel>, ProductCreateValidation>();
 
             return services;
         }
