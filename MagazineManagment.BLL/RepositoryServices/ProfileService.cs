@@ -76,9 +76,9 @@ namespace MagazineManagment.BLL.RepositoryServices
 
             try
             {
-                findRole = _mapper.Map<IdentityRole>(updateRole);
-                //findRole.Name = updateRole.RoleName;
-                //findRole.NormalizedName = updateRole.RoleName.ToUpper();
+                //findRole = _mapper.Map<IdentityRole>(updateRole);
+                findRole.Name = updateRole.RoleName;
+                findRole.NormalizedName = updateRole.RoleName.ToUpper();
 
                 var updateResult = await _roleManager.UpdateAsync(findRole);
 
@@ -187,24 +187,20 @@ namespace MagazineManagment.BLL.RepositoryServices
                 var role = await _roleManager.FindByIdAsync(id);
                 if (role == null)
                     return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("Role doesn't exists");
-
-
+                IdentityResult? assigningRoleResult = null;
                 foreach (var item in users)
                 {
                     var user = await _user.FindByIdAsync(item.UserId);
 
                     if (user == null)
                         return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("User doesnt exists");
-                    IdentityResult? assigningRoleResult = null;
                     if (item.IsSelected && !(await _user.IsInRoleAsync(user, role.Name)))
-                    {
                         assigningRoleResult = await _user.AddToRoleAsync(user, role.Name);
-                    }
                     else
-                        continue;
-                    if (assigningRoleResult.Succeeded)
-                        return ResponseService<IEnumerable<UserInRoleViewModel>>.Ok(users);
+                    continue;
                 }
+                if (assigningRoleResult.Succeeded)
+                    return ResponseService<IEnumerable<UserInRoleViewModel>>.Ok(users);
             }
             catch (Exception ex)
             {
@@ -213,7 +209,7 @@ namespace MagazineManagment.BLL.RepositoryServices
 
             return ResponseService<IEnumerable<UserInRoleViewModel>>.ErrorMsg("Could not assign role to users");
         }
-
+        
         public async Task<ResponseService<IEnumerable<UserInRoleViewModel>>> RemoveUsersFromRole(List<UserInRoleViewModel> users, string id)
         {
             try

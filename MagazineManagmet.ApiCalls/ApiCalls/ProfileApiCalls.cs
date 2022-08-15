@@ -113,9 +113,12 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
                 var uri = _options.Value.ProfileGetOrDeleteProfile;
                 client.BaseAddress = new Uri(uri);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-                var getCategoriesResponse = await client.GetAsync(RequestDestination.ProfileGetUsersInRole + id);
 
-                readResult = await getCategoriesResponse.Content.ReadAsAsync<IList<UserInRoleViewModel>>();
+                var getCategoriesResponse = await client.GetAsync(RequestDestination.ProfileGetUsersInRole + id);
+                if (getCategoriesResponse.StatusCode  == System.Net.HttpStatusCode.BadRequest)
+                    return readResult;
+
+                readResult = await getCategoriesResponse.Content.ReadAsAsync<IEnumerable<UserInRoleViewModel>>();
 
                 client.Dispose();
             }

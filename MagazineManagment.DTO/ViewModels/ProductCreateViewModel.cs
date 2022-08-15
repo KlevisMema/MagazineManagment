@@ -13,10 +13,10 @@ namespace MagazineManagment.DTO.ViewModels
         [RegularExpression("^[a-zA-Z ]*$", ErrorMessage = "Please ensure that the product name doesn't contain special characters ex:(-/?><) etc.")]
         public string? ProductName { get; set; }
 
-        [Required(ErrorMessage = "Serial number is required")]
-        [Display(Name = "Serial number")]
-        [StringLength(maximumLength: 5, MinimumLength = 5)]
-        [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Please ensure that the serial number doesn't contain special characters ex:(-/?><) etc.")]
+        //[Required(ErrorMessage = "Serial number is required")]
+        //[Display(Name = "Serial number")]
+        //[StringLength(maximumLength: 5, MinimumLength = 5)]
+        //[RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Please ensure that the serial number doesn't contain special characters ex:(-/?><) etc.")]
         public string? SerialNumber { get; set; }
 
         [Required(ErrorMessage = "Price is required")]

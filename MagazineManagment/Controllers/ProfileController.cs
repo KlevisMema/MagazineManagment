@@ -65,7 +65,7 @@ namespace MagazineManagment.Web.Controllers
             if (findRole.Success)
                 return Ok(findRole.Value);
 
-            return BadRequest(findRole.Message);
+            return BadRequest(findRole);
         }
         /// <summary>
         /// Update a role 
@@ -118,7 +118,7 @@ namespace MagazineManagment.Web.Controllers
             if (findRole.Success)
                 return Ok(findRole.Value);
 
-            return BadRequest(findRole.Message);
+            return BadRequest(findRole);
         }
         /// <summary>
         /// Get all users of a role
@@ -135,7 +135,7 @@ namespace MagazineManagment.Web.Controllers
             if (usersInRole.Success)
                 return Ok(usersInRole.Value);
 
-            return BadRequest(usersInRole.Message);
+            return BadRequest(usersInRole);
         }
         /// <summary>
         ///  Get all users

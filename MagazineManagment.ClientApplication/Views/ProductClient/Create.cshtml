@@ -1,7 +1,10 @@
 ﻿@using MagazineManagment.Shared.Enums;
 @model MagazineManagment.DTO.ViewModels.ProductCreateViewModel
 
-<form asp-action="Create" asp-controller="ProductClient" enctype="multipart/form-data" method="post" asp-antiforgery="true">
+@using FormHelper
+@addTagHelper *, FormHelper
+
+<form asp-formhelper="true" asp-action="Create" asp-controller="ProductClient" enctype="multipart/form-data" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
 
     @Html.AntiForgeryToken()
 
@@ -11,8 +14,8 @@
         <input asp-for="ProductName" type="text" placeholder="Product Name" class="form-control"/>
         <span asp-validation-for="ProductName"  class="text-danger"></span>
         <br />
-        <label asp-for="SerialNumber" ></label>
-        <input asp-for="SerialNumber" type="text" placeholder="Seial Number" class="form-control"/>
+        <label asp-for="SerialNumber"></label>
+        <input asp-for="SerialNumber" type="text" placeholder="Serial Number" class="form-control"/>
         <span asp-validation-for="SerialNumber" class="text-danger"></span>
         <br />
         <label asp-for="Price" ></label>

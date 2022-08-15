@@ -52,11 +52,9 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Update(string id)
         {
             var getRoleToEditResult = await _profileApiCalls.GetEditRole(id);
-            if (getRoleToEditResult != null)
-            {
-                return View(getRoleToEditResult);
-            }
-            return NotFound("Role doesnt exists");
+            if (getRoleToEditResult.RoleId is null)
+                return NotFound();
+            return View(getRoleToEditResult);
         }
 
         [Authorize(Roles = "Admin")]
@@ -81,11 +79,12 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             var getRoleToDeleteResult = await _profileApiCalls.GetAllRolesDetails(id);
-            if (getRoleToDeleteResult != null)
-            {
-                return View(getRoleToDeleteResult);
-            }
-            return NotFound("Role doesnt exists");
+
+            if (getRoleToDeleteResult.RoleName is null)
+                return NotFound();
+
+            return View(getRoleToDeleteResult);
+            
         }
 
         [Authorize(Roles = "Admin")]
@@ -116,6 +115,8 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> AsingRoleToUsers(string id)
         {
             var getUsers = await _profileApiCalls.GetAllUsersNotInRole(id);
+            if (getUsers is null)
+                return NotFound();
             ViewBag.roleId = id;
             return View(getUsers);
         }
@@ -138,6 +139,10 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> RemoveRoleFromUsers(string id)
         {
             var getUsers = await _profileApiCalls.GetAllUsersInRole(id);
+
+            if (getUsers is null)
+                return NotFound();
+
             ViewBag.roleId = id;
             return View(getUsers);
         }

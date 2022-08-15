@@ -50,7 +50,7 @@ namespace MagazineManagment.Web.Controllers
             if (resultGetProdut.Success)
                 return Ok(resultGetProdut.Value);
 
-            return BadRequest(resultGetProdut.Message);
+            return BadRequest(resultGetProdut);
         }
         /// <summary>
         /// Create a product
@@ -62,7 +62,7 @@ namespace MagazineManagment.Web.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<ProductViewModel>>> CreateProductAsync(ProductCreateViewModelNoIFormFile product)
         {
-            var resultCreateProduct = await _productRepository.CreateProductAsync(product);
+            var resultCreateProduct = await _productRepository.CreateProductAsync(product,HttpContext);
 
             if (resultCreateProduct.Success)
                 return Ok(resultCreateProduct);
@@ -79,7 +79,7 @@ namespace MagazineManagment.Web.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ResponseService<ProductPostEditViewModel>>> UpdateProductAsync(ProductPostEditViewModel product)
         {
-            var resultUpdateProduct = await _productRepository.UpdateProductAsync(product);
+            var resultUpdateProduct = await _productRepository.UpdateProductAsync(product,HttpContext);
 
             if (resultUpdateProduct.Success)
                 return Ok(resultUpdateProduct.Value);
@@ -98,7 +98,7 @@ namespace MagazineManagment.Web.Controllers
         {
             var productToBeDeleted = await _productRepository.DeleteProductAsync(id);
 
-            return Ok(productToBeDeleted.Message);
+            return Ok(productToBeDeleted);
         }
         /// <summary>
         /// Get full info about a product 
@@ -144,7 +144,7 @@ namespace MagazineManagment.Web.Controllers
 
             if (getProductImage.Success)
                 return Ok(getProductImage.Value);
-            return BadRequest(getProductImage.Message);
+            return BadRequest(getProductImage);
         }
         /// <summary>
         /// Get all products changes made by employees
@@ -172,9 +172,9 @@ namespace MagazineManagment.Web.Controllers
             var productToBeDeleted = await _productRepository.DeleteProductChangeByEmployee(id);
 
             if (productToBeDeleted.Success)
-                return Ok(productToBeDeleted.Message);
+                return Ok(productToBeDeleted);
 
-            return BadRequest(productToBeDeleted.Message);
+            return BadRequest(productToBeDeleted);
         }
     }
 }
