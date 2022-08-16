@@ -146,6 +146,7 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtConfig.Key);
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
@@ -158,7 +159,9 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
+
             var token = jwtTokenHandler.CreateToken(tokenDescriptor);
+
             return jwtTokenHandler.WriteToken(token);
         }
     }

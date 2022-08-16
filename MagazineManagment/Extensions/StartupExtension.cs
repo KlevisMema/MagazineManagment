@@ -27,15 +27,7 @@ namespace MagazineManagment.Web.Extensions
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddAutoMapper(typeof(MappingProfile));
-
-           
-
             services.AddScoped<IValidator<CategoryCreateViewModel>, CategoryCreateValidator>();
-
-            //services.AddIdentityServer().AddProfileService<ProfileService2>()/*.AddApiAuthorization<IdentityUser, ApplicationDbContext>()*/;
-            //services.AddAuthentication().AddIdentityServerJwt();
-
-
             services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
@@ -76,6 +68,7 @@ namespace MagazineManagment.Web.Extensions
             .AddJwtBearer(options =>
             {
                 var key = Encoding.ASCII.GetBytes(configuration["JWTConfig:Key"]);
+
                 options.TokenValidationParameters = new()
                 {
                     IssuerSigningKey = new SymmetricSecurityKey(key),
