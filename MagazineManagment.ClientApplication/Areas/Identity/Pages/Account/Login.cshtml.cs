@@ -119,7 +119,7 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
                     var AppUser = await _user.FindByEmailAsync(Input.Email);
 
                     var role = (await _user.GetRolesAsync(AppUser)).FirstOrDefault();
-                    TokenHolder.Token = GenerateToken(AppUser,role);
+                    TokenHolder.Token = GenerateToken(AppUser, role);
                     _logger.LogInformation($"User logged in Token {TokenHolder.Token}");
 
                     return LocalRedirect(returnUrl);
@@ -142,7 +142,7 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private string GenerateToken(IdentityUser user, string role )
+        private string GenerateToken(IdentityUser user, string role)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtConfig.Key);

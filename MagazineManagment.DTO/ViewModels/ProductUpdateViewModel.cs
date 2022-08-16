@@ -1,4 +1,5 @@
-﻿using MagazineManagment.Shared.Enums;
+﻿using MagazineManagment.Shared.CustomModelValidation;
+using MagazineManagment.Shared.Enums;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
@@ -33,8 +34,9 @@ namespace MagazineManagment.DTO.ViewModels
         [RegularExpression("^[a-zA-Z0-9 ]*$", ErrorMessage = "Please ensure that the product description doesn't contain special characters ex:(-/?><) etc.")]
         public string? ProductDescription { get; set; }
         public string? Image { get; set; }
+
         [Display(Name = "Image")]
-     
+        [UpdateProductImageValidation]
         public IFormFile? ImageFile { get; set; }
         public string? CreatedBy { get; set; }
         public string? UserName { get; set; }

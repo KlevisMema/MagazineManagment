@@ -14,7 +14,6 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
 
-
 namespace MagazineManagment.Web.Extensions
 {
     public static class StartupExtension

@@ -3,14 +3,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MagazineManagment.Shared.CustomModelValidation
 {
-    public class ImageFileValidation : ValidationAttribute
+    public class UpdateProductImageValidation : ValidationAttribute
     {
         protected override ValidationResult? IsValid(object? file, ValidationContext context)
         {
             try
             {
                 if (file is not IFormFile formFile)
+                {
+                    if (file is null)
+                        return ValidationResult.Success;
+
                     return new ValidationResult("Image is required");
+                }
 
                 var image = formFile.FileName;
 

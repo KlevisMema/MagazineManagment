@@ -76,6 +76,7 @@ namespace MagazineManagment.BLL.Services
                 if (checkIfSerialNrExists)
                     return ResponseService<ProductViewModel>.ErrorMsg($"Serial number {product.SerialNumber} exists, please give another  serial number");
                 var newProduct = _mapper.Map<Product>(product);
+                newProduct.CreatedBy = GetUser(context);
 
                 _context.Products.Add(newProduct);
                 await _context.SaveChangesAsync();
