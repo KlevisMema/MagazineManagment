@@ -19,6 +19,10 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Index()
         {
             var categories = await _categoryApiCalls.GetAllCategories();
+
+            if (categories is null)
+                return BadRequest();
+
             return View(categories);
         }
 
@@ -46,8 +50,10 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Edit(Guid id)
         {
             var category = await _categoryApiCalls.GetEditCategory(id);
+
             if (category.CategoryName == null)
                 return RedirectToAction("Index", "ErrorHandler"); 
+
             return View(category);
         }
 
@@ -69,8 +75,10 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var category = await _categoryApiCalls.GetEditCategory(id);
+
             if (category.CategoryName is null)
                 return RedirectToAction("Index", "ErrorHandler");
+
             return View(category);
         }
 
