@@ -39,6 +39,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             if (ModelState.IsValid)
             {
                 var postRoleResult = await _profileApiCalls.PostCreateRole(role);
+
                 if (postRoleResult.IsSuccessStatusCode)
                     return RedirectToAction("Index");
 
@@ -52,8 +53,10 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Update(string id)
         {
             var getRoleToEditResult = await _profileApiCalls.GetEditRole(id);
+
             if (getRoleToEditResult.RoleId is null)
                 return NotFound();
+
             return View(getRoleToEditResult);
         }
 
@@ -93,6 +96,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Delete(RolesGetAllDetails role)
         {
             var getRoleToDeleteResult = await _profileApiCalls.DeleteRole(role.RoleId);
+
             if (getRoleToDeleteResult.IsSuccessStatusCode)
                 return RedirectToAction("Index");
 
@@ -105,8 +109,10 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Users(string id)
         {
             var getUsersInRole = await _profileApiCalls.GetAllUsersInRole(id);
+
             if (getUsersInRole == null)
                 return NotFound();
+
             return View(getUsersInRole);
         }
 
@@ -115,8 +121,10 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> AsingRoleToUsers(string id)
         {
             var getUsers = await _profileApiCalls.GetAllUsersNotInRole(id);
+
             if (getUsers is null)
                 return NotFound();
+
             ViewBag.roleId = id;
             return View(getUsers);
         }
@@ -127,6 +135,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> AsingRoleToUsers(List<UserInRoleViewModel> users, string id)
         {
             var asignRoleToUsersResult = await _profileApiCalls.AssignRoleToUsers(users, id);
+
             if (asignRoleToUsersResult.IsSuccessStatusCode)
                 return RedirectToAction("Index");
 
@@ -153,11 +162,9 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> RemoveRoleFromUsers(List<UserInRoleViewModel> users, string id)
         {
             var removeRoleFromUsersResult = await _profileApiCalls.RemoveRoleFromUsers(users, id);
+
             if (removeRoleFromUsersResult.IsSuccessStatusCode)
-                //await _signInManager.SignOutAsync();
                 return RedirectToAction("Index");
-
-
 
             ModelState.AddModelError(string.Empty, await removeRoleFromUsersResult.Content.ReadAsStringAsync());
             return RedirectToAction("RemoveRoleFromUsers");

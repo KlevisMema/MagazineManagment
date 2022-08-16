@@ -18,13 +18,6 @@ namespace MagazineManagment.Web.ApiCalls
             _config = config;
         }
 
-        private string GetIdentityUserName(HttpContext context)
-        {
-            var identityUser = context.User.Identity as ClaimsIdentity;
-            var userName = identityUser.FindFirst(ClaimTypes.Name).Value;
-            return userName;
-        }
-
         private static async Task<string> ConvertImageToBase64(IFormFile image)
         {
             string? BaseArrayImage = null;
@@ -40,37 +33,37 @@ namespace MagazineManagment.Web.ApiCalls
 
         public async Task<IEnumerable<ProductViewModel>> GetAllProducts()
         {
-            using HttpClient client = new();
-            IEnumerable<ProductViewModel>? readResponse = null;
+            HttpClient client = new();
+
             var uri = _config.Value.ProductGet;
+
             client.BaseAddress = new Uri(uri);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
+
             var response = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute);
-            readResponse = await response.Content.ReadAsAsync<IList<ProductViewModel>>();
-            
+            var readResponse = await response.Content.ReadAsAsync<IList<ProductViewModel>>();
+
             client.Dispose();
             return readResponse;
         }
 
         public async Task<IEnumerable<CategoryNameOnlyViewModel>> GetCreateProduct()
         {
+            var client = new HttpClient();
 
-            IEnumerable<CategoryNameOnlyViewModel>? readResponse = null;
+            var uri = _config.Value.GetAllCategories;
 
-            using (var client = new HttpClient())
-            {
-                var uri = _config.Value.GetAllCategories;
-                client.BaseAddress = new Uri(uri);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-                var response = await client.GetAsync(RequestDestination.GetCreateProductRoute);
+            client.BaseAddress = new Uri(uri);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
 
-                readResponse = await response.Content.ReadAsAsync<IList<CategoryNameOnlyViewModel>>();
-                client.Dispose();
-            }
+            var response = await client.GetAsync(RequestDestination.GetCreateProductRoute);
+            var readResponse = await response.Content.ReadAsAsync<IList<CategoryNameOnlyViewModel>>();
+
+            client.Dispose();
             return readResponse;
         }
 
-        public async Task<HttpResponseMessage> PostCreateProduct(ProductCreateViewModel product,HttpContext context)
+        public async Task<HttpResponseMessage> PostCreateProduct(ProductCreateViewModel product)
         {
 
             var BaseArrayImage = await ConvertImageToBase64(product.ImageFile);
@@ -82,35 +75,38 @@ namespace MagazineManagment.Web.ApiCalls
                 Price = product.Price,
                 ProductCategoryId = product.ProductCategoryId,
                 Image = BaseArrayImage,
-                CreatedBy = GetIdentityUserName(context),
+                CreatedBy = product.CreatedBy,
                 ProductInStock = product.ProductInStock,
                 CurrencyType = product.CurrencyType,
                 ProductDescription = product.ProductDescription
             };
 
+            var client = new HttpClient();
 
-            using var client = new HttpClient();
             var uri = _config.Value.ProductPostCreateOrEditDefaultUri;
+
             client.BaseAddress = new Uri(uri);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
+
             var result = await client.PostAsJsonAsync(RequestDestination.ProductCreateOrEditDefaultRoute, newProduct);
             client.Dispose();
+
             return result;
         }
 
         public async Task<ProductUpdateViewModel> GetEditProduct(Guid id)
         {
-            ProductUpdateViewModel? readTask = null;
+            var client = new HttpClient();
 
-            using (var client = new HttpClient())
-            {
-                var uri = _config.Value.ProductGet;
-                client.BaseAddress = new Uri(uri);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-                var getTask = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
-                readTask = await getTask.Content.ReadAsAsync<ProductUpdateViewModel>();
-                client.Dispose();
-            }
+            var uri = _config.Value.ProductGet;
+
+            client.BaseAddress = new Uri(uri);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
+
+            var getTask = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
+            var readTask = await getTask.Content.ReadAsAsync<ProductUpdateViewModel>();
+
+            client.Dispose();
             return readTask;
         }
 
@@ -121,7 +117,8 @@ namespace MagazineManagment.Web.ApiCalls
             //case when user has not changed the image in the edit form
             if (product.ImageFile == null)
             {
-                ProductImageOnly getProduct = await GetProductImage(product.Id);
+                var getProduct = await GetProductImage(product.Id);
+
                 if (getProduct == null)
                 {
                     return new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.NotFound };
@@ -152,83 +149,93 @@ namespace MagazineManagment.Web.ApiCalls
                 newUpdatedProduct.UserName = product.UserName;
             }
 
-            using (var client = new HttpClient())
-            {
-                var uri = _config.Value.ProductPostCreateOrEditDefaultUri;
-                client.BaseAddress = new Uri(uri);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-                var postTask = await client.PutAsJsonAsync(RequestDestination.ProductCreateOrEditDefaultRoute, newUpdatedProduct);
-                return postTask;
-            }
+            var client = new HttpClient();
+
+            var uri = _config.Value.ProductPostCreateOrEditDefaultUri;
+
+            client.BaseAddress = new Uri(uri);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
+
+            var postTask = await client.PutAsJsonAsync(RequestDestination.ProductCreateOrEditDefaultRoute, newUpdatedProduct);
+            client.Dispose();
+
+            return postTask;
         }
 
         public async Task<HttpResponseMessage> Delete(Guid id)
         {
-            HttpResponseMessage? deleteResult = null;
-            using (var client = new HttpClient())
-            {
-                var uri = _config.Value.ProductGet;
-                client.BaseAddress = new Uri(uri);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-                deleteResult = await client.DeleteAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
-                client.Dispose();
-            }
+            var client = new HttpClient();
+
+            var uri = _config.Value.ProductGet;
+
+            client.BaseAddress = new Uri(uri);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
+
+            var deleteResult = await client.DeleteAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
+
+            client.Dispose();
             return deleteResult;
         }
 
         public async Task<ProductImageOnly> GetProductImage(Guid id)
         {
+            var client = new HttpClient();
 
-            using var client = new HttpClient();
             var uri = _config.Value.ProductGet;
+
             client.BaseAddress = new Uri(uri);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-            var getProduct = await client.GetAsync(RequestDestination.GetProductImage + id);
 
+            var getProduct = await client.GetAsync(RequestDestination.GetProductImage + id);
             var Task = await getProduct.Content.ReadAsAsync<ProductImageOnly>();
+
+            client.Dispose();
             return Task;
         }
 
         public async Task<IEnumerable<ProductsRecordCopyViewModel>> GetProductChangesByEmpolyees()
         {
             using HttpClient client = new();
-            IEnumerable<ProductsRecordCopyViewModel>? readResponse = null;
+
             var uri = _config.Value.ProductGet;
+
             client.BaseAddress = new Uri(uri);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
+
             var response = await client.GetAsync(RequestDestination.ProductChangesMadeByEmployee);
-            readResponse = await response.Content.ReadAsAsync<IList<ProductsRecordCopyViewModel>>();
+            var readResponse = await response.Content.ReadAsAsync<IList<ProductsRecordCopyViewModel>>();
+
             client.Dispose();
             return readResponse;
         }
 
         public async Task<HttpResponseMessage> DeleteProductChangeByEmployee(Guid id)
         {
-            HttpResponseMessage? deleteResult = null;
-            using (var client = new HttpClient())
-            {
-                var uri = _config.Value.ProductGet;
-                client.BaseAddress = new Uri(uri);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-                deleteResult = await client.DeleteAsync(RequestDestination.ProductChangesMadeByEmployeeDeleteRoute + id);
-                client.Dispose();
-            }
+            var client = new HttpClient();
+
+            var uri = _config.Value.ProductGet;
+
+            client.BaseAddress = new Uri(uri);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
+            var deleteResult = await client.DeleteAsync(RequestDestination.ProductChangesMadeByEmployeeDeleteRoute + id);
+
+            client.Dispose();
             return deleteResult;
         }
 
         public async Task<ProductViewModel> DetailsOfProductChangedByEmployee(Guid id)
         {
-            ProductViewModel? readTask = null;
+            var client = new HttpClient();
 
-            using (var client = new HttpClient())
-            {
-                var uri = _config.Value.ProductGet;
-                client.BaseAddress = new Uri(uri);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-                var getTask = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
-                readTask = await getTask.Content.ReadAsAsync<ProductViewModel>();
-                client.Dispose();
-            }
+            var uri = _config.Value.ProductGet;
+
+            client.BaseAddress = new Uri(uri);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
+
+            var getTask = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
+            var readTask = await getTask.Content.ReadAsAsync<ProductViewModel>();
+
+            client.Dispose();
             return readTask;
         }
     }

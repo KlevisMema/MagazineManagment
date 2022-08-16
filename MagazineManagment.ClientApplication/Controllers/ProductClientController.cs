@@ -22,8 +22,10 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Index()
         {
             var products = await _productApiCalls.GetAllProducts();
+
             if (products == null)
                 return BadRequest();
+
             return View(products);
         }
 
@@ -33,6 +35,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         {
             var categoryList = await _productApiCalls.GetCreateProduct();
             ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
+
             return View();
         }
 
@@ -42,7 +45,8 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Create(ProductCreateViewModel product)
         {
             
-            var result = await _productApiCalls.PostCreateProduct(product, HttpContext);
+            var result = await _productApiCalls.PostCreateProduct(product);
+
             if (result.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Product created successfully", Url.Action("Index", 1000));
 
@@ -57,8 +61,10 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Edit(Guid id)
         {
             var product = await _productApiCalls.GetEditProduct(id);
+
             if (product.ProductName is null)
                 return NotFound();
+
             return View(product);
         }
 
@@ -82,8 +88,10 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var product = await _productApiCalls.GetEditProduct(id);
+
             if (product.ProductName is null)
                 return NotFound();
+
             return View(product);
         }
 
@@ -106,6 +114,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> GetChangesMadeByEmployees()
         {
             var productChanges = await _productApiCalls.GetProductChangesByEmpolyees();
+
             return View(productChanges);
         }
 
@@ -113,6 +122,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> DeleteProductChangeByEmployee(Guid id)
         {
             var deleteResult = await _productApiCalls.DeleteProductChangeByEmployee(id);
+
             if (deleteResult.IsSuccessStatusCode)
                 return RedirectToAction("GetChangesMadeByEmployees");
 
@@ -125,8 +135,10 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> DetailsOfProductChangedByEmployee(Guid id)
         {
             var product = await _productApiCalls.DetailsOfProductChangedByEmployee(id);
+
             if (product.ProductName is null)
                 return NotFound();
+
             return View(product);
         }
     }

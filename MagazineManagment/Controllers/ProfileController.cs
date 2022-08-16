@@ -21,6 +21,7 @@ namespace MagazineManagment.Web.Controllers
         {
             _profileService = profileService;
         }
+
         /// <summary>
         /// Get all roles
         /// </summary>
@@ -33,6 +34,7 @@ namespace MagazineManagment.Web.Controllers
             var roles = await _profileService.GetRoles();
             return roles.ToList();
         }
+
         /// <summary>
         /// Create a role
         /// </summary>
@@ -50,6 +52,7 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(roleCreateResult.Message);
         }
+
         /// <summary>
         /// Find a role by id 
         /// </summary>
@@ -67,6 +70,7 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(findRole);
         }
+
         /// <summary>
         /// Update a role 
         /// </summary>
@@ -85,6 +89,7 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(resultUpdate.Message);
         }
+
         /// <summary>
         /// Delete a  role
         /// </summary>
@@ -103,6 +108,7 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(resultDelete.Message);
         }
+
         /// <summary>
         /// Get all details of a role  
         /// </summary>
@@ -120,6 +126,7 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(findRole);
         }
+
         /// <summary>
         /// Get all users of a role
         /// </summary>
@@ -137,6 +144,7 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(usersInRole);
         }
+
         /// <summary>
         ///  Get all users
         /// </summary>
@@ -154,6 +162,7 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(getAllUsersResult.Message);
         }
+
         /// <summary>
         /// Assign a role to a user
         /// </summary>
@@ -172,6 +181,7 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(asignResult.Message);
         }
+
         /// <summary>
         /// Remove users from a role
         /// </summary>

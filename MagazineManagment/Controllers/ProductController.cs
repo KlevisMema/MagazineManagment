@@ -22,6 +22,7 @@ namespace MagazineManagment.Web.Controllers
         {
             _productRepository = productRepository;
         }
+
         /// <summary>
         /// Get all products
         /// </summary>
@@ -35,6 +36,7 @@ namespace MagazineManagment.Web.Controllers
             var allProducts = await _productRepository.GetAllProductsAsync();
             return Ok(allProducts);
         }
+
         /// <summary>
         /// Get a product by id 
         /// </summary>
@@ -52,6 +54,7 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(resultGetProdut);
         }
+
         /// <summary>
         /// Create a product
         /// </summary>
@@ -69,6 +72,7 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(resultCreateProduct.Message);
         }
+
         /// <summary>
         /// Update a product
         /// </summary>
@@ -86,6 +90,7 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(resultUpdateProduct.Message);
         }
+
         /// <summary>
         /// Delete a product
         /// </summary>
@@ -100,6 +105,7 @@ namespace MagazineManagment.Web.Controllers
 
             return Ok(productToBeDeleted);
         }
+
         /// <summary>
         /// Get full info about a product 
         /// </summary>
@@ -113,6 +119,7 @@ namespace MagazineManagment.Web.Controllers
             var getProductWithCategoryIncluded = await _productRepository.ProductsAndCategoryAsync();
             return Ok(getProductWithCategoryIncluded);
         }
+
         /// <summary>
         /// Get a product by name
         /// </summary>
@@ -130,6 +137,7 @@ namespace MagazineManagment.Web.Controllers
 
             return BadRequest(resultGetProductByItsName.Message);
         }
+
         /// <summary>
         /// Get product image 
         /// </summary>
@@ -146,6 +154,7 @@ namespace MagazineManagment.Web.Controllers
                 return Ok(getProductImage.Value);
             return BadRequest(getProductImage);
         }
+
         /// <summary>
         /// Get all products changes made by employees
         /// </summary>
@@ -159,6 +168,7 @@ namespace MagazineManagment.Web.Controllers
             var changesByEmployees = await _productRepository.GetProducChangesByEmpolyees();
             return Ok(changesByEmployees);
         }
+
         /// <summary>
         /// Delete the changes that employye made 
         /// </summary>
