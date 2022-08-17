@@ -1,14 +1,18 @@
 ﻿@using MagazineManagment.DTO.ViewModels
 @model IEnumerable<ProductViewModel>
 
- <br />
- <br />
-<div class="btn-center">
-    <a asp-controller="ProductClient" asp-action="Create" class="btn btn-primary ">Create new product</a>
-</div>
 <br />
 <br />
+
 <div class="table-wrapper">
+    <div class="btn-center">
+        <a asp-controller="ProductClient" asp-action="Create" class="btn btn-primary ">Create new product</a>
+    </div>
+    <form asp-action="SearchProduct" asp-controller="ProductClient" method="post">
+        <input type="text" placeholder="Enter product name" class="form-input" name="productName" />
+        <input type="submit" value="Search" class="submitBtn" />
+    </form>
+    <br />
     <table class="fl-table">
         <thead>
             <tr>

@@ -114,7 +114,7 @@ namespace MagazineManagment.BLL.Services
                 return ResponseService<ProductPostEditViewModel>.ErrorMsg("You can't insert products in quantity");
 
             var amountOfProductsRemovedFromMagazine = product.ProductInStock - productToBeUpdated.ProductInStock;
-            if (role.Contains(RoleName.Employee) && amountOfProductsRemovedFromMagazine <= -20)
+            if (role.Contains(RoleName.Employee) && amountOfProductsRemovedFromMagazine < -20)
                 return ResponseService<ProductPostEditViewModel>.ErrorMsg("You can not remove more than 20 products ");
             else if (role.Contains(RoleName.Employee) && amountOfProductsRemovedFromMagazine == 0)
                 recordChangedByEmployee = false;
@@ -139,7 +139,6 @@ namespace MagazineManagment.BLL.Services
                         ProductId = product.Id,
                         ProductInStock = amountOfProductsRemovedFromMagazine,
                         IsDeleted = false,
-                        CreatedBy = product.UserName,
                         CreatedOn = DateTime.Now,
                         UpdatedBy = GetUser(context),
                         QunatityBeforeRemoval = (int)productToBeUpdated.ProductInStock,
@@ -191,19 +190,10 @@ namespace MagazineManagment.BLL.Services
         }
 
         // Serach a product by its name
-        public async Task<ResponseService<ProductViewModel>> GetProductByNameAsync(string ProductName)
+        public async Task<IEnumerable<ProductViewModel>> GetProductByNameAsync(string ProductName)
         {
-            try
-            {
-                var product = await _context.Products.Include(c => c.ProductCategory).FirstOrDefaultAsync(p => p.ProductName == ProductName);
-                if (product == null)
-                    return ResponseService<ProductViewModel>.NotFound("Product does not exists");
-                return ResponseService<ProductViewModel>.Ok(_mapper.Map<ProductViewModel>(product));
-            }
-            catch (Exception ex)
-            {
-                return ResponseService<ProductViewModel>.ExceptioThrow(ex.Message);
-            }
+            var product = await _context.Products.Include(c => c.ProductCategory).Where(p => p.ProductName.Contains(ProductName)).ToListAsync();
+            return _mapper.Map<IEnumerable<ProductViewModel>>(product);
         }
 
         // Get product image

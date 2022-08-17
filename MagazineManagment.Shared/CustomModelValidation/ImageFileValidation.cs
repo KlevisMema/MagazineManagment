@@ -14,7 +14,7 @@ namespace MagazineManagment.Shared.CustomModelValidation
 
                 var image = formFile.FileName;
 
-                if (!image.Contains(".jpg") && !image.Contains(".jepg") && !image.Contains(".png"))
+                if (!image.Contains(".jpg") && !image.Contains(".jpeg") && !image.Contains(".png"))
                     return new ValidationResult("File format incorrect");
 
                 return ValidationResult.Success;

@@ -107,9 +107,16 @@ namespace MagazineManagment.BLL.Services
                 var findCategory = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
 
                 if (findCategory is null)
-                {
                     return ResponseService<CategoryViewModel>.NotFound($"Category with id : {id} doesn't exists!!");
+
+                var findProductWithThisCategory = _context.Products.Where(c => c.ProductCategoryId.Equals(id)).ToList();
+
+                foreach (var item in findProductWithThisCategory)
+                {
+                    item.ProductCategoryId = null;
+                    _context.Products.Update(item);
                 }
+
                 _context.Categories.Remove(findCategory);
                 await _context.SaveChangesAsync();
                 return ResponseService<CategoryViewModel>.Deleted($"Product with id {id} has been deleted!! ");

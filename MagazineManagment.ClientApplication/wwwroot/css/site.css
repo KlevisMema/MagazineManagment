@@ -85,12 +85,13 @@ h2 {
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
+    margin-bottom:20px;
 }
 /* Table Styles */
 .table-wrapper {
-    margin: 10px 70px 70px;
-    box-shadow: 0px 35px 50px rgba( 0, 0, 0, 0.2 );
+   /* margin: 10px 10px 10px;*/
+    /*box-shadow: 0px 135px 180px rgba( 0, 0, 0, 0.2 );*/
 }
 
 .fl-table {
@@ -103,6 +104,7 @@ h2 {
     max-width: 100%;
     white-space: nowrap;
     background-color: white;
+    box-shadow: 0px 50px 80px rgba( 0, 0, 0, 0.2 );
 }
 
     .fl-table td, .fl-table th {
@@ -235,25 +237,44 @@ h2 {
     transition: .3s ease-in-out;
 }
 
-.card1 h1, .card p {
-    color: white;
-    padding-top: 10px;
-    opacity: 1;
+    .card1 h1, .card p {
+        color: white;
+        padding-top: 10px;
+        opacity: 1;
+    }
+
+    .card1 a {
+        text-decoration: none;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 20px;
+    }
+
+    .card1:hover {
+        transform: scale(1.1);
+        background-color: #324960;
+    }
+
+.text-center {
+    margin-top: 100px;
 }
 
-.card1 a {
-    text-decoration: none;
-    color: white;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 20px;
+.form-input {
+    outline: none;
+    border: 2px solid #324960;
+    padding: 5px;
+    width: 300px;
+}
+.submitBtn{
+    background-color: transparent;
+    padding:5px;
+    text-transform:uppercase;
+    border:2px solid #324960;
+    transition: 0.5s all ease-in-out;
+    color:gray;
 }
 
-.card1:hover {
-    transform: scale(1.1);
-    background-color: #324960;
-}
-
-.text-center{
-    margin-top:100px;
+.submitBtn:hover{
+    transform:scale(1.1);
 }

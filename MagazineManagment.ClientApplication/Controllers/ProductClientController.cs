@@ -44,7 +44,6 @@ namespace MagazineManagment.ClientApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductCreateViewModel product)
         {
-            
             var result = await _productApiCalls.PostCreateProduct(product);
 
             if (result.IsSuccessStatusCode)
@@ -65,6 +64,8 @@ namespace MagazineManagment.ClientApplication.Controllers
             if (product.ProductName is null)
                 return NotFound();
 
+            var categoryList = await _productApiCalls.GetCreateProduct();
+            ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
             return View(product);
         }
 
@@ -74,13 +75,11 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Edit(ProductUpdateViewModel UpdateProduct)
         {
             var result = await _productApiCalls.PostEditProduct(UpdateProduct);
-
             if (result.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Product edited successfully", Url.Action("Index", 1000));
-            
-            ModelState.AddModelError(string.Empty, await result.Content.ReadAsStringAsync());
-            var product = await _productApiCalls.GetEditProduct(UpdateProduct.Id);
-            return View(product);
+
+            var errorMsg = await result.Content.ReadAsStringAsync();
+            return FormResult.CreateWarningResult(errorMsg);
         }
 
         [Authorize(Roles = "Admin")]
@@ -140,6 +139,13 @@ namespace MagazineManagment.ClientApplication.Controllers
                 return NotFound();
 
             return View(product);
+        }
+
+        [Authorize(Roles = "Admin,Employee")]
+        public async Task<IActionResult> SearchProduct(string productName)
+        {
+            var productSearch = await _productApiCalls.SearchProduct(productName);
+            return View("Index",productSearch);
         }
     }
 }

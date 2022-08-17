@@ -1,6 +1,9 @@
 ﻿@using MagazineManagment.DTO.ViewModels
 @model RolesGetAllDetails
 
+@using FormHelper
+@addTagHelper *, FormHelper
+
 @{
     ViewData["Title"] = "Delete";
 }
@@ -43,7 +46,7 @@
 
 @if (Model.RoleName != "Admin")
 {
-    <form asp-action="Delete" asp-controller="ProfileClient" method="post" method="post" asp-antiforgery="true">
+    <form asp-formhelper="true" asp-action="Delete" asp-controller="ProfileClient" method="post" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
         <h3>Are you sure to delete this record?</h3>
         <input type="submit" value="Yes" class="btn btn-danger" />
         <a asp-action="Index" asp-controller="ProfileClient" class="btn btn-green">No</a>

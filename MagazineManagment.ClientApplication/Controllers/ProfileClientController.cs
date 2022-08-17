@@ -1,4 +1,5 @@
-﻿using MagazineManagment.DTO.ViewModels;
+﻿using FormHelper;
+using MagazineManagment.DTO.ViewModels;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -32,20 +33,17 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost, FormValidator]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RoleCreateViewModel role)
         {
-            if (ModelState.IsValid)
-            {
-                var postRoleResult = await _profileApiCalls.PostCreateRole(role);
+            var postRoleResult = await _profileApiCalls.PostCreateRole(role);
 
-                if (postRoleResult.IsSuccessStatusCode)
-                    return RedirectToAction("Index");
+            if (postRoleResult.IsSuccessStatusCode)
+                return FormResult.CreateSuccessResult("Role updated succsessfully", Url.Action("Index", 1000));
 
-                ModelState.AddModelError(string.Empty, await postRoleResult.Content.ReadAsStringAsync());
-            }
-            return View(role);
+            var errorMsg = await postRoleResult.Content.ReadAsStringAsync();
+            return FormResult.CreateErrorResult(errorMsg);
         }
 
         [Authorize(Roles = "Admin")]
@@ -61,20 +59,16 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost, FormValidator]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(ProfileUpdateViewModel role)
         {
-            if (ModelState.IsValid)
-            {
-                var postUpdateResult = await _profileApiCalls.PostUpdateRole(role);
-                if (postUpdateResult.IsSuccessStatusCode)
-                    return RedirectToAction("Index");
+            var postUpdateResult = await _profileApiCalls.PostUpdateRole(role);
+            if (postUpdateResult.IsSuccessStatusCode)
+                return FormResult.CreateSuccessResult("Role updated succsessfully", Url.Action("Index", 1000));
 
-                ModelState.AddModelError(string.Empty, await postUpdateResult.Content.ReadAsStringAsync());
-            }
-
-            return View(role);
+            var errorMsg = await postUpdateResult.Content.ReadAsStringAsync();
+            return FormResult.CreateErrorResult(errorMsg);
         }
 
         [Authorize(Roles = "Admin")]
@@ -91,17 +85,17 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost, FormValidator]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(RolesGetAllDetails role)
         {
             var getRoleToDeleteResult = await _profileApiCalls.DeleteRole(role.RoleId);
 
             if (getRoleToDeleteResult.IsSuccessStatusCode)
-                return RedirectToAction("Index");
+                return FormResult.CreateSuccessResult("Role deleted succsessfully", Url.Action("Index", 1000));
 
-            ModelState.AddModelError(string.Empty, await getRoleToDeleteResult.Content.ReadAsStringAsync());
-            return View(role);
+            var errorMsg = await getRoleToDeleteResult.Content.ReadAsStringAsync();
+            return FormResult.CreateErrorResult(errorMsg);
         }
 
         [Authorize(Roles = "Admin")]
@@ -130,17 +124,17 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost, FormValidator]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AsingRoleToUsers(List<UserInRoleViewModel> users, string id)
         {
             var asignRoleToUsersResult = await _profileApiCalls.AssignRoleToUsers(users, id);
 
             if (asignRoleToUsersResult.IsSuccessStatusCode)
-                return RedirectToAction("Index");
+                return FormResult.CreateSuccessResult("Users added successfully", Url.Action("Index", 1000));
 
-            ModelState.AddModelError(string.Empty, await asignRoleToUsersResult.Content.ReadAsStringAsync());
-            return RedirectToAction("AsingRoleToUsers");
+            var errorMsg = await asignRoleToUsersResult.Content.ReadAsStringAsync();
+            return FormResult.CreateErrorResult(errorMsg);
         }
 
         [Authorize(Roles = "Admin")]
@@ -157,17 +151,17 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost, FormValidator]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveRoleFromUsers(List<UserInRoleViewModel> users, string id)
         {
             var removeRoleFromUsersResult = await _profileApiCalls.RemoveRoleFromUsers(users, id);
 
             if (removeRoleFromUsersResult.IsSuccessStatusCode)
-                return RedirectToAction("Index");
+                return FormResult.CreateSuccessResult("Users removed successfully", Url.Action("Index", 1000));
 
-            ModelState.AddModelError(string.Empty, await removeRoleFromUsersResult.Content.ReadAsStringAsync());
-            return RedirectToAction("RemoveRoleFromUsers");
+            var errorMsg = await removeRoleFromUsersResult.Content.ReadAsStringAsync();
+            return FormResult.CreateErrorResult(errorMsg);
         }
     }
 }
