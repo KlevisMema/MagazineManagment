@@ -9,6 +9,7 @@
         public const string ProductCreateOrEditDefaultRoute = "api/Product";
         public const string ProductChangesMadeByEmployee = "Product/GetProducChangesByEmpolyees";
         public const string ProductChangesMadeByEmployeeDeleteRoute = "Product/DeleteProducChangesByEmpolyees/";
+        public const string SearchProduct = "Product/GetProductByName/";
         // Category
         public const string CategoryGetOrDeleteDefaultRoute = "Category";
         public const string CategoryCreateOrEditDefaultRoute = "api/Category";

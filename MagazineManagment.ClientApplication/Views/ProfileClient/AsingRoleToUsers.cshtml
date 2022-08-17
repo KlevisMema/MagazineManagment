@@ -1,5 +1,9 @@
 ﻿@using MagazineManagment.DTO.ViewModels
 @model List<UserNotInRoleViewModel>
+
+@using FormHelper
+@addTagHelper *, FormHelper
+
 @{
     ViewData["Title"] = "GetAllUsers";
     var roleId = ViewBag.roleId;
@@ -7,7 +11,7 @@
 
 <br />
 <br />
-<form method="post" asp-action="AsingRoleToUsers" asp-controller="ProfileClient" asp-antiforgery="true">
+<form asp-formhelper="true" method="post" asp-action="AsingRoleToUsers" asp-controller="ProfileClient" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="card">
         <div class="card-header">

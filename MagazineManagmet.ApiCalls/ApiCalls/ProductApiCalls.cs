@@ -4,6 +4,7 @@ using MagazineManagment.Shared.Jwtbearer;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -113,7 +114,7 @@ namespace MagazineManagment.Web.ApiCalls
         public async Task<HttpResponseMessage> PostEditProduct(ProductUpdateViewModel product)
         {
             ProductPostEditViewModel newUpdatedProduct = new();
-            
+
             //case when user has not changed the image in the edit form
             if (product.ImageFile == null)
             {
@@ -132,7 +133,7 @@ namespace MagazineManagment.Web.ApiCalls
                 newUpdatedProduct.ProductInStock = product.ProductInStock;
                 newUpdatedProduct.CurrencyType = product.CurrencyType;
                 newUpdatedProduct.ProductDescription = product.ProductDescription;
-                newUpdatedProduct.UserName = product.UserName;
+                newUpdatedProduct.ProductCategoryId = product.ProductCategoryId;
             }
             else
             {
@@ -146,7 +147,7 @@ namespace MagazineManagment.Web.ApiCalls
                 newUpdatedProduct.ProductInStock = product.ProductInStock;
                 newUpdatedProduct.CurrencyType = product.CurrencyType;
                 newUpdatedProduct.ProductDescription = product.ProductDescription;
-                newUpdatedProduct.UserName = product.UserName;
+                newUpdatedProduct.ProductCategoryId = product.ProductCategoryId;
             }
 
             var client = new HttpClient();
@@ -237,6 +238,25 @@ namespace MagazineManagment.Web.ApiCalls
 
             client.Dispose();
             return readTask;
+        }
+
+        public async Task<IEnumerable<ProductViewModel>> SearchProduct(string productName)
+        {
+            if (string.IsNullOrEmpty(productName))
+                return await GetAllProducts();
+
+            HttpClient client = new();
+
+            var uri = _config.Value.ProductGet;
+
+            client.BaseAddress = new Uri(uri);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
+
+            var response = await client.GetAsync(RequestDestination.SearchProduct + productName);
+            var readResponse = await response.Content.ReadAsAsync<IList<ProductViewModel>>();
+
+            client.Dispose();
+            return readResponse;
         }
     }
 }

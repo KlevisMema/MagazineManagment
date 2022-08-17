@@ -40,5 +40,8 @@ namespace MagazineManagment.DTO.ViewModels
         public IFormFile? ImageFile { get; set; }
         public string? CreatedBy { get; set; }
         public string? UserName { get; set; }
+
+        [Display(Name = "Category name")]
+        public Guid? ProductCategoryId { get; set; }
     }
 }

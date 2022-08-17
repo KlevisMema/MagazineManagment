@@ -13,6 +13,6 @@ namespace MagazineManagment.DTO.ViewModels
         public string? ProductDescription { get; set; }
         public string? Image { get; set; }
         public string? CreatedBy { get; set; }
-        public string? UserName { get; set; }
+        public Guid? ProductCategoryId { get; set; }
     }
 }

@@ -1,10 +1,14 @@
 ﻿@using MagazineManagment.DTO.ViewModels
 @model ProfileUpdateViewModel
+
+@using FormHelper
+@addTagHelper *, FormHelper
+
 @{
     ViewData["Title"] = "Update";
 }
 
-<form asp-action="Update" asp-controller="ProfileClient" method="post" asp-antiforgery="true">
+<form asp-formhelper="true" asp-action="Update" asp-controller="ProfileClient" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group">
         <label asp-for="RoleName"></label>

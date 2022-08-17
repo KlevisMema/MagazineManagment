@@ -1,5 +1,4 @@
 ﻿using MagazineManagment.DTO.ViewModels;
-using Microsoft.AspNetCore.Http;
 
 namespace MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces
 {
@@ -14,5 +13,6 @@ namespace MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces
         Task<IEnumerable<ProductsRecordCopyViewModel>> GetProductChangesByEmpolyees();
         Task<HttpResponseMessage> DeleteProductChangeByEmployee(Guid id);
         Task<ProductViewModel> DetailsOfProductChangedByEmployee(Guid id);
+        Task<IEnumerable<ProductViewModel>> SearchProduct(string productName);
     }
 }

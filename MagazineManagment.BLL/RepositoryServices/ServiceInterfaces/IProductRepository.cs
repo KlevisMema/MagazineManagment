@@ -9,7 +9,7 @@ namespace MagazineManagment.BLL.RepositoryServices.ServiceInterfaces
         Task<ResponseService<ProductViewModel>> CreateProductAsync(ProductCreateViewModelNoIFormFile product, HttpContext context);
         Task<ResponseService<ProductViewModel>> DeleteProductAsync(Guid id);
         Task<IEnumerable<ProductViewModel>> GetAllProductsAsync();
-        Task<ResponseService<ProductViewModel>> GetProductByNameAsync(string ProductName);
+        Task<IEnumerable<ProductViewModel>> GetProductByNameAsync(string ProductName);
         Task<ResponseService<ProductViewModel>> GetProductAsync(Guid id);
         Task<IEnumerable<ProductsAndCategoryInfoViewModel>> ProductsAndCategoryAsync();
         Task<ResponseService<ProductPostEditViewModel>> UpdateProductAsync(ProductPostEditViewModel product, HttpContext context);

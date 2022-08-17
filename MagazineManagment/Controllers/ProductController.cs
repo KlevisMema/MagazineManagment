@@ -128,14 +128,10 @@ namespace MagazineManagment.Web.Controllers
         [HttpGet("GetProductByName/{productName}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<ResponseService<ProductViewModel>>> GetPorductByNameAsync(string productName)
+        public async Task<ActionResult<IEnumerable<ProductViewModel>>> GetPorductByNameAsync([FromRoute] string productName)
         {
             var resultGetProductByItsName = await _productRepository.GetProductByNameAsync(productName);
-
-            if (resultGetProductByItsName.Success)
-                return Ok(resultGetProductByItsName.Value);
-
-            return BadRequest(resultGetProductByItsName.Message);
+            return Ok(resultGetProductByItsName);
         }
 
         /// <summary>

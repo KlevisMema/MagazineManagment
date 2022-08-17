@@ -82,17 +82,17 @@ namespace MagazineManagment.ClientApplication.Controllers
             return View(category);
         }
 
-        [HttpPost]
+        [HttpPost, FormValidator]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(CategoryUpdateViewModel category)
         {
             var deleteResult = await _categoryApiCalls.PostDeleteCategory(category.Id);
             
             if (deleteResult.IsSuccessStatusCode)
-                return RedirectToAction("index");
+                return FormResult.CreateSuccessResult("Category deleted successfully", Url.Action("Index", 1000));
 
-            ModelState.AddModelError(string.Empty, await deleteResult.Content.ReadAsStringAsync());
-            return View(category);
+            var errorMsg = await deleteResult.Content.ReadAsStringAsync();
+            return FormResult.CreateErrorResult(errorMsg);
         }
     }
 }

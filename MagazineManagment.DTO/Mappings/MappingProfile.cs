@@ -47,9 +47,9 @@ namespace MagazineManagment.DTO.Mappings
             CreateMap<IdentityRole, RoleFindViewModel>()
                 .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Id));
-            //CreateMap<IdentityRole, ProfileUpdateViewModel>()
-            //    .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Name))
-            //    .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Id));
+            CreateMap<IdentityRole, ProfileUpdateViewModel>()
+                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Id));
 
             CreateMap<ProfileUpdateViewModel, IdentityRole>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.RoleName))

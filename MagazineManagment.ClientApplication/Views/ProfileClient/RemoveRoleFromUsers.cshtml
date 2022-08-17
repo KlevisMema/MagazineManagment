@@ -1,12 +1,15 @@
 ﻿@using MagazineManagment.DTO.ViewModels
 @model List<UserInRoleViewModel>
 
+@using FormHelper
+@addTagHelper *, FormHelper
+
 @{
     ViewData["Title"] = "RemoveRoleFromUsers";
     var roleId = ViewBag.roleId;
 }
 
-<form method="post" asp-action="RemoveRoleFromUsers" asp-controller="ProfileClient" asp-antiforgery="true">
+<form asp-formhelper="true" method="post" asp-action="RemoveRoleFromUsers" asp-controller="ProfileClient" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="card">
         <div class="card-header">
