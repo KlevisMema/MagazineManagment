@@ -49,6 +49,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<CategoryViewModel>>> GetCategory(Guid id)
         {
             var result = await _categoryRepository.GetCategoryAsync(id);
@@ -67,6 +68,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<CategoryViewModel>>> CreateCategory(CategoryCreateViewModel createCategory)
         {
             var result = await _validator.ValidateAsync(createCategory);
@@ -89,6 +91,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<CategoryViewModel>>> UpdateCategory(CategoryUpdateViewModel category)
         {
             var result = await _categoryRepository.UpdateCategoryAsync(category,HttpContext);
@@ -108,6 +111,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<CategoryViewModel>>> DeleteCategory(Guid id)
         {
             var resultDelete = await _categoryRepository.DeleteCategoryAsync(id);

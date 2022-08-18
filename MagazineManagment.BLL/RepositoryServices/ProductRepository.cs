@@ -164,7 +164,7 @@ namespace MagazineManagment.BLL.Services
             }
         }
 
-        //Delete a product
+        // Delete a product
         public async Task<ResponseService<ProductViewModel>> DeleteProductAsync(Guid id)
         {
             try
@@ -212,14 +212,14 @@ namespace MagazineManagment.BLL.Services
             }
         }
 
-        // get changes made by employee
+        // Get changes made by employee
         public async Task<IEnumerable<ProductsRecordCopyViewModel>> GetProducChangesByEmpolyees()
         {
             var products = await _context.ProductRecordsChangeds.OrderByDescending(p => p.CreatedOn).ToListAsync();
             return _mapper.Map<List<ProductsRecordCopyViewModel>>(products);
         }
 
-        // delete the change made by employee
+        // Delete the change made by employee
         public async Task<ResponseService<ProductsRecordCopyViewModel>> DeleteProductChangeByEmployee(Guid id)
         {
             try

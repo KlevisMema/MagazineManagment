@@ -7,7 +7,6 @@ namespace MagazineManagment.DAL.DataSeeding
 {
     public class CategoriesSeed
     {
-        // seeding category data
         public static async Task SeedCategories(IApplicationBuilder applicationBuilder)
         {
             using var serviceScope = applicationBuilder.ApplicationServices.CreateScope();

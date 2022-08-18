@@ -44,6 +44,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RoleCreateViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<RoleCreateViewModel>> Index([FromBody] RoleCreateViewModel role)
         {
             var roleCreateResult = await _profileService.CreateRole(role);
@@ -62,6 +63,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpGet("FindRole/{roleId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RoleFindViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<RoleFindViewModel>>> FindRole(string roleId)
         {
             var findRole = await _profileService.FindRole(roleId);
@@ -80,6 +82,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProfileUpdateViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<ProfileUpdateViewModel>>> UpdateRole([FromBody] ProfileUpdateViewModel roleId)
         {
             var resultUpdate = await _profileService.UpdateRole(roleId);
@@ -99,6 +102,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RoleFindViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<RoleFindViewModel>>> DeleteRole([FromRoute] string id)
         {
             var resultDelete = await _profileService.DeleteRole(id);
@@ -118,6 +122,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpGet("GetRole/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RolesGetAllDetails))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<RolesGetAllDetails>>> GetAllDetailsOfARole(string id)
         {
             var findRole = await _profileService.GetRolesDetails(id);
@@ -136,6 +141,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpGet("GetUsersOfARole/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserInRoleViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<IEnumerable<UserInRoleViewModel>>>> GetUsersOfARole(string id)
         {
             var usersInRole = await _profileService.GetUsersOfARole(id);
@@ -154,6 +160,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpGet("GetAllUsers/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserNotInRoleViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<IEnumerable<UserNotInRoleViewModel>>>> GetAllUsers([FromRoute] string id)
         {
             var getAllUsersResult = await _profileService.GettAllUsers(id);
@@ -173,6 +180,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpPost("AssignRoleToUsers/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserInRoleViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<IEnumerable<UserInRoleViewModel>>>> AssignRoleToUsers(List<UserInRoleViewModel> users, [FromRoute] string id)
         {
             var asignResult = await _profileService.AssignRoleToUsers(users, id);
@@ -192,6 +200,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpPost("RemoveRoleFromUsers/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserInRoleViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<IEnumerable<UserInRoleViewModel>>>> RemoveRoleFromUsers(List<UserInRoleViewModel> users, [FromRoute] string id)
         {
             var asignResult = await _profileService.RemoveUsersFromRole(users, id);

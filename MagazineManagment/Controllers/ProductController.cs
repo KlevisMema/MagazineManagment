@@ -45,6 +45,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<ProductViewModel>>> GetProductAsync(Guid id)
         {
             var resultGetProdut = await _productRepository.GetProductAsync(id);
@@ -63,6 +64,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<ProductViewModel>>> CreateProductAsync(ProductCreateViewModelNoIFormFile product)
         {
             var resultCreateProduct = await _productRepository.CreateProductAsync(product,HttpContext);
@@ -81,6 +83,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductPostEditViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<ProductPostEditViewModel>>> UpdateProductAsync(ProductPostEditViewModel product)
         {
             var resultUpdateProduct = await _productRepository.UpdateProductAsync(product,HttpContext);
@@ -142,6 +145,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpGet("GetProductImage/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductImageOnly))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<ProductImageOnly>>> GetProductImageOnlyAsync(Guid id)
         {
             var getProductImage = await _productRepository.GetProductImage(id);
@@ -173,6 +177,7 @@ namespace MagazineManagment.Web.Controllers
         [HttpDelete("DeleteProducChangesByEmpolyees/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductsRecordCopyViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<ProductsRecordCopyViewModel>>> DeleteProductChangeByEmployee(Guid id)
         {
             var productToBeDeleted = await _productRepository.DeleteProductChangeByEmployee(id);

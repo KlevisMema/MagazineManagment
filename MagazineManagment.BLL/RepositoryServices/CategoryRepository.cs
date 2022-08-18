@@ -15,6 +15,7 @@ namespace MagazineManagment.BLL.Services
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
+        //Get user username
         private static string GetUser(HttpContext context)
         {
             var headers = context.Request.Headers["Authorization"].ToString().Remove(0, 7);
@@ -127,6 +128,7 @@ namespace MagazineManagment.BLL.Services
             }
         }
 
+        // Get  category names only
         public async Task<IEnumerable<CategoryNameOnlyViewModel>> GetNamesOnlyCategories()
         {
             var categoryNames = await _context.Categories.ToListAsync();

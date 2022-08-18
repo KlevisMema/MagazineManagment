@@ -142,10 +142,10 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [Authorize(Roles = "Admin,Employee")]
-        public async Task<IActionResult> SearchProduct(string productName)
+        public async Task<IActionResult> SearchProduct(string productName )
         {
             var productSearch = await _productApiCalls.SearchProduct(productName);
-            return View("Index",productSearch);
+            return View("Index", productSearch);
         }
     }
 }

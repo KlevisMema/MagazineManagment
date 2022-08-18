@@ -20,7 +20,6 @@ namespace MagazineManagment.BLL.ResponseService
             Success = success;
         }
 
-
         public ResponseService(string? errorMessage, T? value, bool success, HttpStatusCode statusCode)
         {
             Message = errorMessage;

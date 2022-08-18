@@ -23,12 +23,14 @@ namespace MagazineManagment.BLL.RepositoryServices
             _mapper = mapper;
         }
 
+        // Get all roles
         public async Task<IEnumerable<RolesGetAllDetails>> GetRoles()
         {
             var getRoles = await _roleManager.Roles.ToListAsync();
             return _mapper.Map<List<RolesGetAllDetails>>(getRoles);
         }
 
+        // Create a role
         public async Task<ResponseService<RoleCreateViewModel>> CreateRole(RoleCreateViewModel roleName)
         {
             try
@@ -47,6 +49,7 @@ namespace MagazineManagment.BLL.RepositoryServices
             }
         }
 
+        // Find a role by id
         public async Task<ResponseService<RoleFindViewModel>> FindRole(string roleId)
         {
             IdentityRole? findRole = null;
@@ -67,6 +70,7 @@ namespace MagazineManagment.BLL.RepositoryServices
             return ResponseService<RoleFindViewModel>.Ok(_mapper.Map<RoleFindViewModel>(findRole));
         }
 
+        // Update a role
         public async Task<ResponseService<ProfileUpdateViewModel>> UpdateRole(ProfileUpdateViewModel updateRole)
         {
             var findRole = await _roleManager.FindByIdAsync(updateRole.RoleId);
@@ -90,6 +94,7 @@ namespace MagazineManagment.BLL.RepositoryServices
             }
         }
 
+        // Get role details by id
         public async Task<ResponseService<RolesGetAllDetails>> GetRolesDetails(string id)
         {
             IdentityRole? findRole = null;
@@ -107,6 +112,7 @@ namespace MagazineManagment.BLL.RepositoryServices
             return ResponseService<RolesGetAllDetails>.Ok(_mapper.Map<RolesGetAllDetails>(findRole));
         }
 
+        // Delete a role 
         public async Task<ResponseService<RoleFindViewModel>> DeleteRole(string id)
         {
             try
@@ -126,6 +132,7 @@ namespace MagazineManagment.BLL.RepositoryServices
             }
         }
 
+        // Get all users of a role  
         public async Task<ResponseService<IEnumerable<UserInRoleViewModel>>> GetUsersOfARole(string roleId)
         {
             IList<IdentityUser>? usersInRole = null;
@@ -151,6 +158,7 @@ namespace MagazineManagment.BLL.RepositoryServices
 
         }
 
+        // Get all users that are not in the role 
         public async Task<ResponseService<IEnumerable<UserNotInRoleViewModel>>> GettAllUsers(string id)
         {
             List<UserNotInRoleViewModel> usersNotInRole = new List<UserNotInRoleViewModel>();
@@ -180,6 +188,7 @@ namespace MagazineManagment.BLL.RepositoryServices
 
         }
 
+        // Assign a role to users
         public async Task<ResponseService<IEnumerable<UserInRoleViewModel>>> AssignRoleToUsers(List<UserInRoleViewModel> users, string id)
         {
             try
@@ -210,6 +219,7 @@ namespace MagazineManagment.BLL.RepositoryServices
             return ResponseService<IEnumerable<UserInRoleViewModel>>.ErrorMsg("Could not assign role to users");
         }
         
+        // Remove users form a role
         public async Task<ResponseService<IEnumerable<UserInRoleViewModel>>> RemoveUsersFromRole(List<UserInRoleViewModel> users, string id)
         {
             try

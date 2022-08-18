@@ -1,5 +1,4 @@
-﻿
-using MagazineManagment.Shared.Enums;
+﻿using MagazineManagment.Shared.Enums;
 
 namespace MagazineManagment.DTO.ViewModels
 {
