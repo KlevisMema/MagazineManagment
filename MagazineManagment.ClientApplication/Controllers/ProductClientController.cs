@@ -49,6 +49,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             if (result.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Product created successfully", Url.Action("Index", 1000));
 
+
             ModelState.AddModelError(string.Empty, await result.Content.ReadAsStringAsync());
             var categoryList = await _productApiCalls.GetCreateProduct();
             ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
@@ -76,7 +77,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         {
             var result = await _productApiCalls.PostEditProduct(UpdateProduct);
             if (result.IsSuccessStatusCode)
-                return FormResult.CreateSuccessResult("Product edited successfully", Url.Action("Index", 1000));
+                return FormResult.CreateSuccessResult("Product edited successfully", Url.Action("Index"));
 
             var errorMsg = await result.Content.ReadAsStringAsync();
             return FormResult.CreateWarningResult(errorMsg);

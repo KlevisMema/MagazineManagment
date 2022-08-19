@@ -4,11 +4,8 @@
 }
 
 body {
-    /*font-family: Helvetica;*/
     background: #fff;
 }
-
-
 
 .btn-primary {
     background-color: rgba( 71, 147, 227, 1);
@@ -17,21 +14,21 @@ body {
     border: none;
 }
 
-    .btn-primary:hover {
-        background-color: #4FC3A1;
-        color: #fff;
-    }
+.btn-primary:hover {
+    background-color: #4FC3A1;
+    color: #fff;
+}
 
 .btn-green {
     background-color: green;
     color: #fff;
 }
 
-    .btn-green:hover {
-        color: green;
-        background-color: #fff;
-        border-color: green;
-    }
+.btn-green:hover {
+    color: green;
+    background-color: #fff;
+    border-color: green;
+}
 
 .btn-danger:hover {
     color: #dc3545;
@@ -43,10 +40,10 @@ body {
     color: #ffff;
 }
 
-    .btn-primary-plus:hover {
-        background-color: #fff;
-        color: #0d6efd;
-    }
+.btn-primary-plus:hover {
+    background-color: #fff;
+    color: #0d6efd;
+}
 
 .btn-danger:hover {
     color: #dc3545;
@@ -59,9 +56,9 @@ body {
     justify-content: center;
 }
 
-    .form-group-image h1 {
-        margin: 0px 30px;
-    }
+.form-group-image h1 {
+    margin: 0px 30px;
+}
 
 .form-group-image {
     display: flex;
@@ -69,9 +66,9 @@ body {
     justify-content: center;
 }
 
-    .form-group-image h1 {
-        margin: 0px 30px;
-    }
+.form-group-image h1 {
+    margin: 0px 30px;
+}
 
 h2 {
     font-size: 18px;
@@ -93,7 +90,6 @@ h2 {
     /* margin: 10px 10px 10px;*/
     /*box-shadow: 0px 135px 180px rgba( 0, 0, 0, 0.2 );*/
 }
-
 .fl-table {
     border-radius: 5px;
     font-size: 14px;
@@ -106,33 +102,27 @@ h2 {
     background-color: white;
     box-shadow: 0px 50px 80px rgba( 0, 0, 0, 0.2 );
 }
-
-    .fl-table td, .fl-table th {
-        text-align: center;
-        padding: 10px;
-    }
-
-    .fl-table td {
-        border-right: 1px solid #f8f8f8;
-        font-size: 14px;
-    }
-
-    .fl-table thead th {
+.fl-table td, .fl-table th {
+    text-align: center;
+    padding: 10px;
+}
+.fl-table td {
+    border-right: 1px solid #f8f8f8;
+    font-size: 14px;
+}
+.fl-table thead th {
+    color: #ffffff;
+    background: #4FC3A1;
+}
+.fl-table thead th:nth-child(odd) {
         color: #ffffff;
-        background: #4FC3A1;
+        background: #324960;
     }
+.fl-table tr:nth-child(even) {
+    background: #F8F8F8;
+}
 
-
-        .fl-table thead th:nth-child(odd) {
-            color: #ffffff;
-            background: #324960;
-        }
-
-    .fl-table tr:nth-child(even) {
-        background: #F8F8F8;
-    }
-
-/* Responsive */
+/* Responsive table */
 
 @media (max-width: 767px) {
     .fl-table {
@@ -220,7 +210,6 @@ h2 {
     align-items: center;
     justify-content: space-between;
 }
-
 .card1 {
     display: flex;
     flex-direction: column;
@@ -236,37 +225,31 @@ h2 {
     cursor: pointer;
     transition: .3s ease-in-out;
 }
-
-    .card1 h1, .card p {
-        color: white;
-        padding-top: 10px;
-        opacity: 1;
-    }
-
-    .card1 a {
-        text-decoration: none;
-        color: white;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-size: 20px;
-    }
-
-    .card1:hover {
-        transform: scale(1.1);
-        background-color: #324960;
-    }
-
+.card1 h1, .card p {
+    color: white;
+    padding-top: 10px;
+    opacity: 1;
+}
+.card1 a {
+    text-decoration: none;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 20px;
+}
+.card1:hover {
+    transform: scale(1.1);
+    background-color: #324960;
+}
 .text-center {
     margin-top: 100px;
 }
-
 .form-input {
     outline: none;
     border: 2px solid #324960;
     padding: 5px;
     width: 300px;
 }
-
 .submitBtn {
     background-color: transparent;
     padding: 5px;
@@ -275,11 +258,9 @@ h2 {
     transition: 0.3s all ease-in-out;
     color: gray;
 }
-
-    .submitBtn:hover {
-        transform: scale(1.1);
-    }
-
+.submitBtn:hover {
+    transform: scale(1.1);
+}
 .sort {
     display: flex;
     align-items: center;
@@ -287,7 +268,6 @@ h2 {
     gap: 10px;
     margin-top: 20px;
 }
-
 .sort a {
     text-decoration: none;
     color: #324960;
@@ -296,9 +276,99 @@ h2 {
     border: 1px solid #324960;
     padding: 5px;
 }
-
 .sort a:hover {
-    transform: scale(1.05);
-    background-color: #324960;
-    color: #fff;
+            transform: scale(1.05);
+            background-color: #324960;
+            color: #fff;
+        }
+
+/*procesing request animation*/
+@keyframes ldio-p03kydz5gtb-1 {
+    0% {
+        top: 36px;
+        height: 128px
+    }
+
+    50% {
+        top: 60px;
+        height: 80px
+    }
+
+    100% {
+        top: 60px;
+        height: 80px
+    }
+}
+@keyframes ldio-p03kydz5gtb-2 {
+    0% {
+        top: 41.99999999999999px;
+        height: 116.00000000000001px
+    }
+
+    50% {
+        top: 60px;
+        height: 80px
+    }
+
+    100% {
+        top: 60px;
+        height: 80px
+    }
+}
+@keyframes ldio-p03kydz5gtb-3 {
+    0% {
+        top: 48px;
+        height: 104px
+    }
+
+    50% {
+        top: 60px;
+        height: 80px
+    }
+
+    100% {
+        top: 60px;
+        height: 80px
+    }
+}
+.ldio-p03kydz5gtb div {
+    position: absolute;
+    width: 30px;
+}
+.ldio-p03kydz5gtb div:nth-child(1) {
+    left: 35px;
+    background: #e15b64;
+    animation: ldio-p03kydz5gtb-1 1s cubic-bezier(0,0.5,0.5,1) infinite;
+    animation-delay: -0.2s;
+}
+.ldio-p03kydz5gtb div:nth-child(2) {
+    left: 85px;
+    background: #f8b26a;
+    animation: ldio-p03kydz5gtb-2 1s cubic-bezier(0,0.5,0.5,1) infinite;
+    animation-delay: -0.1s;
+}
+.ldio-p03kydz5gtb div:nth-child(3) {
+    left: 135px;
+    background: #abbd81;
+    animation: ldio-p03kydz5gtb-3 1s cubic-bezier(0,0.5,0.5,1) infinite;
+    animation-delay: undefineds;
+}
+.loadingio-spinner-pulse-74mroih09kc {
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.ldio-p03kydz5gtb {
+    position: absolute;
+    top: 40%;
+    left: 40%;
+    transform: translate(-40%, -40%);
+}
+.ldio-p03kydz5gtb div {
+    box-sizing: content-box;
+    opacity: 1;
 }

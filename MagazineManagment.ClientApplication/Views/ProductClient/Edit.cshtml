@@ -8,8 +8,6 @@
     ViewData["Title"] = "Edit";
 }
 
-<link rel="stylesheet" href="/formhelper/formhelper.min.css" />
-
 @if (User.IsInRole("Employee"))
 {
     <form asp-formhelper="true" asp-action="Edit" asp-controller="ProductClient" method="post" enctype="multipart/form-data" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
@@ -40,18 +38,10 @@
 
         <input type="submit" value="Update Product" class="btn btn-primary" />
     </form>
-
-    <script>
-        var loadImage = function (event) {
-            var image = document.getElementById('img2');
-            image.style.width = "400px";
-            image.src = URL.createObjectURL(event.target.files[0]);
-        }
-    </script>
 }
 else
 {
-    <form asp-formhelper="true" asp-action="Edit" asp-controller="ProductClient" method="post" enctype="multipart/form-data" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
+    <form asp-formhelper="true" asp-action="Edit" asp-controller="ProductClient" method="post" enctype="multipart/form-data" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false" onsubmit="formVlidation()">
 
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -88,7 +78,6 @@ else
                 <h1>&rarr;</h1>
                 <img id="img2" />
             </div>
-            @* <input asp-for="Image" hidden />*@
             <br />
             <label asp-for="CurrencyType"></label>
             <select asp-for="CurrencyType" asp-items="Html.GetEnumSelectList<CurrencyTypeEnum>()" class="form-control"></select>
@@ -99,18 +88,14 @@ else
             <span asp-validation-for="CreatedBy" class="text-danger"></span>
         </div>
         <br />
-        @* <input type="hidden"  asp-for="CategoryId"/>*@
         <input type="submit" value="Update Product" class="btn btn-primary" />
+
 
     </form>
 
-    <script>
-        var loadImage = function (event) {
-            var image = document.getElementById('img2');
-            image.style.width = "400px";
-            image.src = URL.createObjectURL(event.target.files[0]);
-        }
-    </script>
+    <div class="loadingio-spinner-pulse-74mroih09kc" id="loader">
+        <div class="ldio-p03kydz5gtb">
+            <div></div><div></div><div></div>
+        </div>
+    </div>
 }
-
-<script src="/formhelper/formhelper.bundle.min.js"></script>

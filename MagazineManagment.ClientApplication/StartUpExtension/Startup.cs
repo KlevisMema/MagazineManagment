@@ -33,7 +33,15 @@ namespace MagazineManagment.ClientApplication.StartUpExtension
             services.Configure<FetchApiValue>(configuration.GetSection(FetchApiValue.SectionName));
             services.Configure<JwtConfig>(configuration.GetSection("JWTConfig"));
 
-            services.AddControllersWithViews().AddFormHelper().AddFluentValidation();
+            services.AddControllersWithViews()
+                .AddFormHelper(options =>
+                {
+                    options.RedirectDelay = 3000;
+                    options.EmbeddedFiles = true;
+                })
+                .AddFluentValidation();
+
+
 
             services.AddMemoryCache();
             services.AddSession();

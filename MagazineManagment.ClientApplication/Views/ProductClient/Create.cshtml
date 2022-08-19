@@ -4,7 +4,7 @@
 @using FormHelper
 @addTagHelper *, FormHelper
 
-<form asp-formhelper="true" asp-action="Create" asp-controller="ProductClient" enctype="multipart/form-data" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
+<form asp-formhelper="true" asp-action="Create" asp-controller="ProductClient" enctype="multipart/form-data" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false" onsubmit="formVlidation()">
 
     @Html.AntiForgeryToken()
 
@@ -35,19 +35,52 @@
         <span asp-validation-for="ProductDescription" class="text-danger"></span>
         <br />
         <label asp-for="Image" ></label>
-        <input asp-for="ImageFile" type="file" accept="image/*" class="form-control"/> 
+        <input asp-for="ImageFile" type="file" accept="image/*" class="form-control" onchange="loadImage(event)" />
         <span asp-validation-for="ImageFile" class="text-danger"></span>
         <br />
+        <div class="form-group-image">
+            <img id="img2" />
+        </div>
         <label asp-for="CurrencyType" ></label>
         <select asp-for="CurrencyType" asp-items="Html.GetEnumSelectList<CurrencyTypeEnum>()" class="form-control"></select>
         <span asp-validation-for="CurrencyType" class="text-danger"></span>
-       @* <br />
-        <label asp-for="CreatedBy" ></label>
-        <input asp-for="CreatedBy" type="text" class="form-control"/> 
-        <span asp-validation-for="CreatedBy" class="text-danger"></span>*@
     </div>
     <br />
     <input type="submit" value="Create Product" class="btn btn-primary" />
 
 </form>
+
+<div class="loadingio-spinner-pulse-74mroih09kc" id="loader">
+    <div class="ldio-p03kydz5gtb">
+        <div></div><div></div><div></div>
+    </div>
+</div>
+
+<script>
+    // load image
+    var loadImage = function (event) {
+        var image = document.getElementById('img2');
+        image.style.width = "400px";
+        image.src = URL.createObjectURL(event.target.files[0]);
+    }
+
+    //request processor animation play when form is valid only
+    var loader = document.getElementById("loader");
+
+    loader.style.display = "none";
+    function formVlidation() {
+        let validationMessages = document.getElementsByTagName("span");
+        var couter = 0;
+        for (var item = 0; item < validationMessages.length; item++) {
+            if (validationMessages[item].className.includes("field-validation-error")) {
+                couter++;
+            }
+        }
+        console.log(couter);
+        if (couter == validationMessages.length) {
+            //loader.style.display = "block";
+            //window.scrollTo({ top: 0 });
+        }
+    }
+</script>
 
