@@ -40,10 +40,9 @@ namespace MagazineManagment.ClientApplication.Controllers
             var postResult = await _categoryApiCalls.PostCreateCategory(category);
 
             if (postResult.IsSuccessStatusCode)
-                return FormResult.CreateSuccessResult("Category created successfully", Url.Action("Index", 1000));
+                return FormResult.CreateSuccessResult("Category created successfully", Url.Action("Index"));
 
-            ModelState.AddModelError(string.Empty, await postResult.Content.ReadAsStringAsync());
-            return View(category);
+            return FormResult.CreateErrorResult(await postResult.Content.ReadAsStringAsync());
         }
 
         [HttpGet]
@@ -61,14 +60,12 @@ namespace MagazineManagment.ClientApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CategoryUpdateViewModel categoryUpdate)
         {
-
             var editResult = await _categoryApiCalls.PostEditCategory(categoryUpdate);
 
             if (editResult.IsSuccessStatusCode)
-                return FormResult.CreateSuccessResult("Category updated successfully", Url.Action("Index", 1000));
+                return FormResult.CreateSuccessResult("Category updated successfully", Url.Action("Index"));
 
-            ModelState.AddModelError(string.Empty, await editResult.Content.ReadAsStringAsync());
-            return View(categoryUpdate);
+            return FormResult.CreateErrorResult(await editResult.Content.ReadAsStringAsync());
         }
 
         [HttpGet]
@@ -89,10 +86,9 @@ namespace MagazineManagment.ClientApplication.Controllers
             var deleteResult = await _categoryApiCalls.PostDeleteCategory(category.Id);
             
             if (deleteResult.IsSuccessStatusCode)
-                return FormResult.CreateSuccessResult("Category deleted successfully", Url.Action("Index", 1000));
+                return FormResult.CreateSuccessResult("Category deleted successfully", Url.Action("Index"));
 
-            var errorMsg = await deleteResult.Content.ReadAsStringAsync();
-            return FormResult.CreateErrorResult(errorMsg);
+            return FormResult.CreateErrorResult(await deleteResult.Content.ReadAsStringAsync());
         }
     }
 }

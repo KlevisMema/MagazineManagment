@@ -127,7 +127,7 @@ namespace MagazineManagment.Web.Controllers
         /// Get a product by name
         /// </summary>
         /// <response code="401"> Unauthorized </response>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Employee")]
         [HttpGet("GetProductByName/{productName}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
