@@ -16,7 +16,7 @@
         <br />
         <label asp-for="SerialNumber"></label>
         <input asp-for="SerialNumber" type="text" placeholder="Serial Number" class="form-control"/>
-        <span asp-validation-for="SerialNumber" class="text-danger"></span>
+        <span asp-validation-for="SerialNumber" class="text-danger" id="serialNumber"></span>
         <br />
         <label asp-for="Price" ></label>
         <input asp-for="Price" type="number" placeholder="Price" class="form-control"/>
@@ -47,7 +47,7 @@
     </div>
     <br />
     <input type="submit" value="Create Product" class="btn btn-primary" />
-
+    <h1>@ViewBag.FormValidation</h1>
 </form>
 
 <div class="loadingio-spinner-pulse-74mroih09kc" id="loader">
@@ -55,32 +55,3 @@
         <div></div><div></div><div></div>
     </div>
 </div>
-
-<script>
-    // load image
-    var loadImage = function (event) {
-        var image = document.getElementById('img2');
-        image.style.width = "400px";
-        image.src = URL.createObjectURL(event.target.files[0]);
-    }
-
-    //request processor animation play when form is valid only
-    var loader = document.getElementById("loader");
-
-    loader.style.display = "none";
-    function formVlidation() {
-        let validationMessages = document.getElementsByTagName("span");
-        var couter = 0;
-        for (var item = 0; item < validationMessages.length; item++) {
-            if (validationMessages[item].className.includes("field-validation-error")) {
-                couter++;
-            }
-        }
-        console.log(couter);
-        if (couter == validationMessages.length) {
-            //loader.style.display = "block";
-            //window.scrollTo({ top: 0 });
-        }
-    }
-</script>
-

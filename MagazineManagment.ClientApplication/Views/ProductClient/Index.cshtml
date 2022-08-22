@@ -12,10 +12,6 @@
     <form asp-action="SearchProduct" asp-controller="ProductClient" method="post">
         <input type="text" placeholder="Enter product name" class="form-input" name="productName" />
         <input type="submit" value="Search" class="submitBtn" />
-        <div class="sort">
-            <a asp-action="" asp-controller="">Sort by price</a>
-            <a asp-action="" asp-controller="">Sort by date created</a>
-        </div>
     </form>
     <br />
     <table class="fl-table">

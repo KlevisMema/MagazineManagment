@@ -9,7 +9,7 @@
     var roleId = ViewBag.roleId;
 }
 
-<form asp-formhelper="true" method="post" asp-action="RemoveRoleFromUsers" asp-controller="ProfileClient" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
+<form asp-formhelper="true" method="post" asp-action="RemoveRoleFromUsers" asp-controller="ProfileClient" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false" onsubmit="formVlidation()">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="card">
         <div class="card-header">
@@ -43,3 +43,9 @@
         </div>
     </div>
 </form>
+
+<div class="loadingio-spinner-pulse-74mroih09kc" id="loader">
+    <div class="ldio-p03kydz5gtb">
+        <div></div><div></div><div></div>
+    </div>
+</div>

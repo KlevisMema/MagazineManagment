@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
+using System.Linq;
 
 namespace MagazineManagment.BLL.Services
 {
@@ -37,6 +38,9 @@ namespace MagazineManagment.BLL.Services
         {
             try
             {
+                var categoryExists = _context.Categories.Any(c => c.CategoryName == category.CategoryName);
+                if (categoryExists)
+                    return ResponseService<CategoryViewModel>.ErrorMsg($"Category {category.CategoryName} exists, please give another category name");
                 category.CreatedBy = GetUser(context);
                 Category Newcategory = _mapper.Map<Category>(category);
 
@@ -76,7 +80,7 @@ namespace MagazineManagment.BLL.Services
         }
 
         // update a category
-        public async Task<ResponseService<CategoryViewModel>> UpdateCategoryAsync(CategoryUpdateViewModel category,HttpContext context)
+        public async Task<ResponseService<CategoryViewModel>> UpdateCategoryAsync(CategoryUpdateViewModel category, HttpContext context)
         {
             try
             {
@@ -84,9 +88,13 @@ namespace MagazineManagment.BLL.Services
 
                 if (findCategory is null)
                     return ResponseService<CategoryViewModel>.NotFound($"Category with id : {category.Id} doesn't exists!!");
+                var categoryExists = false;
+                if (findCategory.CategoryName != category.CategoryName)
+                    categoryExists = await _context.Categories.AnyAsync(c => c.CategoryName == category.CategoryName);
+                if (categoryExists)
+                    return ResponseService<CategoryViewModel>.ErrorMsg($"Category {category.CategoryName} exists please give another category");
 
-                findCategory.CategoryName = category.CategoryName;
-                findCategory.CreatedOn = DateTime.Now;
+                _mapper.Map(category, findCategory);
                 findCategory.CreatedBy = GetUser(context);
 
                 _context.Categories.Update(findCategory);

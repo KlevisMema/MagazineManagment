@@ -47,8 +47,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             var result = await _productApiCalls.PostCreateProduct(product);
 
             if (result.IsSuccessStatusCode)
-                return FormResult.CreateSuccessResult("Product created successfully", Url.Action("Index", 1000));
-
+                return FormResult.CreateSuccessResult("Product created successfully", Url.Action("Index"));
 
             ModelState.AddModelError(string.Empty, await result.Content.ReadAsStringAsync());
             var categoryList = await _productApiCalls.GetCreateProduct();
@@ -103,7 +102,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             var deleteResult = await _productApiCalls.Delete(productToBeDeleted.Id);
 
             if (deleteResult.IsSuccessStatusCode)
-                return FormResult.CreateSuccessResult("Product deleted successfully", Url.Action("Index", 1000));
+                return FormResult.CreateSuccessResult("Product deleted successfully", Url.Action("Index"));
 
             ModelState.AddModelError(string.Empty, await deleteResult.Content.ReadAsStringAsync());
             return View(productToBeDeleted);
@@ -143,9 +142,11 @@ namespace MagazineManagment.ClientApplication.Controllers
         }
 
         [Authorize(Roles = "Admin,Employee")]
-        public async Task<IActionResult> SearchProduct(string productName )
+        public async Task<IActionResult> SearchProduct(string productName)
         {
             var productSearch = await _productApiCalls.SearchProduct(productName);
+            if (productSearch == null)
+                return View("Index");
             return View("Index", productSearch);
         }
     }

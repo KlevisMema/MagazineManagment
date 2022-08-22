@@ -11,7 +11,7 @@
 
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<form asp-formhelper="true" asp-controller="CategoryClient" asp-action="Create" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
+<form asp-formhelper="true" asp-controller="CategoryClient" asp-action="Create" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false" onsubmit="formVlidation()">
 
     <div class="form-group">
         <label asp-for="CategoryName"></label>
@@ -21,3 +21,9 @@
     <br />
     <input type="submit" value="Create category" class="btn btn-primary" />
 </form>
+
+<div class="loadingio-spinner-pulse-74mroih09kc" id="loader">
+    <div class="ldio-p03kydz5gtb">
+        <div></div><div></div><div></div>
+    </div>
+</div>

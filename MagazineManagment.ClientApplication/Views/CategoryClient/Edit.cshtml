@@ -4,7 +4,7 @@
 @using FormHelper
 @addTagHelper *, FormHelper
 
-<form asp-formhelper="true" asp-action="Edit" asp-controller="CategoryClient" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
+<form asp-formhelper="true" asp-action="Edit" asp-controller="CategoryClient" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false" onsubmit="formVlidation()">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group">
         <label asp-for="CategoryName" ></label>
@@ -14,3 +14,9 @@
     <br />
     <input type="submit" value="Update category" class="btn btn-green" />
 </form>
+
+<div class="loadingio-spinner-pulse-74mroih09kc" id="loader">
+    <div class="ldio-p03kydz5gtb">
+        <div></div><div></div><div></div>
+    </div>
+</div>

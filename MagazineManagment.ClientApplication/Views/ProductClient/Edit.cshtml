@@ -10,7 +10,7 @@
 
 @if (User.IsInRole("Employee"))
 {
-    <form asp-formhelper="true" asp-action="Edit" asp-controller="ProductClient" method="post" enctype="multipart/form-data" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
+    <form asp-formhelper="true" asp-action="Edit" asp-controller="ProductClient" method="post" enctype="multipart/form-data" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false" onsubmit="formVlidation()">
 
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -33,9 +33,9 @@
             <input hidden asp-for="ProductDescription" type="text" placeholder="Product description" class="form-control" />
             <input hidden asp-for="ImageFile" type="file" accept="image/*" class="form-control" onchange="loadImage(event)" id="imgfile" />
             <input hidden asp-for="CreatedBy" type="text" class="form-control" />
+            <input hidden asp-for="ProductCategoryId" type="text" class="form-control" />
         </div>
         <br />
-
         <input type="submit" value="Update Product" class="btn btn-primary" />
     </form>
 }
@@ -90,12 +90,11 @@ else
         <br />
         <input type="submit" value="Update Product" class="btn btn-primary" />
 
-
     </form>
-
-    <div class="loadingio-spinner-pulse-74mroih09kc" id="loader">
-        <div class="ldio-p03kydz5gtb">
-            <div></div><div></div><div></div>
-        </div>
-    </div>
 }
+
+<div class="loadingio-spinner-pulse-74mroih09kc" id="loader">
+    <div class="ldio-p03kydz5gtb">
+        <div></div><div></div><div></div>
+    </div>
+</div>

@@ -40,7 +40,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             var postRoleResult = await _profileApiCalls.PostCreateRole(role);
 
             if (postRoleResult.IsSuccessStatusCode)
-                return FormResult.CreateSuccessResult("Role updated succsessfully", Url.Action("Index", 1000));
+                return FormResult.CreateSuccessResult("Role updated succsessfully", Url.Action("Index"));
 
             var errorMsg = await postRoleResult.Content.ReadAsStringAsync();
             return FormResult.CreateErrorResult(errorMsg);
@@ -65,7 +65,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         {
             var postUpdateResult = await _profileApiCalls.PostUpdateRole(role);
             if (postUpdateResult.IsSuccessStatusCode)
-                return FormResult.CreateSuccessResult("Role updated succsessfully", Url.Action("Index", 1000));
+                return FormResult.CreateSuccessResult("Role updated succsessfully", Url.Action("Index"));
 
             var errorMsg = await postUpdateResult.Content.ReadAsStringAsync();
             return FormResult.CreateErrorResult(errorMsg);
@@ -92,7 +92,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             var getRoleToDeleteResult = await _profileApiCalls.DeleteRole(role.RoleId);
 
             if (getRoleToDeleteResult.IsSuccessStatusCode)
-                return FormResult.CreateSuccessResult("Role deleted succsessfully", Url.Action("Index", 1000));
+                return FormResult.CreateSuccessResult("Role deleted succsessfully", Url.Action("Index"));
 
             var errorMsg = await getRoleToDeleteResult.Content.ReadAsStringAsync();
             return FormResult.CreateErrorResult(errorMsg);
@@ -131,7 +131,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             var asignRoleToUsersResult = await _profileApiCalls.AssignRoleToUsers(users, id);
 
             if (asignRoleToUsersResult.IsSuccessStatusCode)
-                return FormResult.CreateSuccessResult("Users added successfully", Url.Action("Index", 1000));
+                return FormResult.CreateSuccessResult("Users added successfully", Url.Action("Index"));
 
             var errorMsg = await asignRoleToUsersResult.Content.ReadAsStringAsync();
             return FormResult.CreateErrorResult(errorMsg);
@@ -158,7 +158,7 @@ namespace MagazineManagment.ClientApplication.Controllers
             var removeRoleFromUsersResult = await _profileApiCalls.RemoveRoleFromUsers(users, id);
 
             if (removeRoleFromUsersResult.IsSuccessStatusCode)
-                return FormResult.CreateSuccessResult("Users removed successfully", Url.Action("Index", 1000));
+                return FormResult.CreateSuccessResult("Users removed successfully", Url.Action("Index"));
 
             var errorMsg = await removeRoleFromUsersResult.Content.ReadAsStringAsync();
             return FormResult.CreateErrorResult(errorMsg);

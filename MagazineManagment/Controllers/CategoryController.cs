@@ -71,12 +71,12 @@ namespace MagazineManagment.Web.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<CategoryViewModel>>> CreateCategory(CategoryCreateViewModel createCategory)
         {
-            var result = await _validator.ValidateAsync(createCategory);
+            var resultValidator = await _validator.ValidateAsync(createCategory);
 
-            if (!result.IsValid)
-                return BadRequest(result.ToDictionary());
+            if (!resultValidator.IsValid)
+                return BadRequest(resultValidator.ToDictionary());
 
-            var resultCreate = await _categoryRepository.CreateCategoryAsync(createCategory,HttpContext);
+            var resultCreate = await _categoryRepository.CreateCategoryAsync(createCategory, HttpContext);
             if (resultCreate.Success)
                 return Ok(resultCreate.Value);
             return BadRequest(resultCreate.Message);
@@ -94,7 +94,7 @@ namespace MagazineManagment.Web.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ResponseService<CategoryViewModel>>> UpdateCategory(CategoryUpdateViewModel category)
         {
-            var result = await _categoryRepository.UpdateCategoryAsync(category,HttpContext);
+            var result = await _categoryRepository.UpdateCategoryAsync(category, HttpContext);
 
             if (result.Success)
                 return Ok(result.Value);
@@ -127,7 +127,7 @@ namespace MagazineManagment.Web.Controllers
         /// Get category names
         /// </summary>
         /// <response code="401"> Unauthorized </response>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Employee")]
         [HttpGet("CategoryNameOnly")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryNameOnlyViewModel))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

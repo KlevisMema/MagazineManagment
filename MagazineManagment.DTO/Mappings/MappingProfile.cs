@@ -30,9 +30,13 @@ namespace MagazineManagment.DTO.Mappings
                 .ForMember(dest => dest.UpdatedOn, opt => opt.MapFrom(src => src.CreatedOn));
             // Category Mapping
             CreateMap<Category, CategoryViewModel>();
+
             CreateMap<Category, CategoryNameOnlyViewModel>();
+
             CreateMap<CategoryCreateViewModel, Category>()
                 .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            CreateMap<CategoryUpdateViewModel, Category>();
             // Profile Mapping
             CreateMap<IdentityRole, RolesGetAllDetails>()
                 .ForMember(dest => dest.RoleNameNormalized, opt => opt.MapFrom(src => src.NormalizedName))

@@ -8,45 +8,9 @@
     ViewData["Title"] = "Delete";
 }
 
-<style>
-    .form-group-image {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .form-group-image h1 {
-        margin: 0px 30px;
-    }
-
-    .btn-danger {
-        background-color: #dc3545;
-        color: #fff;
-    }
-
-    .btn-danger:hover {
-        color: #dc3545;
-        background-color: #fff;
-        border-color: #dc3545;
-    }
-
-    .btn-green {
-        background-color: green;
-        color: #fff;
-    }
-
-    .btn-green:hover {
-        color: green;
-        background-color: #fff;
-        border-color: green;
-    }
-</style>
-
-
-
 @if (Model.RoleName != "Admin")
 {
-    <form asp-formhelper="true" asp-action="Delete" asp-controller="ProfileClient" method="post" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false">
+    <form asp-formhelper="true" asp-action="Delete" asp-controller="ProfileClient" method="post" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false" onsubmit="formVlidation()">
         <h3>Are you sure to delete this record?</h3>
         <input type="submit" value="Yes" class="btn btn-danger" />
         <a asp-action="Index" asp-controller="ProfileClient" class="btn btn-green">No</a>
@@ -75,9 +39,6 @@ else if (Model.RoleName == "Admin")
 
     </div>
 }
-
-<br />
-
 <br />
 <div class="card">
     <div class="card-header">
@@ -85,5 +46,11 @@ else if (Model.RoleName == "Admin")
     </div>
     <div class="card-body">
         <a asp-action="RemoveRoleFromUsers" asp-controller="ProfileClient" asp-route-id="@Model.RoleId" class="btn btn-danger">Go to page</a>
+    </div>
+</div>
+
+<div class="loadingio-spinner-pulse-74mroih09kc" id="loader">
+    <div class="ldio-p03kydz5gtb">
+        <div></div><div></div><div></div>
     </div>
 </div>
