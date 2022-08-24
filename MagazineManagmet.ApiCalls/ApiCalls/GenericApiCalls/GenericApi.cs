@@ -5,7 +5,6 @@ namespace MagazineManagmet.ApiCalls.ApiCall.GenericApiCall
 
     public class GenericApi<T> : IGenericApi<T> where T : class
     {
-        public static string Token1 { get; set; } = String.Empty;
         public string Uri { get; set; }
         public string DefaultRoute { get; set; }
         public string Token { get; set; }
@@ -26,7 +25,7 @@ namespace MagazineManagmet.ApiCalls.ApiCall.GenericApiCall
         public async Task<IEnumerable<T>> GetAllRecords(object productName)
         {
             Client.BaseAddress = new Uri(Uri);
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", Token1);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", Token);
 
             var getResponse = await Client.GetAsync(DefaultRoute + productName);
             var readResult = await getResponse.Content.ReadAsAsync<IList<T>>();
