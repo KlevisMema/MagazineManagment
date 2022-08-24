@@ -7,6 +7,7 @@ using MagazineManagment.DTO.FluentValidators;
 using MagazineManagment.DTO.ViewModels;
 using MagazineManagment.Web.ApiCalls;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
+using MagazineManagmet.ApiCalls.ApiCall.GenericApiCall;
 using MagazineManagmet.ApiCalls.ApiCalls;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Identity;
@@ -25,10 +26,10 @@ namespace MagazineManagment.ClientApplication.StartUpExtension
 
             services.AddDefaultIdentity<IdentityUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
-
             services.AddTransient<IProductApiCalls, ProductApiCalls>();
             services.AddTransient<ICategoryApiCalls, CategoryApiCalls>();
             services.AddTransient<IProfileApiCalls, ProfileApiCalls>();
+            services.AddTransient(typeof(IGenericApi<>), typeof(GenericApi<>));
 
             services.Configure<FetchApiValue>(configuration.GetSection(FetchApiValue.SectionName));
             services.Configure<JwtConfig>(configuration.GetSection("JWTConfig"));
@@ -40,8 +41,6 @@ namespace MagazineManagment.ClientApplication.StartUpExtension
                     options.EmbeddedFiles = true;
                 })
                 .AddFluentValidation();
-
-
 
             services.AddMemoryCache();
             services.AddSession();

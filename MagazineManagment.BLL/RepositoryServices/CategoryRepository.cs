@@ -7,12 +7,14 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
-using System.Linq;
+using MagazineManagment.BLL.RepositoryServices.GenericService;
 
 namespace MagazineManagment.BLL.Services
 {
     public class CategoryRepository : ICategoryRepository
     {
+        private readonly IGenericRepository<CategoryViewModel, Category,Category> _genericCrudCategory;
+
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
@@ -27,10 +29,13 @@ namespace MagazineManagment.BLL.Services
             return getUsername[0].ToString();
         }
 
-        public CategoryRepository(ApplicationDbContext context, IMapper mapper)
+        public CategoryRepository(ApplicationDbContext context, IMapper mapper,
+                                  IGenericRepository<CategoryViewModel, Category, Category> genericCrudCategory)
         {
             _context = context;
             _mapper = mapper;
+            _genericCrudCategory = genericCrudCategory;
+
         }
 
         //Create a category
@@ -41,16 +46,13 @@ namespace MagazineManagment.BLL.Services
                 var categoryExists = _context.Categories.Any(c => c.CategoryName == category.CategoryName);
                 if (categoryExists)
                     return ResponseService<CategoryViewModel>.ErrorMsg($"Category {category.CategoryName} exists, please give another category name");
-                category.CreatedBy = GetUser(context);
-                Category Newcategory = _mapper.Map<Category>(category);
 
-                _context.Categories.Add(Newcategory);
-                await _context.SaveChangesAsync();
-                return ResponseService<CategoryViewModel>.Ok(_mapper.Map<CategoryViewModel>(Newcategory));
+                category.CreatedBy = GetUser(context);
+
+                return await _genericCrudCategory.Create(_mapper.Map<Category>(category));
             }
             catch (Exception ex)
             {
-
                 return ResponseService<CategoryViewModel>.ExceptioThrow(ex.Message);
             }
         }
@@ -58,7 +60,7 @@ namespace MagazineManagment.BLL.Services
         //Get all categories
         public async Task<IEnumerable<CategoryViewModel>> GetAllCategoriesAsync()
         {
-            var categories = await _context.Categories.ToListAsync();
+            var categories = await _context.Categories.Where(category => category.IsDeleted == false).ToListAsync();
             return _mapper.Map<IEnumerable<CategoryViewModel>>(categories);
         }
 
@@ -88,19 +90,17 @@ namespace MagazineManagment.BLL.Services
 
                 if (findCategory is null)
                     return ResponseService<CategoryViewModel>.NotFound($"Category with id : {category.Id} doesn't exists!!");
+
                 var categoryExists = false;
                 if (findCategory.CategoryName != category.CategoryName)
                     categoryExists = await _context.Categories.AnyAsync(c => c.CategoryName == category.CategoryName);
+
                 if (categoryExists)
                     return ResponseService<CategoryViewModel>.ErrorMsg($"Category {category.CategoryName} exists please give another category");
 
-                _mapper.Map(category, findCategory);
-                findCategory.CreatedBy = GetUser(context);
+                category.UpdatedBy = GetUser(context);
 
-                _context.Categories.Update(findCategory);
-                await _context.SaveChangesAsync();
-
-                return ResponseService<CategoryViewModel>.Ok(_mapper.Map<CategoryViewModel>(findCategory));
+                return await _genericCrudCategory.Update(_mapper.Map<Category>(category),findCategory);
             }
             catch (Exception ex)
             {
@@ -118,17 +118,9 @@ namespace MagazineManagment.BLL.Services
                 if (findCategory is null)
                     return ResponseService<CategoryViewModel>.NotFound($"Category with id : {id} doesn't exists!!");
 
-                var findProductWithThisCategory = _context.Products.Where(c => c.ProductCategoryId.Equals(id)).ToList();
+                findCategory.IsDeleted = true;
 
-                foreach (var item in findProductWithThisCategory)
-                {
-                    item.ProductCategoryId = null;
-                    _context.Products.Update(item);
-                }
-
-                _context.Categories.Remove(findCategory);
-                await _context.SaveChangesAsync();
-                return ResponseService<CategoryViewModel>.Deleted($"Product with id {id} has been deleted!! ");
+                return await _genericCrudCategory.Update(findCategory,findCategory);
             }
             catch (Exception ex)
             {
@@ -139,7 +131,7 @@ namespace MagazineManagment.BLL.Services
         // Get  category names only
         public async Task<IEnumerable<CategoryNameOnlyViewModel>> GetNamesOnlyCategories()
         {
-            var categoryNames = await _context.Categories.ToListAsync();
+            var categoryNames = await _context.Categories.Where(category => category.IsDeleted == false).ToListAsync();
             return _mapper.Map<List<CategoryNameOnlyViewModel>>(categoryNames);
         }
     }

@@ -1,4 +1,7 @@
-﻿namespace MagazineManagment.Shared.Jwtbearer
+﻿using System.Security.Claims;
+using System.Text;
+
+namespace MagazineManagment.Shared.Jwtbearer
 {
     public class TokenHolder
     {

@@ -49,10 +49,9 @@ namespace MagazineManagment.ClientApplication.Controllers
             if (result.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Product created successfully", Url.Action("Index"));
 
-            ModelState.AddModelError(string.Empty, await result.Content.ReadAsStringAsync());
             var categoryList = await _productApiCalls.GetCreateProduct();
             ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
-            return View(product);
+            return FormResult.CreateErrorResult(await result.Content.ReadAsStringAsync());
         }
 
         [Authorize(Roles = "Admin,Employee")]
