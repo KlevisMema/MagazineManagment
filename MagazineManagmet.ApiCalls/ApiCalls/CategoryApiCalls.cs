@@ -2,6 +2,7 @@
 using MagazineManagment.Shared.ApiUrlDestinations;
 using MagazineManagment.Shared.Jwtbearer;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
+using MagazineManagmet.ApiCalls.ApiCall.GenericApiCall;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
@@ -10,84 +11,60 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
 {
     public class CategoryApiCalls : ICategoryApiCalls
     {
-        private readonly IOptions<FetchApiValue> _options;
+        private readonly IOptions<FetchApiValue> _config;
+        private readonly IGenericApi<CategoryViewModel> _apiCall;
+        private readonly IGenericApi<CategoryCreateViewModel> _PostMethodApi;
+        private readonly IGenericApi<CategoryUpdateViewModel> _editMethodApi;
 
-        public CategoryApiCalls(IOptions<FetchApiValue> options)
+        public CategoryApiCalls(IOptions<FetchApiValue> config, IGenericApi<CategoryViewModel> apiCalls, IGenericApi<CategoryCreateViewModel> postMethodApi, 
+                                IGenericApi<CategoryUpdateViewModel> editMethodApi)
         {
-            _options = options;
+            _config = config;
+            _apiCall = apiCalls;
+            _apiCall = apiCalls;
+            _PostMethodApi = postMethodApi;
+            _editMethodApi = editMethodApi;
         }
 
         public async Task<IEnumerable<CategoryViewModel>> GetAllCategories()
         {
-            var client = new HttpClient();
-            var uri = _options.Value.CategoryGetOrDeleteDefaultUri;
-
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-
-            var getCategoriesResponse = await client.GetAsync(RequestDestination.CategoryGetOrDeleteDefaultRoute);
-            var readResult = await getCategoriesResponse.Content.ReadAsAsync<IList<CategoryViewModel>>();
-
-            client.Dispose();
-            
-            return readResult;
+            _apiCall.DefaultRoute = RequestDestination.CategoryGetOrDeleteDefaultRoute;
+            _apiCall.Uri = _config.Value.CategoryGetOrDeleteDefaultUri;
+            _apiCall.Token = TokenHolder.Token;
+            return await _apiCall.GetAllRecords(String.Empty);
         }
 
         public async Task<HttpResponseMessage> PostCreateCategory(CategoryCreateViewModel category)
         {
-            var client = new HttpClient();
-            var uri = _options.Value.CategoryCreateOrEditDefaultUri;
-
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-
-            var resultPostCategory = await client.PostAsJsonAsync(RequestDestination.CategoryCreateOrEditDefaultRoute, category);
-            client.Dispose();
-
-            return resultPostCategory;
+            _PostMethodApi.DefaultRoute = RequestDestination.CategoryCreateOrEditDefaultRoute;
+            _PostMethodApi.Uri = _config.Value.CategoryCreateOrEditDefaultUri;
+            _PostMethodApi.Token = TokenHolder.Token;
+            return await _PostMethodApi.PostRecord(category);
         }
 
         public async Task<CategoryViewModel> GetEditCategory(Guid id)
         {
-            var client = new HttpClient();
-            var uri = _options.Value.CategoryGetOrDeleteDefaultUri;
-
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-
-            var getCategoryResult = await client.GetAsync(RequestDestination.CategoryGetOrDeleteDefaultRoute + "/" + id);
-            var getContent = await getCategoryResult.Content.ReadAsAsync<CategoryViewModel>();
-
-            client.Dispose();
-            return getContent;
+            _apiCall.DefaultRoute = RequestDestination.CategoryGetOrDeleteDefaultRoute;
+            _apiCall.Uri = _config.Value.CategoryGetOrDeleteDefaultUri;
+            _apiCall.Token = TokenHolder.Token;
+            return await _apiCall.RecordDetails(id);
         }
 
         public async Task<HttpResponseMessage> PostEditCategory(CategoryUpdateViewModel category)
         {
-            var client = new HttpClient();
-            var uri = _options.Value.CategoryCreateOrEditDefaultUri;
+            _editMethodApi.DefaultRoute = RequestDestination.CategoryCreateOrEditDefaultRoute;
+            _editMethodApi.Token = TokenHolder.Token;
+            _editMethodApi.Uri = _config.Value.CategoryCreateOrEditDefaultUri;
+            return await  _editMethodApi.Edit(category);
 
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-
-            var getPostEditResult = await client.PutAsJsonAsync(RequestDestination.CategoryCreateOrEditDefaultRoute, category);
-
-            client.Dispose();
-            return getPostEditResult;
         }
 
         public async Task<HttpResponseMessage> PostDeleteCategory(Guid id)
         {
-            var client = new HttpClient();
-            var uri = _options.Value.CategoryGetOrDeleteDefaultUri;
-
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-
-            var deleteResult = await client.DeleteAsync(RequestDestination.CategoryGetOrDeleteDefaultRoute + "/" + id);
-
-            client.Dispose();
-            return deleteResult;
+            _apiCall.DefaultRoute = RequestDestination.CategoryGetOrDeleteDefaultRoute;
+            _apiCall.Uri = _config.Value.CategoryGetOrDeleteDefaultUri;
+            _apiCall.Token = TokenHolder.Token;
+            return await _apiCall.Delete(id);
         }
     }
 }

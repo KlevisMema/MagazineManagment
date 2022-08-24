@@ -12,12 +12,14 @@ namespace MagazineManagment.DTO.Mappings
             // Products Mapping
             CreateMap<Product, ProductViewModel>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.ProductCategory.CategoryName));
+
             CreateMap<ProductCreateViewModelNoIFormFile, Product>()
                 .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => DateTime.UtcNow));
 
             CreateMap<Product, ProductPostEditViewModel>();
                 
             CreateMap<ProductPostEditViewModel, Product>();
+
             CreateMap<Product, ProductsAndCategoryInfoViewModel>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.ProductCategory.CategoryName))
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.ProductCategoryId));
@@ -28,15 +30,19 @@ namespace MagazineManagment.DTO.Mappings
                 .ForMember(dest => dest.ChangesInQunatity, opt => opt.MapFrom(src => src.ProductInStock))
                 .ForMember(dest => dest.QuantityBeforeChange, opt => opt.MapFrom(src => src.QunatityBeforeRemoval))
                 .ForMember(dest => dest.UpdatedOn, opt => opt.MapFrom(src => src.CreatedOn));
+
             // Category Mapping
             CreateMap<Category, CategoryViewModel>();
+
+            CreateMap<CategoryCreateViewModel, Category>();
 
             CreateMap<Category, CategoryNameOnlyViewModel>();
 
             CreateMap<CategoryCreateViewModel, Category>()
                 .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => DateTime.UtcNow));
 
-            CreateMap<CategoryUpdateViewModel, Category>();
+            CreateMap<CategoryUpdateViewModel, Category>()
+                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.UpdatedBy));
             // Profile Mapping
             CreateMap<IdentityRole, RolesGetAllDetails>()
                 .ForMember(dest => dest.RoleNameNormalized, opt => opt.MapFrom(src => src.NormalizedName))

@@ -2,21 +2,35 @@
 using MagazineManagment.Shared.ApiUrlDestinations;
 using MagazineManagment.Shared.Jwtbearer;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
+using MagazineManagmet.ApiCalls.ApiCall.GenericApiCall;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
-using System.Security.Claims;
 
 namespace MagazineManagment.Web.ApiCalls
 {
     public class ProductApiCalls : IProductApiCalls
     {
         private readonly IOptions<FetchApiValue> _config;
-        public ProductApiCalls(IOptions<FetchApiValue> config)
+        private readonly IGenericApi<ProductViewModel> _apiCall;
+        private readonly IGenericApi<ProductCreateViewModelNoIFormFile> _postMethodApi;
+        private readonly IGenericApi<ProductUpdateViewModel> _editMethodApi;
+        private readonly IGenericApi<ProductPostEditViewModel> _editMethodApi_;
+        private readonly IGenericApi<ProductImageOnly> _getProductImage;
+        private readonly IGenericApi<ProductsRecordCopyViewModel> _GetEmployeeWorkApiCall;
+
+        public ProductApiCalls (IOptions<FetchApiValue> config, IGenericApi<ProductViewModel> apiCall, IGenericApi<ProductCreateViewModelNoIFormFile> postMethodApi,
+                               IGenericApi<ProductUpdateViewModel> editMethodApi, IGenericApi<ProductPostEditViewModel> editMethodApi_,
+                               IGenericApi<ProductImageOnly> getProductImage, IGenericApi<ProductsRecordCopyViewModel> GetEmployeeWorkApiCal)
         {
             _config = config;
+            _apiCall = apiCall;
+            _postMethodApi = postMethodApi;
+            _editMethodApi = editMethodApi;
+            _editMethodApi_ = editMethodApi_;
+            _getProductImage = getProductImage;
+            _GetEmployeeWorkApiCall = GetEmployeeWorkApiCal;    
         }
 
         private static async Task<string> ConvertImageToBase64(IFormFile image)
@@ -34,18 +48,10 @@ namespace MagazineManagment.Web.ApiCalls
 
         public async Task<IEnumerable<ProductViewModel>> GetAllProducts()
         {
-            HttpClient client = new();
-
-            var uri = _config.Value.ProductGet;
-
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-
-            var response = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute);
-            var readResponse = await response.Content.ReadAsAsync<IList<ProductViewModel>>();
-
-            client.Dispose();
-            return readResponse;
+            _apiCall.Uri = _config.Value.ProductGet;
+            _apiCall.DefaultRoute = RequestDestination.ProductGetOrDeleteDefaultRoute;
+            _apiCall.Token = TokenHolder.Token;
+            return await _apiCall.GetAllRecords(String.Empty);
         }
 
         public async Task<IEnumerable<CategoryNameOnlyViewModel>> GetCreateProduct()
@@ -82,33 +88,18 @@ namespace MagazineManagment.Web.ApiCalls
                 ProductDescription = product.ProductDescription
             };
 
-            var client = new HttpClient();
-
-            var uri = _config.Value.ProductPostCreateOrEditDefaultUri;
-
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-
-            var result = await client.PostAsJsonAsync(RequestDestination.ProductCreateOrEditDefaultRoute, newProduct);
-            client.Dispose();
-
-            return result;
+            _postMethodApi.DefaultRoute = RequestDestination.ProductCreateOrEditDefaultRoute;
+            _postMethodApi.Uri = _config.Value.ProductPostCreateOrEditDefaultUri;
+            _postMethodApi.Token = TokenHolder.Token;
+            return await _postMethodApi.PostRecord(newProduct);
         }
 
         public async Task<ProductUpdateViewModel> GetEditProduct(Guid id)
         {
-            var client = new HttpClient();
-
-            var uri = _config.Value.ProductGet;
-
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-
-            var getTask = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
-            var readTask = await getTask.Content.ReadAsAsync<ProductUpdateViewModel>();
-
-            client.Dispose();
-            return readTask;
+            _editMethodApi.DefaultRoute = RequestDestination.ProductGetOrDeleteDefaultRoute;
+            _editMethodApi.Uri = _config.Value.ProductGet;
+            _editMethodApi.Token = TokenHolder.Token;
+            return await _editMethodApi.RecordDetails(id);
         }
 
         public async Task<HttpResponseMessage> PostEditProduct(ProductUpdateViewModel product)
@@ -150,94 +141,50 @@ namespace MagazineManagment.Web.ApiCalls
                 newUpdatedProduct.ProductCategoryId = product.ProductCategoryId;
             }
 
-            var client = new HttpClient();
-
-            var uri = _config.Value.ProductPostCreateOrEditDefaultUri;
-
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-
-            var postTask = await client.PutAsJsonAsync(RequestDestination.ProductCreateOrEditDefaultRoute, newUpdatedProduct);
-            client.Dispose();
-
-            return postTask;
+            _editMethodApi_.DefaultRoute = RequestDestination.ProductCreateOrEditDefaultRoute;
+            _editMethodApi_.Uri = _config.Value.ProductPostCreateOrEditDefaultUri;
+            _editMethodApi_.Token = TokenHolder.Token;
+            return await _editMethodApi_.Edit(newUpdatedProduct);
         }
 
         public async Task<HttpResponseMessage> Delete(Guid id)
         {
-            var client = new HttpClient();
-
-            var uri = _config.Value.ProductGet;
-
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-
-            var deleteResult = await client.DeleteAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
-
-            client.Dispose();
-            return deleteResult;
+            _apiCall.Uri = _config.Value.ProductGet;
+            _apiCall.DefaultRoute = RequestDestination.ProductGetOrDeleteDefaultRoute;
+            _apiCall.Token = TokenHolder.Token;
+            return await _apiCall.Delete(id);
         }
 
         public async Task<ProductImageOnly> GetProductImage(Guid id)
         {
-            var client = new HttpClient();
-
-            var uri = _config.Value.ProductGet;
-
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-
-            var getProduct = await client.GetAsync(RequestDestination.GetProductImage + id);
-            var Task = await getProduct.Content.ReadAsAsync<ProductImageOnly>();
-
-            client.Dispose();
-            return Task;
+            _getProductImage.Uri = _config.Value.ProductGet;
+            _getProductImage.DefaultRoute = RequestDestination.GetProductImage;
+            _getProductImage.Token = TokenHolder.Token;
+            return await _getProductImage.RecordDetails(id);
         }
 
         public async Task<IEnumerable<ProductsRecordCopyViewModel>> GetProductChangesByEmpolyees()
         {
-            using HttpClient client = new();
-
-            var uri = _config.Value.ProductGet;
-
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-
-            var response = await client.GetAsync(RequestDestination.ProductChangesMadeByEmployee);
-            var readResponse = await response.Content.ReadAsAsync<IList<ProductsRecordCopyViewModel>>();
-
-            client.Dispose();
-            return readResponse;
+            _GetEmployeeWorkApiCall.Uri = _config.Value.ProductGet;
+            _GetEmployeeWorkApiCall.DefaultRoute = RequestDestination.ProductChangesMadeByEmployee;
+            _GetEmployeeWorkApiCall.Token = TokenHolder.Token;
+            return await _GetEmployeeWorkApiCall.GetAllRecords(String.Empty);
         }
 
         public async Task<HttpResponseMessage> DeleteProductChangeByEmployee(Guid id)
         {
-            var client = new HttpClient();
-
-            var uri = _config.Value.ProductGet;
-
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-            var deleteResult = await client.DeleteAsync(RequestDestination.ProductChangesMadeByEmployeeDeleteRoute + id);
-
-            client.Dispose();
-            return deleteResult;
+            _apiCall.Uri = _config.Value.ProductGet;
+            _apiCall.DefaultRoute = RequestDestination.ProductChangesMadeByEmployeeDeleteRoute;
+            _apiCall.Token = TokenHolder.Token;
+            return await _apiCall.Delete(id);
         }
 
         public async Task<ProductViewModel> DetailsOfProductChangedByEmployee(Guid id)
         {
-            var client = new HttpClient();
-
-            var uri = _config.Value.ProductGet;
-
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-
-            var getTask = await client.GetAsync(RequestDestination.ProductGetOrDeleteDefaultRoute + "/" + id);
-            var readTask = await getTask.Content.ReadAsAsync<ProductViewModel>();
-
-            client.Dispose();
-            return readTask;
+            _apiCall.Uri = _config.Value.ProductGet;
+            _apiCall.DefaultRoute = RequestDestination.ProductGetOrDeleteDefaultRoute;
+            _apiCall.Token = TokenHolder.Token;
+            return await _apiCall.RecordDetails(id);
         }
 
         public async Task<IEnumerable<ProductViewModel>> SearchProduct(string productName)
@@ -245,18 +192,10 @@ namespace MagazineManagment.Web.ApiCalls
             if (string.IsNullOrEmpty(productName))
                 return await GetAllProducts();
 
-            HttpClient client = new();
-
-            var uri = _config.Value.ProductGet;
-
-            client.BaseAddress = new Uri(uri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
-
-            var response = await client.GetAsync(RequestDestination.SearchProduct + productName);
-            var readResponse = await response.Content.ReadAsAsync<IList<ProductViewModel>>();
-
-            client.Dispose();
-            return readResponse;
+            _apiCall.Uri = _config.Value.ProductGet;
+            _apiCall.DefaultRoute = RequestDestination.SearchProduct;
+            _apiCall.Token = TokenHolder.Token;
+            return await _apiCall.GetAllRecords(productName);
         }
     }
 }

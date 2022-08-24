@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MagazineManagment.BLL.RepositoryServices;
+using MagazineManagment.BLL.RepositoryServices.GenericService;
 using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.Services;
 using MagazineManagment.DAL.DataContext;
@@ -22,10 +23,14 @@ namespace MagazineManagment.Web.Extensions
         {
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddAutoMapper(typeof(MappingProfile));
+
+            services.AddTransient(typeof(IGenericRepository<,,>) , typeof(GenericRepository<,,>));
+
             services.AddScoped<IValidator<CategoryCreateViewModel>, CategoryCreateValidator>();
             services.AddSwaggerGen(c =>
             {
@@ -77,6 +82,8 @@ namespace MagazineManagment.Web.Extensions
                     RequireExpirationTime = true,
                 };
             });
+
+            
 
             return services;
         }
