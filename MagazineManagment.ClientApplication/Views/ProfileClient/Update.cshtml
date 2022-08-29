@@ -8,17 +8,17 @@
     ViewData["Title"] = "Update";
 }
 
-<form asp-formhelper="true" asp-action="Update" asp-controller="ProfileClient" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false" onsubmit="formVlidation()">
+@*<form asp-formhelper="true" asp-action="Update" asp-controller="ProfileClient" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false" onsubmit="formVlidation()">*@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group">
         <label asp-for="RoleName"></label>
-        <input asp-for="RoleName" type="text" placeholder="Category Name" class="form-control" />
-        <span asp-validation-for="RoleName" class="text-danger"></span>
-        <input asp-for="RoleId" hidden />
+        <input readonly asp-for="RoleName" type="text" placeholder="Category Name" class="form-control" />
+       @* <span asp-validation-for="RoleName" class="text-danger"></span>*@
+       @* <input asp-for="RoleId" hidden />*@
     </div>
     <br />
-    <input type="submit" class="btn btn-green" value="Update" />
-</form>
+    @*<input type="submit" class="btn btn-green" value="Update" />*@
+@*</form>*@
 
 <br />
 
