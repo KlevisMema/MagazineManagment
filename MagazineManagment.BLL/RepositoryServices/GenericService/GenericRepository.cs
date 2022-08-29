@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DAL.DataContext;
-using Microsoft.EntityFrameworkCore;
 
 namespace MagazineManagment.BLL.RepositoryServices.GenericService
 {
@@ -11,14 +10,12 @@ namespace MagazineManagment.BLL.RepositoryServices.GenericService
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
-        private readonly DbSet<U> _table = null;
 
 
         public GenericRepository(ApplicationDbContext applicationDbContext, IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
             _mapper = mapper;
-            _table = _applicationDbContext.Set<U>();
         }
 
         public GenericRepository()

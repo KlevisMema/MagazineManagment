@@ -1,11 +1,9 @@
 ﻿using MagazineManagment.DTO.ViewModels;
 using MagazineManagment.Shared.ApiUrlDestinations;
-using MagazineManagment.Shared.Jwtbearer;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using MagazineManagmet.ApiCalls.ApiCall.GenericApiCall;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.Extensions.Options;
-using System.Net.Http.Headers;
 
 namespace MagazineManagmet.ApiCalls.ApiCalls
 {
@@ -27,34 +25,31 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
         }
 
         public async Task<IEnumerable<CategoryViewModel>> GetAllCategories()
+        
         {
             _apiCall.DefaultRoute = RequestDestination.CategoryGetOrDeleteDefaultRoute;
-            _apiCall.Uri = _config.Value.CategoryGetOrDeleteDefaultUri;
-            _apiCall.Token = TokenHolder.Token;
+            _apiCall.Uri = _config.Value.GetDeleteDefault;
             return await _apiCall.GetAllRecords(String.Empty);
         }
 
         public async Task<HttpResponseMessage> PostCreateCategory(CategoryCreateViewModel category)
         {
             _PostMethodApi.DefaultRoute = RequestDestination.CategoryCreateOrEditDefaultRoute;
-            _PostMethodApi.Uri = _config.Value.CategoryCreateOrEditDefaultUri;
-            _PostMethodApi.Token = TokenHolder.Token;
+            _PostMethodApi.Uri = _config.Value.CreateEditDefault;
             return await _PostMethodApi.PostRecord(category);
         }
 
         public async Task<CategoryViewModel> GetEditCategory(Guid id)
         {
             _apiCall.DefaultRoute = RequestDestination.CategoryGetOrDeleteDefaultRoute;
-            _apiCall.Uri = _config.Value.CategoryGetOrDeleteDefaultUri;
-            _apiCall.Token = TokenHolder.Token;
+            _apiCall.Uri = _config.Value.GetDeleteDefault;
             return await _apiCall.RecordDetails(id);
         }
 
         public async Task<HttpResponseMessage> PostEditCategory(CategoryUpdateViewModel category)
         {
             _editMethodApi.DefaultRoute = RequestDestination.CategoryCreateOrEditDefaultRoute;
-            _editMethodApi.Token = TokenHolder.Token;
-            _editMethodApi.Uri = _config.Value.CategoryCreateOrEditDefaultUri;
+            _editMethodApi.Uri = _config.Value.CreateEditDefault;
             return await  _editMethodApi.Edit(category);
 
         }
@@ -62,8 +57,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
         public async Task<HttpResponseMessage> PostDeleteCategory(Guid id)
         {
             _apiCall.DefaultRoute = RequestDestination.CategoryGetOrDeleteDefaultRoute;
-            _apiCall.Uri = _config.Value.CategoryGetOrDeleteDefaultUri;
-            _apiCall.Token = TokenHolder.Token;
+            _apiCall.Uri = _config.Value.GetDeleteDefault;
             return await _apiCall.Delete(id);
         }
     }

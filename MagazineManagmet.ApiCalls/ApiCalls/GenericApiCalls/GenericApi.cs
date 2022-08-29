@@ -1,14 +1,14 @@
-﻿using System.Net.Http.Headers;
+﻿using MagazineManagment.Shared.Jwtbearer;
+using System.Net.Http.Headers;
 
 namespace MagazineManagmet.ApiCalls.ApiCall.GenericApiCall
 {
-
     public class GenericApi<T> : IGenericApi<T> where T : class
     {
         public string Uri { get; set; }
         public string DefaultRoute { get; set; }
-        public string Token { get; set; }
-        public HttpClient Client { get; set; } = new HttpClient();
+        private string Token { get; set; } = TokenHolder.Token;
+        private HttpClient Client { get; set; } = new HttpClient();
 
         public GenericApi()
         {
@@ -82,6 +82,38 @@ namespace MagazineManagmet.ApiCalls.ApiCall.GenericApiCall
 
             Client.Dispose();
             return deleteResult;
+        }
+
+        // Get a list of records by some  id  
+        public async Task<IEnumerable<T>> GetRecordsDetailsById(object id)
+        {
+            IEnumerable<T>? readResult = null;
+
+            Client.BaseAddress = new Uri(Uri);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", Token);
+
+            var getResponse = await Client.GetAsync(DefaultRoute + id);
+
+            if (getResponse.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                return readResult;
+
+            readResult = await getResponse.Content.ReadAsAsync<IEnumerable<T>>();
+
+            Client.Dispose();
+            return readResult;
+        }
+
+        // AssignRole / Remove  role
+        public async Task<HttpResponseMessage> AssignRemoveRoleToUsers(List<T> users, object id)
+        {
+
+            Client.BaseAddress = new Uri(Uri);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", Token);
+
+            var resultPostRoleToUsers = await Client.PostAsJsonAsync(DefaultRoute + id, users);
+
+            Client.Dispose();
+            return resultPostRoleToUsers;
         }
     }
 }

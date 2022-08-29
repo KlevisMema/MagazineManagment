@@ -48,9 +48,8 @@ namespace MagazineManagment.Web.ApiCalls
 
         public async Task<IEnumerable<ProductViewModel>> GetAllProducts()
         {
-            _apiCall.Uri = _config.Value.ProductGet;
+            _apiCall.Uri = _config.Value.GetDeleteDefault;
             _apiCall.DefaultRoute = RequestDestination.ProductGetOrDeleteDefaultRoute;
-            _apiCall.Token = TokenHolder.Token;
             return await _apiCall.GetAllRecords(String.Empty);
         }
 
@@ -89,16 +88,14 @@ namespace MagazineManagment.Web.ApiCalls
             };
 
             _postMethodApi.DefaultRoute = RequestDestination.ProductCreateOrEditDefaultRoute;
-            _postMethodApi.Uri = _config.Value.ProductPostCreateOrEditDefaultUri;
-            _postMethodApi.Token = TokenHolder.Token;
+            _postMethodApi.Uri = _config.Value.CreateEditDefault;
             return await _postMethodApi.PostRecord(newProduct);
         }
 
         public async Task<ProductUpdateViewModel> GetEditProduct(Guid id)
         {
             _editMethodApi.DefaultRoute = RequestDestination.ProductGetOrDeleteDefaultRoute;
-            _editMethodApi.Uri = _config.Value.ProductGet;
-            _editMethodApi.Token = TokenHolder.Token;
+            _editMethodApi.Uri = _config.Value.GetDeleteDefault;
             return await _editMethodApi.RecordDetails(id);
         }
 
@@ -142,48 +139,42 @@ namespace MagazineManagment.Web.ApiCalls
             }
 
             _editMethodApi_.DefaultRoute = RequestDestination.ProductCreateOrEditDefaultRoute;
-            _editMethodApi_.Uri = _config.Value.ProductPostCreateOrEditDefaultUri;
-            _editMethodApi_.Token = TokenHolder.Token;
+            _editMethodApi_.Uri = _config.Value.CreateEditDefault;
             return await _editMethodApi_.Edit(newUpdatedProduct);
         }
 
         public async Task<HttpResponseMessage> Delete(Guid id)
         {
-            _apiCall.Uri = _config.Value.ProductGet;
+            _apiCall.Uri = _config.Value.GetDeleteDefault;
             _apiCall.DefaultRoute = RequestDestination.ProductGetOrDeleteDefaultRoute;
-            _apiCall.Token = TokenHolder.Token;
             return await _apiCall.Delete(id);
         }
 
         public async Task<ProductImageOnly> GetProductImage(Guid id)
         {
-            _getProductImage.Uri = _config.Value.ProductGet;
+            _getProductImage.Uri = _config.Value.GetDeleteDefault;
             _getProductImage.DefaultRoute = RequestDestination.GetProductImage;
-            _getProductImage.Token = TokenHolder.Token;
             return await _getProductImage.RecordDetails(id);
         }
 
         public async Task<IEnumerable<ProductsRecordCopyViewModel>> GetProductChangesByEmpolyees()
         {
-            _GetEmployeeWorkApiCall.Uri = _config.Value.ProductGet;
+            _GetEmployeeWorkApiCall.Uri = _config.Value.GetDeleteDefault;
             _GetEmployeeWorkApiCall.DefaultRoute = RequestDestination.ProductChangesMadeByEmployee;
-            _GetEmployeeWorkApiCall.Token = TokenHolder.Token;
             return await _GetEmployeeWorkApiCall.GetAllRecords(String.Empty);
         }
 
         public async Task<HttpResponseMessage> DeleteProductChangeByEmployee(Guid id)
         {
-            _apiCall.Uri = _config.Value.ProductGet;
+            _apiCall.Uri = _config.Value.GetDeleteDefault;
             _apiCall.DefaultRoute = RequestDestination.ProductChangesMadeByEmployeeDeleteRoute;
-            _apiCall.Token = TokenHolder.Token;
             return await _apiCall.Delete(id);
         }
 
         public async Task<ProductViewModel> DetailsOfProductChangedByEmployee(Guid id)
         {
-            _apiCall.Uri = _config.Value.ProductGet;
+            _apiCall.Uri = _config.Value.GetDeleteDefault;
             _apiCall.DefaultRoute = RequestDestination.ProductGetOrDeleteDefaultRoute;
-            _apiCall.Token = TokenHolder.Token;
             return await _apiCall.RecordDetails(id);
         }
 
@@ -192,9 +183,8 @@ namespace MagazineManagment.Web.ApiCalls
             if (string.IsNullOrEmpty(productName))
                 return await GetAllProducts();
 
-            _apiCall.Uri = _config.Value.ProductGet;
+            _apiCall.Uri = _config.Value.GetDeleteDefault;
             _apiCall.DefaultRoute = RequestDestination.SearchProduct;
-            _apiCall.Token = TokenHolder.Token;
             return await _apiCall.GetAllRecords(productName);
         }
     }

@@ -14,7 +14,6 @@ namespace MagazineManagment.BLL.Services
     public class CategoryRepository : ICategoryRepository
     {
         private readonly IGenericRepository<CategoryViewModel, Category,Category> _genericCrudCategory;
-
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 

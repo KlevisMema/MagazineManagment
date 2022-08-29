@@ -77,7 +77,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         {
             var getRoleToDeleteResult = await _profileApiCalls.GetAllRolesDetails(id);
 
-            if (getRoleToDeleteResult.RoleName is null)
+            if (getRoleToDeleteResult.RoleName == null)
                 return NotFound();
 
             return View(getRoleToDeleteResult);
