@@ -17,6 +17,7 @@
                 <th scope="col">Category name</th>
                 <th scope="col">Created on</th>
                 <th scope="col">Created by</th>
+                <th scope="col">Is active</th>
                 <th scope="col">Operations</th>
             </tr>
         </thead>
@@ -28,8 +29,16 @@
                     <td>@item.CreatedOn?.ToString("MMMM dd, yyyy")</td>
                     <td>@item.CreatedBy</td>
                     <td>
-                        <a asp-action="Edit" asp-controller="CategoryClient" asp-route-id="@item.Id" class="btn btn-green"><i class="fa-solid fa-pen-to-square"></i></a> |
-                        <a asp-action="Delete" asp-controller="CategoryClient" asp-route-id="@item.Id" class=" btn btn-danger"><i class="fa-solid fa-trash"></i></a>
+                        @if(item.IsDeleted){
+                            <i class="fa-solid fa-circle" style="color:red"></i>
+                        }
+                        else{
+                            <i class="fa-solid fa-circle" style="color:green"></i>
+                        }
+                    </td>
+                    <td>
+                       | <a asp-action="Edit" asp-controller="CategoryClient" asp-route-id="@item.Id" class="btn btn-green"><i class="fa-solid fa-pen-to-square"></i></a> |
+                        @*<a asp-action="Delete" asp-controller="CategoryClient" asp-route-id="@item.Id" class=" btn btn-danger"><i class="fa-solid fa-trash"></i></a>*@
                     </td>
                 </tr>
             }

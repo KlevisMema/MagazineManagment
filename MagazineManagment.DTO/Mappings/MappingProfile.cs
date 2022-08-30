@@ -13,6 +13,7 @@ namespace MagazineManagment.DTO.Mappings
             CreateMap<Product, ProductViewModel>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.ProductCategory.CategoryName));
 
+
             CreateMap<ProductCreateViewModelNoIFormFile, Product>()
                 .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => DateTime.UtcNow));
 

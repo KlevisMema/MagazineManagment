@@ -90,5 +90,12 @@ namespace MagazineManagment.ClientApplication.Controllers
 
             return FormResult.CreateErrorResult(await deleteResult.Content.ReadAsStringAsync());
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ActivateCategory(Guid id)
+        {
+            await _categoryApiCalls.ActivateCategory(id);
+            return RedirectToAction("Index");
+        }
     }
 }

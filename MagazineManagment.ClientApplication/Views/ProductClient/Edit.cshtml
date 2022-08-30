@@ -8,7 +8,63 @@
     ViewData["Title"] = "Edit";
 }
 
-@if (User.IsInRole("Employee"))
+@if (User.IsInRole("Admin"))
+{
+    <form asp-formhelper="true" asp-action="Edit" asp-controller="ProductClient" method="post" enctype="multipart/form-data" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false" onsubmit="formVlidation()">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="ProductName"></label>
+            <input asp-for="ProductName" type="text" placeholder="Product Name" class="form-control" />
+            <span asp-validation-for="ProductName" class="text-danger"></span>
+            <br />
+            
+                <label asp-for="ProductCategoryId"></label>
+                <select asp-for="ProductCategoryId" asp-items="@ViewBag.CategoryNames" class="form-control"></select>
+                <span asp-validation-for="ProductCategoryId" class="text-danger"></span>
+            
+            <br />
+            <label asp-for="SerialNumber"></label>
+            <input asp-for="SerialNumber" type="text" placeholder="Seial Number" class="form-control" />
+            <span asp-validation-for="SerialNumber" class="text-danger"></span>
+            <br />
+            <label asp-for="Price"></label>
+            <input asp-for="Price" type="number" placeholder="Price" class="form-control" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+            <br />
+            <label asp-for="CurrencyType"></label>
+            <select asp-for="CurrencyType" asp-items="Html.GetEnumSelectList<CurrencyTypeEnum>()" class="form-control"></select>
+            <span asp-validation-for="CurrencyType" class="text-danger"></span>
+            <br />
+            <label asp-for="ProductInStock"></label>
+            <input asp-for="ProductInStock" type="number" placeholder="Product in stock" class="form-control" />
+            <span asp-validation-for="ProductInStock" class="text-danger"></span>
+            <br />
+            <label asp-for="ProductDescription"></label>
+            <input asp-for="ProductDescription" type="text" placeholder="Product description" class="form-control" />
+            <span asp-validation-for="ProductDescription" class="text-danger"></span>
+            <br />
+            <label asp-for="Image"></label>
+            <input asp-for="ImageFile" type="file" accept="image/*" class="form-control" onchange="loadImage(event)" id="imgfile" />
+            <span asp-validation-for="ImageFile" class="text-danger"></span>
+            <br />
+            <div class="form-group-image">
+                <img src="data:image/png;base64,@Model.Image" width="400px" id="img" />
+                <h1>&rarr;</h1>
+                <img id="img2" />
+            </div>
+            <br />
+            <label asp-for="CreatedBy"></label>
+            <input readonly asp-for="CreatedBy" type="text" class="form-control" />
+            <span asp-validation-for="CreatedBy" class="text-danger"></span>
+        </div>
+        <br />
+        <input type="submit" value="Update Product" class="btn btn-primary" />
+
+    </form>
+}
+else
 {
     <form asp-formhelper="true" asp-action="Edit" asp-controller="ProductClient" method="post" enctype="multipart/form-data" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false" onsubmit="formVlidation()">
 
@@ -37,59 +93,6 @@
         </div>
         <br />
         <input type="submit" value="Update Product" class="btn btn-primary" />
-    </form>
-}
-else
-{
-    <form asp-formhelper="true" asp-action="Edit" asp-controller="ProductClient" method="post" enctype="multipart/form-data" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false" onsubmit="formVlidation()">
-
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-        <div class="form-group">
-            <label asp-for="ProductName"></label>
-            <input asp-for="ProductName" type="text" placeholder="Product Name" class="form-control" />
-            <span asp-validation-for="ProductName" class="text-danger"></span>
-            <br />
-            <label asp-for="ProductCategoryId"></label>
-            <select asp-for="ProductCategoryId" asp-items="@ViewBag.CategoryNames" class="form-control"></select>
-            <span asp-validation-for="ProductCategoryId" class="text-danger"></span>
-            <br />
-            <label asp-for="SerialNumber"></label>
-            <input asp-for="SerialNumber" type="text" placeholder="Seial Number" class="form-control" />
-            <span asp-validation-for="SerialNumber" class="text-danger"></span>
-            <br />
-            <label asp-for="Price"></label>
-            <input asp-for="Price" type="number" placeholder="Price" class="form-control" />
-            <span asp-validation-for="Price" class="text-danger"></span>
-            <br />
-            <label asp-for="ProductInStock"></label>
-            <input asp-for="ProductInStock" type="number" placeholder="Product in stock" class="form-control" />
-            <span asp-validation-for="ProductInStock" class="text-danger"></span>
-            <br />
-            <label asp-for="ProductDescription"></label>
-            <input asp-for="ProductDescription" type="text" placeholder="Product description" class="form-control" />
-            <span asp-validation-for="ProductDescription" class="text-danger"></span>
-            <br />
-            <label asp-for="Image"></label>
-            <input asp-for="ImageFile" type="file" accept="image/*" class="form-control" onchange="loadImage(event)" id="imgfile" />
-            <span asp-validation-for="ImageFile" class="text-danger"></span>
-            <div class="form-group-image">
-                <img src="data:image/png;base64,@Model.Image" width="400px" id="img" />
-                <h1>&rarr;</h1>
-                <img id="img2" />
-            </div>
-            <br />
-            <label asp-for="CurrencyType"></label>
-            <select asp-for="CurrencyType" asp-items="Html.GetEnumSelectList<CurrencyTypeEnum>()" class="form-control"></select>
-            <span asp-validation-for="CurrencyType" class="text-danger"></span>
-            <br />
-            <label asp-for="CreatedBy"></label>
-            <input readonly asp-for="CreatedBy" type="text" class="form-control" />
-            <span asp-validation-for="CreatedBy" class="text-danger"></span>
-        </div>
-        <br />
-        <input type="submit" value="Update Product" class="btn btn-primary" />
-
     </form>
 }
 

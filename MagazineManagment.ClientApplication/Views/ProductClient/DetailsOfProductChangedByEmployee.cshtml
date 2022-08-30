@@ -23,6 +23,7 @@
         <label asp-for="ProductDescription" ></label>
         <input readonly asp-for="ProductDescription" type="text" placeholder="Product description" class="form-control" />
         <span asp-validation-for="ProductDescription" class="text-danger"></span>
+        <br />
         <div class="form-group-image">
              <img  src="data:image/png;base64,@Model.Image" width="400px" id="img"/>
              <img id="img2"/>

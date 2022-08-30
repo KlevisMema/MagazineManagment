@@ -10,5 +10,6 @@ namespace MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces
         Task<CategoryViewModel> GetEditCategory(Guid id);
         Task<HttpResponseMessage> PostEditCategory(CategoryUpdateViewModel category);
         Task<HttpResponseMessage> PostDeleteCategory(Guid id);
+        Task<CategoryViewModel> ActivateCategory(Guid id);
     }
 }

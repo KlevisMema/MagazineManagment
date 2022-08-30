@@ -1,9 +1,12 @@
-﻿using MagazineManagment.DTO.ViewModels;
+﻿using IdentityServer4.Models;
+using MagazineManagment.DTO.ViewModels;
 using MagazineManagment.Shared.ApiUrlDestinations;
+using MagazineManagment.Shared.Jwtbearer;
 using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using MagazineManagmet.ApiCalls.ApiCall.GenericApiCall;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
 
 namespace MagazineManagmet.ApiCalls.ApiCalls
 {
@@ -14,7 +17,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
         private readonly IGenericApi<CategoryCreateViewModel> _PostMethodApi;
         private readonly IGenericApi<CategoryUpdateViewModel> _editMethodApi;
 
-        public CategoryApiCalls(IOptions<FetchApiValue> config, IGenericApi<CategoryViewModel> apiCalls, IGenericApi<CategoryCreateViewModel> postMethodApi, 
+        public CategoryApiCalls(IOptions<FetchApiValue> config, IGenericApi<CategoryViewModel> apiCalls, IGenericApi<CategoryCreateViewModel> postMethodApi,
                                 IGenericApi<CategoryUpdateViewModel> editMethodApi)
         {
             _config = config;
@@ -25,7 +28,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
         }
 
         public async Task<IEnumerable<CategoryViewModel>> GetAllCategories()
-        
+
         {
             _apiCall.DefaultRoute = RequestDestination.CategoryGetOrDeleteDefaultRoute;
             _apiCall.Uri = _config.Value.GetDeleteDefault;
@@ -50,7 +53,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
         {
             _editMethodApi.DefaultRoute = RequestDestination.CategoryCreateOrEditDefaultRoute;
             _editMethodApi.Uri = _config.Value.CreateEditDefault;
-            return await  _editMethodApi.Edit(category);
+            return await _editMethodApi.Edit(category);
 
         }
 
@@ -60,5 +63,21 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
             _apiCall.Uri = _config.Value.GetDeleteDefault;
             return await _apiCall.Delete(id);
         }
+
+        public async Task<CategoryViewModel> ActivateCategory(Guid id)
+        {
+            var client = new HttpClient();
+            var uri = _config.Value.GetDeleteDefault;
+
+            client.BaseAddress = new Uri(uri);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", TokenHolder.Token);
+
+            var response = await client.GetAsync(RequestDestination.ActivateCategory + "/" + id);
+            var readResponse = await response.Content.ReadAsAsync<CategoryViewModel>();
+
+            client.Dispose();
+            return readResponse;
+        }
+
     }
 }

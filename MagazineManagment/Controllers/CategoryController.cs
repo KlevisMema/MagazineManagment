@@ -136,5 +136,19 @@ namespace MagazineManagment.Web.Controllers
             var result = await _categoryRepository.GetNamesOnlyCategories();
             return Ok(result);
         }
+
+        /// <summary>
+        /// Activate category
+        /// </summary>
+        /// <response code="401"> Unauthorized </response>
+        [Authorize(Roles = "Admin")]
+        [HttpGet("ActivateCategory/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<CategoryViewModel>> ActivateCategory([FromRoute] Guid id)
+        {
+            var result = await _categoryRepository.ActivateCategory(id);
+            return Ok(result);
+        }
     }
 }

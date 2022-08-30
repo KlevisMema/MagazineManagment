@@ -22,11 +22,7 @@ namespace MagazineManagment.DAL.DataSeeding
                 await roleManager.CreateAsync(new IdentityRole(RoleName.Employee));
 
             //Users//
-            var getUsers = configuration.GetSection(Users.SectionName).GetChildren().ToList().Select(x => new Users
-            {
-                UserName = x.GetValue<string>("UserName"),
-                Password = x.GetValue<string>("Password"),
-            });
+            var getUsers = configuration.GetSection(Users.SectionName).Get<Users[]>();
 
             var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
@@ -34,27 +30,22 @@ namespace MagazineManagment.DAL.DataSeeding
             {
                 var User = await userManager.FindByEmailAsync(item.UserName);
 
-                if (User == null && item.UserName.Contains("admin"))
+                if (User == null)
                 {
-                    var newAdminUser = new IdentityUser()
+                    var newUser = new IdentityUser()
                     {
                         UserName = item.UserName,
                         Email = item.UserName,
                         EmailConfirmed = true
                     };
-                    await userManager.CreateAsync(newAdminUser, item.Password);
-                    await userManager.AddToRoleAsync(newAdminUser, RoleName.Admin);
-                }
-                else if (User == null && item.UserName.Contains("employee"))
-                {
-                    var newManagerUser = new IdentityUser()
+
+                    await userManager.CreateAsync(newUser, item.Password);
+
+                    foreach(var role in item.Roles)
                     {
-                        UserName = item.UserName,
-                        Email = item.UserName,
-                        EmailConfirmed = true
-                    };
-                    await userManager.CreateAsync(newManagerUser, item.Password);
-                    await userManager.AddToRoleAsync(newManagerUser, RoleName.Employee);
+                        await userManager.AddToRoleAsync(newUser, role);
+                    }
+
                 }
             }
         }

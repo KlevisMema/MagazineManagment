@@ -13,6 +13,7 @@
         // Category
         public const string CategoryGetOrDeleteDefaultRoute = "Category";
         public const string CategoryCreateOrEditDefaultRoute = "api/Category";
+        public const string ActivateCategory = "Category/ActivateCategory";
         //Profile
         public const string ProfileGetRoles = "Profile";
         public const string ProfileGetRole = "Profile/FindRole";

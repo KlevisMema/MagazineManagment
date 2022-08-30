@@ -46,6 +46,11 @@ namespace MagazineManagment.BLL.ResponseService
             return new ResponseService<T>(errorMessage, HttpStatusCode.NotFound);
         }
 
+        public static ResponseService<T> SuccessMessage(string message)
+        {
+            return new ResponseService<T>(message, HttpStatusCode.OK);
+        }
+
         public static ResponseService<T> Deleted(string Message)
         {
             return new ResponseService<T>(Message, true);

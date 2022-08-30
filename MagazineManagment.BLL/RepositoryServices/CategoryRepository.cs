@@ -42,6 +42,10 @@ namespace MagazineManagment.BLL.Services
         {
             try
             {
+                var categoryExistsv2 = _context.Categories.Any(c => c.CategoryName == category.CategoryName && c.IsDeleted == true);
+                if (categoryExistsv2)
+                    return ResponseService<CategoryViewModel>.ErrorMsg($"Category {category.CategoryName} is inactive but exists, please give another category name");
+
                 var categoryExists = _context.Categories.Any(c => c.CategoryName == category.CategoryName);
                 if (categoryExists)
                     return ResponseService<CategoryViewModel>.ErrorMsg($"Category {category.CategoryName} exists, please give another category name");
@@ -59,7 +63,7 @@ namespace MagazineManagment.BLL.Services
         //Get all categories
         public async Task<IEnumerable<CategoryViewModel>> GetAllCategoriesAsync()
         {
-            var categories = await _context.Categories.Where(category => category.IsDeleted == false).ToListAsync();
+            var categories = await _context.Categories.ToListAsync();
             return _mapper.Map<IEnumerable<CategoryViewModel>>(categories);
         }
 
@@ -132,6 +136,28 @@ namespace MagazineManagment.BLL.Services
         {
             var categoryNames = await _context.Categories.Where(category => category.IsDeleted == false).ToListAsync();
             return _mapper.Map<List<CategoryNameOnlyViewModel>>(categoryNames);
+        }
+
+        //  Activate category
+        public async Task<ResponseService<CategoryViewModel>> ActivateCategory(Guid id)
+        {
+            try
+            {
+                var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+                if (category == null)
+                    return ResponseService<CategoryViewModel>.NotFound("Category does not exists");
+
+                category.IsDeleted = false;
+
+                _context.Categories.Update(category);
+                _context.SaveChanges();
+
+                return ResponseService<CategoryViewModel>.SuccessMessage("Category activated");
+            }
+            catch (Exception ex)
+            {
+                return ResponseService<CategoryViewModel>.ExceptioThrow(ex.Message);
+            }
         }
     }
 }

@@ -203,6 +203,8 @@ namespace MagazineManagment.BLL.RepositoryServices
 
                     if (user == null)
                         return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("User doesnt exists");
+                    //if(await _user.IsInRoleAsync(user,"Admin"))
+                    //    return ResponseService<IEnumerable<UserInRoleViewModel>>.ErrorMsg("You can not assing employee role to admin");
                     if (item.IsSelected && !(await _user.IsInRoleAsync(user, role.Name)))
                         assigningRoleResult = await _user.AddToRoleAsync(user, role.Name);
                     else
@@ -237,6 +239,8 @@ namespace MagazineManagment.BLL.RepositoryServices
 
                     if (user == null)
                         return ResponseService<IEnumerable<UserInRoleViewModel>>.NotFound("User doesnt exists");
+                    //if (await _user.IsInRoleAsync(user, "Admin"))
+                    //    return ResponseService<IEnumerable<UserInRoleViewModel>>.ErrorMsg("You can not remove admin  role");
                     if (!item.IsSelected && await _user.IsInRoleAsync(user, role.Name))
                         assigningRoleResult = await _user.RemoveFromRoleAsync(user, role.Name);
                 }

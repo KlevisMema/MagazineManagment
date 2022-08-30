@@ -19,18 +19,18 @@ namespace MagazineManagment.BLL.Services
         private readonly UserManager<IdentityUser> _user;
         private readonly IMapper _mapper;
         private readonly IGenericRepository<ProductViewModel, Product, Product> _createProduct;
-        private readonly IGenericRepository<ProductPostEditViewModel, Product, Product> _updateProduct;
+        private readonly IGenericRepository<ProductPostEditViewModel, ProductPostEditViewModel, Product> _updateProduct;
 
 
         public ProductRepository(ApplicationDbContext context, UserManager<IdentityUser> user,
                                  IMapper mapper, IGenericRepository<ProductViewModel, Product, Product> createProduct,
-                                 IGenericRepository<ProductPostEditViewModel, Product, Product> updateProduct)
+                                 IGenericRepository<ProductPostEditViewModel, ProductPostEditViewModel, Product> updateProduct)
         {
             _context = context;
             _user = user;
             _mapper = mapper;
             _createProduct = createProduct;
-            _updateProduct = updateProduct;;
+            _updateProduct = updateProduct; ;
         }
 
         //Get user name
@@ -57,6 +57,7 @@ namespace MagazineManagment.BLL.Services
             try
             {
                 var product = await _context.Products.Include(p => p.ProductCategory).FirstOrDefaultAsync(x => x.Id == id);
+
                 if (product is null)
                     return ResponseService<ProductViewModel>.NotFound("Product doesnt exists");
                 return ResponseService<ProductViewModel>.Ok(_mapper.Map<ProductViewModel>(product));
@@ -103,6 +104,13 @@ namespace MagazineManagment.BLL.Services
                 if (productToBeUpdated == null)
                     return ResponseService<ProductPostEditViewModel>.NotFound("Product does not exists");
 
+                //  check if the serial number is changed, if yes  then check if does exists 
+                bool ckeckIfExists = false;
+                if (productToBeUpdated.SerialNumber != product.SerialNumber)
+                    ckeckIfExists = await _context.Products.AnyAsync(s => s.SerialNumber == product.SerialNumber);
+                if (ckeckIfExists)
+                    return ResponseService<ProductPostEditViewModel>.ErrorMsg($"Serial number {product.SerialNumber} exists, please give another  serial number");
+
                 // find  the user by email
                 var findUser = await _user.FindByEmailAsync(GetUser(context));
                 if (findUser == null)
@@ -115,7 +123,7 @@ namespace MagazineManagment.BLL.Services
 
                 // if empolyee role then check how many products is he removing
                 bool recordChangedByEmployee = false;
-                if (product.ProductInStock > productToBeUpdated.ProductInStock && role.Contains(RoleName.Employee))
+                if (role.Count == 1 && product.ProductInStock > productToBeUpdated.ProductInStock && role.Contains(RoleName.Employee))
                     return ResponseService<ProductPostEditViewModel>.ErrorMsg("You can't insert products in quantity");
 
                 var amountOfProductsRemovedFromMagazine = product.ProductInStock - productToBeUpdated.ProductInStock;
@@ -126,12 +134,9 @@ namespace MagazineManagment.BLL.Services
                 else if (role.Contains(RoleName.Employee) && amountOfProductsRemovedFromMagazine > -20)
                     recordChangedByEmployee = true;
 
-                //  check if the serial number is changed, if yes  then check if does exists 
-                bool ckeckIfExists = false;
-                if (productToBeUpdated.SerialNumber != product.SerialNumber)
-                    ckeckIfExists = await _context.Products.AnyAsync(s => s.SerialNumber == product.SerialNumber);
-                if (ckeckIfExists)
-                    return ResponseService<ProductPostEditViewModel>.ErrorMsg($"Serial number {product.SerialNumber} exists, please give another  serial number");
+                productToBeUpdated.ProductInStock = product.ProductInStock;
+                _mapper.Map(product, productToBeUpdated);
+                var resultUpdate = await _updateProduct.Update(product, productToBeUpdated);
 
                 if (recordChangedByEmployee)
                 {
@@ -143,18 +148,11 @@ namespace MagazineManagment.BLL.Services
                         CreatedOn = DateTime.Now,
                         UpdatedBy = GetUser(context),
                         QunatityBeforeRemoval = (int)productToBeUpdated.ProductInStock,
-
                     };
                     _context.ProductRecordsChangeds.Add(copyOfRecord);
                     await _context.SaveChangesAsync();
-
-                    productToBeUpdated.ProductInStock = product.ProductInStock;
                 }
-                else
-                {
-                    _mapper.Map(product, productToBeUpdated);
-                }
-                return await _updateProduct.Update(productToBeUpdated, productToBeUpdated);
+                return resultUpdate;
             }
             catch (Exception ex)
             {
@@ -223,6 +221,8 @@ namespace MagazineManagment.BLL.Services
             try
             {
                 var record = await _context.ProductRecordsChangeds.FirstOrDefaultAsync(p => p.Id == id);
+                if (record is null)
+                    return ResponseService<ProductsRecordCopyViewModel>.NotFound($"Record with id {id} does not exists !!");
                 _context.ProductRecordsChangeds.Remove(record);
                 await _context.SaveChangesAsync();
             }

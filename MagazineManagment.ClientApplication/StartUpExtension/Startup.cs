@@ -41,7 +41,7 @@ namespace MagazineManagment.ClientApplication.StartUpExtension
                     options.EmbeddedFiles = true;
                 })
                 .AddFluentValidation();
-
+            services.AddRazorPages();
             services.AddMemoryCache();
             services.AddSession();
 

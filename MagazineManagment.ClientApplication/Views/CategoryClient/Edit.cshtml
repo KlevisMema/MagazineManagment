@@ -14,7 +14,37 @@
     <br />
     <input type="submit" value="Update category" class="btn btn-green" />
 </form>
-
+<br />
+@if(Model.IsDeleted ==  false)
+{
+    <form asp-formhelper="true" asp-action="Delete" asp-controller="CategoryClient" method="post" asp-antiforgery="true" asp-resetFormAfterSuccess="false" asp-enableButtonAfterSuccess="false" onsubmit="formVlidation()">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="card">
+            <div class="card-header">
+                <h2>Are u sure to remove this record ?  </h2>
+                <p style="color:grey">Name : @Model.CategoryName</p>
+                <p style="color:grey">Created by : @Model.CreatedBy</p>
+                <p style="color:grey">Created : @Model.CreatedOn</p>
+            </div>
+            <div class="card-body">
+                <input type="hidden" readonly asp-for="Id" />
+                <input type="hidden" readonly asp-for="CategoryName" />
+                <input type="submit" value="Remove category" class="btn btn-danger" />
+            </div>
+        </div>
+    </form>
+}
+else{
+    <br />
+    <div class="card">
+        <div class="card-header">
+            <h2>This category is removed, click activate activate this cateogry</h2>
+        </div>
+        <div class="card-body">
+            <a asp-action="ActivateCategory" asp-controller="CategoryClient" asp-route-id="@Model.Id" class="btn btn-green">Activate</a>
+        </div>
+    </div>
+}
 <div class="loadingio-spinner-pulse-74mroih09kc" id="loader">
     <div class="ldio-p03kydz5gtb">
         <div></div><div></div><div></div>

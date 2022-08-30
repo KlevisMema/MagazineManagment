@@ -1,4 +1,5 @@
-﻿using MagazineManagment.Shared.CustomModelValidation;
+﻿using MagazineManagment.DAL.Models;
+using MagazineManagment.Shared.CustomModelValidation;
 using MagazineManagment.Shared.Enums;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
@@ -43,5 +44,6 @@ namespace MagazineManagment.DTO.ViewModels
 
         [Display(Name = "Category name")]
         public Guid? ProductCategoryId { get; set; }
+
     }
 }

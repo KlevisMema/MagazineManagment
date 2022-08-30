@@ -23,7 +23,6 @@ namespace MagazineManagment.Web.Extensions
         {
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
-
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
@@ -82,8 +81,6 @@ namespace MagazineManagment.Web.Extensions
                     RequireExpirationTime = true,
                 };
             });
-
-            
 
             return services;
         }

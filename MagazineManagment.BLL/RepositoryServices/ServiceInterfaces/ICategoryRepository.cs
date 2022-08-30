@@ -12,5 +12,6 @@ namespace MagazineManagment.BLL.RepositoryServices.ServiceInterfaces
         Task<ResponseService<CategoryViewModel>> GetCategoryAsync(Guid id);
         Task<IEnumerable<CategoryNameOnlyViewModel>> GetNamesOnlyCategories();
         Task<ResponseService<CategoryViewModel>> UpdateCategoryAsync(CategoryUpdateViewModel category, HttpContext context);
+        Task<ResponseService<CategoryViewModel>> ActivateCategory(Guid id);
     }
 }
