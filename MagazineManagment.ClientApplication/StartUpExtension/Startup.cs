@@ -24,16 +24,7 @@ namespace MagazineManagment.ClientApplication.StartUpExtension
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
-
-            services.AddTransient<IProductApiCalls, ProductApiCalls>();
-            services.AddTransient<ICategoryApiCalls, CategoryApiCalls>();
-            services.AddTransient<IProfileApiCalls, ProfileApiCalls>();
-            services.AddTransient(typeof(IGenericApi<>), typeof(GenericApi<>));
-
-            services.Configure<FetchApiValue>(configuration.GetSection(FetchApiValue.SectionName));
-            services.Configure<JwtConfig>(configuration.GetSection("JWTConfig"));
-
+            services.AddDefaultIdentity<IdentityUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews()
                 .AddFormHelper(options =>
                 {
@@ -42,9 +33,17 @@ namespace MagazineManagment.ClientApplication.StartUpExtension
                 })
                 .AddFluentValidation();
             services.AddRazorPages();
-            services.AddMemoryCache();
+            services.AddDistributedMemoryCache();
             services.AddSession();
+            services.AddAuthentication();
 
+            services.Configure<FetchApiValue>(configuration.GetSection(FetchApiValue.SectionName));
+            services.Configure<JwtConfig>(configuration.GetSection("JWTConfig"));
+
+            services.AddTransient<IProductApiCalls, ProductApiCalls>();
+            services.AddTransient<ICategoryApiCalls, CategoryApiCalls>();
+            services.AddTransient<IProfileApiCalls, ProfileApiCalls>();
+            services.AddTransient(typeof(IGenericApi<>), typeof(GenericApi<>));
             services.AddTransient<IValidator<CategoryCreateViewModel>, CategoryCreateValidator>();
             services.AddTransient<IValidator<CategoryViewModel>, CategoryUpdateValidator>();
             services.AddTransient<IValidator<ProductCreateViewModel>, ProductCreateValidation>();

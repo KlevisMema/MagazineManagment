@@ -15,6 +15,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using MagazineManagment.Shared.Jwtbearer;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Graph;
+using System.Data;
 
 namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
 {
@@ -117,9 +120,12 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     var AppUser = await _user.FindByEmailAsync(Input.Email);
-
                     var role = await _user.GetRolesAsync(AppUser);
+
                     TokenHolder.Token = GenerateToken(AppUser, role);
+
+                    HttpContext.Session.SetString("Token", GenerateToken(AppUser,role));
+
                     _logger.LogInformation($"User logged in Token {TokenHolder.Token}");
 
                     return LocalRedirect(returnUrl);

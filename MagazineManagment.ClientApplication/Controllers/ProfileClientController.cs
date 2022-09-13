@@ -12,6 +12,10 @@ namespace MagazineManagment.ClientApplication.Controllers
     {
         private readonly IProfileApiCalls _profileApiCalls;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private string GetToken()
+        {
+            return HttpContext.Session.GetString("Token");
+        }
         public ProfileClientController(IProfileApiCalls profileApiCalls, SignInManager<IdentityUser> signInManager)
         {
             _profileApiCalls = profileApiCalls;
@@ -21,7 +25,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            var getAllRoles = await _profileApiCalls.GetAllRoles();
+            var getAllRoles = await _profileApiCalls.GetAllRoles(GetToken());
             return View(getAllRoles);
         }
 
@@ -37,7 +41,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RoleCreateViewModel role)
         {
-            var postRoleResult = await _profileApiCalls.PostCreateRole(role);
+            var postRoleResult = await _profileApiCalls.PostCreateRole(role, GetToken());
 
             if (postRoleResult.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Role updated succsessfully", Url.Action("Index"));
@@ -50,7 +54,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Update(string id)
         {
-            var getRoleToEditResult = await _profileApiCalls.GetEditRole(id);
+            var getRoleToEditResult = await _profileApiCalls.GetEditRole(id,GetToken());
 
             if (getRoleToEditResult.RoleId is null)
                 return NotFound();
@@ -63,7 +67,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(ProfileUpdateViewModel role)
         {
-            var postUpdateResult = await _profileApiCalls.PostUpdateRole(role);
+            var postUpdateResult = await _profileApiCalls.PostUpdateRole(role,GetToken());
             if (postUpdateResult.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Role updated succsessfully", Url.Action("Index"));
 
@@ -75,7 +79,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
-            var getRoleToDeleteResult = await _profileApiCalls.GetAllRolesDetails(id);
+            var getRoleToDeleteResult = await _profileApiCalls.GetAllRolesDetails(id, GetToken());
 
             if (getRoleToDeleteResult.RoleName == null)
                 return NotFound();
@@ -89,7 +93,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(RolesGetAllDetails role)
         {
-            var getRoleToDeleteResult = await _profileApiCalls.DeleteRole(role.RoleId);
+            var getRoleToDeleteResult = await _profileApiCalls.DeleteRole(role.RoleId, GetToken());
 
             if (getRoleToDeleteResult.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Role deleted succsessfully", Url.Action("Index"));
@@ -102,7 +106,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Users(string id)
         {
-            var getUsersInRole = await _profileApiCalls.GetAllUsersInRole(id);
+            var getUsersInRole = await _profileApiCalls.GetAllUsersInRole(id, GetToken());
 
             if (getUsersInRole == null)
                 return NotFound();
@@ -114,7 +118,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> AsingRoleToUsers(string id)
         {
-            var getUsers = await _profileApiCalls.GetAllUsersNotInRole(id);
+            var getUsers = await _profileApiCalls.GetAllUsersNotInRole(id, GetToken());
 
             if (getUsers is null)
                 return NotFound();
@@ -128,7 +132,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AsingRoleToUsers(List<UserInRoleViewModel> users, string id)
         {
-            var asignRoleToUsersResult = await _profileApiCalls.AssignRoleToUsers(users, id);
+            var asignRoleToUsersResult = await _profileApiCalls.AssignRoleToUsers(users, id, GetToken());
 
             if (asignRoleToUsersResult.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Users added successfully", Url.Action("Index"));
@@ -141,7 +145,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> RemoveRoleFromUsers(string id)
         {
-            var getUsers = await _profileApiCalls.GetAllUsersInRole(id);
+            var getUsers = await _profileApiCalls.GetAllUsersInRole(id, GetToken());
 
             if (getUsers is null)
                 return NotFound();
@@ -155,7 +159,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveRoleFromUsers(List<UserInRoleViewModel> users, string id)
         {
-            var removeRoleFromUsersResult = await _profileApiCalls.RemoveRoleFromUsers(users, id);
+            var removeRoleFromUsersResult = await _profileApiCalls.RemoveRoleFromUsers(users, id, GetToken());
 
             if (removeRoleFromUsersResult.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Users removed successfully", Url.Action("Index"));

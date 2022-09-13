@@ -7,12 +7,12 @@ namespace MagazineManagment.ClientApplication.Controllers
         [Route("Error/{statusCode}")]
         public IActionResult Index(int statusCode)
         {
-            switch (statusCode)
+            return statusCode switch
             {
-                case 404: return View("NotFound", statusCode); break;
-                case 400: return View("BadRequest", statusCode); break;
-            }
-            return NoContent();
+                404 => View("NotFound", statusCode),
+                400 => View("BadRequest", statusCode),
+                _ => NoContent()
+            };
         }
     }
 }

@@ -5,6 +5,7 @@
     {
         string DefaultRoute { get; set; }
         string Uri { get; set; }
+        string Token { get; set; }
 
         Task<IEnumerable<T>> GetAllRecords(object productName);
         Task<HttpResponseMessage> PostRecord(T obj);
