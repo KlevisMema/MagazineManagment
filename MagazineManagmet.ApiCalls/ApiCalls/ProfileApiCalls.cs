@@ -4,6 +4,7 @@ using MagazineManagment.Web.ApiCalls.ApiUrlValues;
 using MagazineManagmet.ApiCalls.ApiCall.GenericApiCall;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.Extensions.Options;
+using NuGet.Protocol;
 
 namespace MagazineManagmet.ApiCalls.ApiCalls
 {
@@ -34,6 +35,7 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
         {
             _roles.DefaultRoute = RequestDestination.ProfileGetRoles;
             _roles.Uri = _options.Value.GetDeleteDefault;
+            _roles.Token = token;
             return await _roles.GetAllRecords(String.Empty);
         }
 
