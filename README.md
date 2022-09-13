@@ -13,3 +13,5 @@
 9- Database Seeding (Users,Roles,Categories only).
 10- Use of abstrasct class.
 11- Api consume  with httpclient c#.
+12- Use of fluent validation.
+13- Use of Automapper.
