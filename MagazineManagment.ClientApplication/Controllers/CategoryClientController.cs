@@ -10,6 +10,11 @@ namespace MagazineManagment.ClientApplication.Controllers
     public class CategoryClientController : Controller
     {
         private readonly ICategoryApiCalls _categoryApiCalls;
+        private string GetToken()
+        {
+            return HttpContext.Session.GetString("Token");
+        }
+
         public CategoryClientController(ICategoryApiCalls categoryApiCalls)
         {
             _categoryApiCalls = categoryApiCalls;
@@ -18,7 +23,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var categories = await _categoryApiCalls.GetAllCategories();
+            var categories = await _categoryApiCalls.GetAllCategories(GetToken());
 
             if (categories is null)
                 return BadRequest();
@@ -37,7 +42,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         public async Task<IActionResult> Create(CategoryCreateViewModel category)
         {
 
-            var postResult = await _categoryApiCalls.PostCreateCategory(category);
+            var postResult = await _categoryApiCalls.PostCreateCategory(category, GetToken());
 
             if (postResult.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Category created successfully", Url.Action("Index"));
@@ -48,7 +53,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var category = await _categoryApiCalls.GetEditCategory(id);
+            var category = await _categoryApiCalls.GetEditCategory(id,GetToken());
 
             if (category.CategoryName == null)
                 return RedirectToAction("Index", "ErrorHandler"); 
@@ -60,7 +65,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CategoryUpdateViewModel categoryUpdate)
         {
-            var editResult = await _categoryApiCalls.PostEditCategory(categoryUpdate);
+            var editResult = await _categoryApiCalls.PostEditCategory(categoryUpdate, GetToken());
 
             if (editResult.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Category updated successfully", Url.Action("Index"));
@@ -71,7 +76,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var category = await _categoryApiCalls.GetEditCategory(id);
+            var category = await _categoryApiCalls.GetEditCategory(id, GetToken());
 
             if (category.CategoryName is null)
                 return RedirectToAction("Index", "ErrorHandler");
@@ -83,7 +88,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(CategoryUpdateViewModel category)
         {
-            var deleteResult = await _categoryApiCalls.PostDeleteCategory(category.Id);
+            var deleteResult = await _categoryApiCalls.PostDeleteCategory(category.Id, GetToken());
             
             if (deleteResult.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Category deleted successfully", Url.Action("Index"));
@@ -94,7 +99,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> ActivateCategory(Guid id)
         {
-            await _categoryApiCalls.ActivateCategory(id);
+            await _categoryApiCalls.ActivateCategory(id, GetToken());
             return RedirectToAction("Index");
         }
     }

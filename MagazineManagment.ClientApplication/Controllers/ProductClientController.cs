@@ -4,13 +4,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using MagazineManagmet.ApiCalls.ApiCalls.ApiCallsInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using FormHelper;
+using System.Data;
 
 namespace MagazineManagment.ClientApplication.Controllers
 {
     public class ProductClientController : Controller
     {
-
         private readonly IProductApiCalls _productApiCalls;
+
+        private string GetToken()
+        {
+            return HttpContext.Session.GetString("Token");
+        }
 
         public ProductClientController(IProductApiCalls productApiCalls)
         {
@@ -21,7 +26,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var products = await _productApiCalls.GetAllProducts();
+            var products = await _productApiCalls.GetAllProducts(GetToken());
 
             if (products == null)
                 return BadRequest();
@@ -33,7 +38,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var categoryList = await _productApiCalls.GetCreateProduct();
+            var categoryList = await _productApiCalls.GetCreateProduct(GetToken());
             ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
 
             return View();
@@ -44,12 +49,12 @@ namespace MagazineManagment.ClientApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductCreateViewModel product)
         {
-            var result = await _productApiCalls.PostCreateProduct(product);
+            var result = await _productApiCalls.PostCreateProduct(product, GetToken());
 
             if (result.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Product created successfully", Url.Action("Index"));
 
-            var categoryList = await _productApiCalls.GetCreateProduct();
+            var categoryList = await _productApiCalls.GetCreateProduct(GetToken());
             ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
             return FormResult.CreateErrorResult(await result.Content.ReadAsStringAsync());
         }
@@ -58,12 +63,12 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var product = await _productApiCalls.GetEditProduct(id);
+            var product = await _productApiCalls.GetEditProduct(id, GetToken());
 
             if (product.ProductName is null)
                 return NotFound();
 
-            var categoryList = await _productApiCalls.GetCreateProduct();
+            var categoryList = await _productApiCalls.GetCreateProduct(GetToken());
             ViewBag.CategoryNames = new SelectList(categoryList, "Id", "CategoryName");
             return View(product);
         }
@@ -73,7 +78,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProductUpdateViewModel UpdateProduct)
         {
-            var result = await _productApiCalls.PostEditProduct(UpdateProduct);
+            var result = await _productApiCalls.PostEditProduct(UpdateProduct, GetToken());
             if (result.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Product edited successfully", Url.Action("Index"));
 
@@ -85,7 +90,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var product = await _productApiCalls.GetEditProduct(id);
+            var product = await _productApiCalls.GetEditProduct(id, GetToken());
 
             if (product.ProductName is null)
                 return NotFound();
@@ -98,7 +103,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(ProductUpdateViewModel productToBeDeleted)
         {
-            var deleteResult = await _productApiCalls.Delete(productToBeDeleted.Id);
+            var deleteResult = await _productApiCalls.Delete(productToBeDeleted.Id, GetToken());
 
             if (deleteResult.IsSuccessStatusCode)
                 return FormResult.CreateSuccessResult("Product deleted successfully", Url.Action("Index"));
@@ -111,7 +116,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> GetChangesMadeByEmployees()
         {
-            var productChanges = await _productApiCalls.GetProductChangesByEmpolyees();
+            var productChanges = await _productApiCalls.GetProductChangesByEmpolyees(GetToken());
 
             return View(productChanges);
         }
@@ -119,7 +124,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProductChangeByEmployee(Guid id)
         {
-            var deleteResult = await _productApiCalls.DeleteProductChangeByEmployee(id);
+            var deleteResult = await _productApiCalls.DeleteProductChangeByEmployee(id, GetToken());
 
             if (deleteResult.IsSuccessStatusCode)
                 return RedirectToAction("GetChangesMadeByEmployees");
@@ -132,7 +137,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> DetailsOfProductChangedByEmployee(Guid id)
         {
-            var product = await _productApiCalls.DetailsOfProductChangedByEmployee(id);
+            var product = await _productApiCalls.DetailsOfProductChangedByEmployee(id, GetToken());
 
             if (product.ProductName is null)
                 return NotFound();
@@ -143,7 +148,7 @@ namespace MagazineManagment.ClientApplication.Controllers
         [Authorize(Roles = "Admin,Employee")]
         public async Task<IActionResult> SearchProduct(string productName)
         {
-            var productSearch = await _productApiCalls.SearchProduct(productName);
+            var productSearch = await _productApiCalls.SearchProduct(productName, GetToken());
             if (productSearch == null)
                 return View("Index");
             return View("Index", productSearch);

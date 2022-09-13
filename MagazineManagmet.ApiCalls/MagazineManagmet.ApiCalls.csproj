@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MagazineManagment.BLL\MagazineManagment.BLL.csproj" />
     <ProjectReference Include="..\MagazineManagment.DTO\MagazineManagment.DTO.csproj" />
   </ItemGroup>
 

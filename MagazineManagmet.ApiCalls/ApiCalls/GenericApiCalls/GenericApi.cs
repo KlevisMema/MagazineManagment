@@ -7,7 +7,7 @@ namespace MagazineManagmet.ApiCalls.ApiCall.GenericApiCall
     {
         public string Uri { get; set; }
         public string DefaultRoute { get; set; }
-        private string Token { get; set; } = TokenHolder.Token;
+        public string Token { get; set; } 
         private HttpClient Client { get; set; } = new HttpClient();
 
         public GenericApi()
