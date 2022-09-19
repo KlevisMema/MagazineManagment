@@ -15,3 +15,4 @@
 11- Api consume  with httpclient c#.
 12- Use of fluent validation.
 13- Use of Automapper.
+14- Dependency injection.
