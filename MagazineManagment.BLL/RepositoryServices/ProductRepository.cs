@@ -104,6 +104,9 @@ namespace MagazineManagment.BLL.Services
                 if (productToBeUpdated == null)
                     return ResponseService<ProductPostEditViewModel>.NotFound("Product does not exists");
 
+                if(product.ProductCategoryId == null)
+                    return ResponseService<ProductPostEditViewModel>.NotFound("Category not  found");
+
                 //  check if the serial number is changed, if yes  then check if does exists 
                 bool ckeckIfExists = false;
                 if (productToBeUpdated.SerialNumber != product.SerialNumber)
