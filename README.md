@@ -16,3 +16,5 @@
 12- Use of fluent validation.
 13- Use of Automapper.
 14- Dependency injection.
+
+Clone this ploject to your machine and run it on Visual Studio 2022
