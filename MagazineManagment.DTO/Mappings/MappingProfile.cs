@@ -44,6 +44,7 @@ namespace MagazineManagment.DTO.Mappings
 
             CreateMap<CategoryUpdateViewModel, Category>()
                 .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.UpdatedBy));
+
             // Profile Mapping
             CreateMap<IdentityRole, RolesGetAllDetails>()
                 .ForMember(dest => dest.RoleNameNormalized, opt => opt.MapFrom(src => src.NormalizedName))

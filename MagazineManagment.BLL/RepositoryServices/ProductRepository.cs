@@ -1,4 +1,5 @@
-﻿using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
+﻿
+using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DAL.DataContext;
 using MagazineManagment.DAL.Models;
@@ -22,8 +23,10 @@ namespace MagazineManagment.BLL.Services
         private readonly IGenericRepository<ProductPostEditViewModel, ProductPostEditViewModel, Product> _updateProduct;
 
 
-        public ProductRepository(ApplicationDbContext context, UserManager<IdentityUser> user,
-                                 IMapper mapper, IGenericRepository<ProductViewModel, Product, Product> createProduct,
+        public ProductRepository(ApplicationDbContext context, 
+                                 UserManager<IdentityUser> user,
+                                 IMapper mapper, 
+                                 IGenericRepository<ProductViewModel, Product, Product> createProduct,
                                  IGenericRepository<ProductPostEditViewModel, ProductPostEditViewModel, Product> updateProduct)
         {
             _context = context;

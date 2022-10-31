@@ -9,6 +9,7 @@ namespace MagazineManagment.BLL.ResponseService
         public bool Success { get; set; }
         public HttpStatusCode StatusCode { get; set; }
 
+        /* Constructor overloading */
         public ResponseService(string? errorMessage)
         {
             Message = errorMessage;
@@ -36,6 +37,7 @@ namespace MagazineManagment.BLL.ResponseService
             StatusCode = statusCode;
         }
 
+        /* Static methods to return */
         public static ResponseService<T> Ok(T value)
         {
             return new ResponseService<T>(String.Empty, value, true, HttpStatusCode.OK);

@@ -40,6 +40,7 @@ namespace MagazineManagment.Web.Controllers
         /// </summary>
         /// <param name="role"></param>
         /// <response code="401"> Unauthorized </response>
+        /// <response code="400"> Bad Request </response>
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RoleCreateViewModel))]
@@ -59,6 +60,7 @@ namespace MagazineManagment.Web.Controllers
         /// </summary>
         /// <param name="roleId"></param>
         /// <response code="401"> Unauthorized </response>
+        /// <response code="400"> Bad Request </response>
         [Authorize(Roles = "Admin")]
         [HttpGet("FindRole/{roleId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RoleFindViewModel))]
@@ -78,6 +80,7 @@ namespace MagazineManagment.Web.Controllers
         /// </summary>
         /// <param name="roleId"></param>
         /// <response code="401"> Unauthorized </response>
+        /// <response code="400"> Bad Request </response>
         [Authorize(Roles = "Admin")]
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProfileUpdateViewModel))]
@@ -98,6 +101,7 @@ namespace MagazineManagment.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <response code="401"> Unauthorized </response>
+        /// <response code="400"> Bad Request </response>
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RoleFindViewModel))]
@@ -118,6 +122,7 @@ namespace MagazineManagment.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <response code="401"> Unauthorized </response>
+        /// <response code="400"> Bad Request </response>
         [Authorize(Roles = "Admin")]
         [HttpGet("GetRole/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RolesGetAllDetails))]
@@ -137,6 +142,7 @@ namespace MagazineManagment.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <response code="401"> Unauthorized </response>
+        /// <response code="400"> Bad Request </response>
         [Authorize(Roles = "Admin")]
         [HttpGet("GetUsersOfARole/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserInRoleViewModel))]
@@ -156,6 +162,7 @@ namespace MagazineManagment.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <response code="401"> Unauthorized </response>
+        /// <response code="400"> Bad Request </response>
         [Authorize(Roles = "Admin")]
         [HttpGet("GetAllUsers/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserNotInRoleViewModel))]
@@ -176,6 +183,7 @@ namespace MagazineManagment.Web.Controllers
         /// <param name="users"></param>
         /// <param name="id"></param>
         /// <response code="401"> Unauthorized </response>
+        /// <response code="400"> Bad Request </response>
         [Authorize(Roles = "Admin")]
         [HttpPost("AssignRoleToUsers/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserInRoleViewModel))]
@@ -196,6 +204,7 @@ namespace MagazineManagment.Web.Controllers
         /// <param name="users"></param>
         /// <param name="id"></param>
         /// <response code="401"> Unauthorized </response>
+        /// <response code="400"> Bad Request </response>
         [Authorize(Roles = "Admin")]
         [HttpPost("RemoveRoleFromUsers/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserInRoleViewModel))]
