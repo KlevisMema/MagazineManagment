@@ -7,6 +7,7 @@ using MagazineManagment.DAL.DataContext;
 using MagazineManagment.DTO.FluentValidators;
 using MagazineManagment.DTO.Mappings;
 using MagazineManagment.DTO.ViewModels;
+using MagazineManagment.Web.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,9 @@ namespace MagazineManagment.Web.Extensions
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddAutoMapper(typeof(MappingProfile));
+            services.AddSession();
+
+            services.Configure<JwtConfig>(configuration.GetSection("JWTConfig"));
 
             services.AddTransient(typeof(IGenericRepository<,,>) , typeof(GenericRepository<,,>));
 
