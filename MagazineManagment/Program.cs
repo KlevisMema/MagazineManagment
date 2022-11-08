@@ -1,19 +1,19 @@
 using MagazineManagment.DAL.DataSeeding;
 using MagazineManagment.Web.Extensions;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 
-builder.Services.AddCors(options => options.AddPolicy("CorsPolicy",
-    builder =>
-    {
-        builder
-        .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowCredentials();
-    }));
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy",
+        builder => builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
 
 
 builder.Services.AddControllers();
@@ -34,11 +34,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
 
-app.UseCors();
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
