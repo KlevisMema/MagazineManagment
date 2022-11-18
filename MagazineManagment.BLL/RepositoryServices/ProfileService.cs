@@ -3,24 +3,41 @@ using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DAL.DataContext;
 using MagazineManagment.DTO.ViewModels;
+using MagazineManagment.Shared.UsersSeedValues;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace MagazineManagment.BLL.RepositoryServices
 {
     public class ProfileService : IProfileService
     {
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _user;
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IUserStore<IdentityUser> _userStore;
 
-        public ProfileService(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> user, ApplicationDbContext context, IMapper mapper)
+        public ProfileService
+        (
+            RoleManager<IdentityRole> roleManager,
+            UserManager<IdentityUser> user,
+            ApplicationDbContext context,
+            IMapper mapper,
+            SignInManager<IdentityUser> signInManager,
+            IUserStore<IdentityUser> userStore
+        )
         {
             _roleManager = roleManager;
             _user = user;
             _context = context;
             _mapper = mapper;
+            _signInManager = signInManager;
+            _userStore = userStore;
         }
 
         // Get all roles
@@ -208,7 +225,7 @@ namespace MagazineManagment.BLL.RepositoryServices
                     if (item.IsSelected && !(await _user.IsInRoleAsync(user, role.Name)))
                         assigningRoleResult = await _user.AddToRoleAsync(user, role.Name);
                     else
-                    continue;
+                        continue;
                 }
                 if (assigningRoleResult.Succeeded)
                     return ResponseService<IEnumerable<UserInRoleViewModel>>.Ok(users);
@@ -220,7 +237,7 @@ namespace MagazineManagment.BLL.RepositoryServices
 
             return ResponseService<IEnumerable<UserInRoleViewModel>>.ErrorMsg("Could not assign role to users");
         }
-        
+
         // Remove users form a role
         public async Task<ResponseService<IEnumerable<UserInRoleViewModel>>> RemoveUsersFromRole(List<UserInRoleViewModel> users, string id)
         {
@@ -252,6 +269,109 @@ namespace MagazineManagment.BLL.RepositoryServices
                 ResponseService<UserInRoleViewModel>.ExceptioThrow(ex.Message);
             }
             return ResponseService<IEnumerable<UserInRoleViewModel>>.Ok(users);
+        }
+
+        // User Login 
+        public async Task<ResponseService<Tuple<string?, IdentityUser?>>> Login(LoginViewModel inputModel, string key)
+        {
+            var result = await _signInManager.PasswordSignInAsync(inputModel.Email, inputModel.Password, inputModel.RememberMe, lockoutOnFailure: false);
+
+            if (result.Succeeded)
+            {
+                var AppUser = await _user.FindByEmailAsync(inputModel.Email);
+                var role = await _user.GetRolesAsync(AppUser);
+
+                var Token = GenerateToken(AppUser, role, key);
+
+                return ResponseService<Tuple<string?, IdentityUser?>>.Ok(Tuple.Create(Token, AppUser));
+            }
+            return ResponseService<Tuple<string?, IdentityUser?>>.ErrorMsg("Invalid login attempt");
+        }
+
+        // Register
+        public async Task<ResponseService<string>> Register(RegisterViewModel Input, string key)
+        {
+            var user = CreateUser();
+
+            await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+
+            user.Email = Input.Email;
+            var result = await _user.CreateAsync(user, Input.Password);
+
+            if (result.Succeeded)
+            {
+                var findRole = await _roleManager.FindByNameAsync(RoleName.Employee);
+                if (findRole != null)
+                    await _user.AddToRoleAsync(user, RoleName.Employee);
+
+                var Token = GenerateToken(user, RoleName.Employee, key);
+
+                return ResponseService<string>.Ok(Token);
+            }
+            else
+            {
+                return ResponseService<string>.ErrorMsg("Server error...");
+            }
+        }
+
+        private string GenerateToken(IdentityUser user, IList<string> roles, string secretKey)
+        {
+
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.NameId, user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            };
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(secretKey);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+            };
+
+            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
+
+            return jwtTokenHandler.WriteToken(token);
+        }
+
+        private string GenerateToken(IdentityUser user, string role, string secretKey)
+        {
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(secretKey);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(JwtRegisteredClaimNames.NameId, user.Id),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Role,role),
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
+            return jwtTokenHandler.WriteToken(token);
+        }
+
+        private IdentityUser CreateUser()
+        {
+            try
+            {
+                return Activator.CreateInstance<IdentityUser>();
+            }
+            catch
+            {
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
+                    $"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
+            }
         }
     }
 }

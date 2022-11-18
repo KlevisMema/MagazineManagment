@@ -45,6 +45,7 @@ namespace MagazineManagment.Web.Controllers
         /// </summary>
         /// <param name="id">The category id</param>
         /// <response code="401"> Unauthorized </response>
+        /// <response code="400"> Bad Request </response>
         [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
@@ -64,6 +65,7 @@ namespace MagazineManagment.Web.Controllers
         ///  Create a  category
         /// </summary>
         /// <response code="401"> Unauthorized </response>
+        /// <response code="400"> Bad Request </response>
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
@@ -87,6 +89,7 @@ namespace MagazineManagment.Web.Controllers
         /// </summary>
         /// <param name="category"></param>
         /// <response code="401"> Unauthorized </response>
+        /// <response code="400"> Bad Request </response>
         [Authorize(Roles = "Admin")]
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]
@@ -107,6 +110,7 @@ namespace MagazineManagment.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <response code="401"> Unauthorized </response>
+        /// <response code="400"> Bad Request </response>
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryViewModel))]

@@ -40,6 +40,7 @@ namespace MagazineManagment.Web.Controllers
         /// <summary>
         /// Get a product by id 
         /// </summary>
+        /// <response code="400"> Bad Request </response>
         /// <response code="401"> Unauthorized </response>
         [Authorize(Roles = "Admin,Employee")]
         [HttpGet("{id}")]
@@ -59,6 +60,7 @@ namespace MagazineManagment.Web.Controllers
         /// <summary>
         /// Create a product
         /// </summary>
+        /// <response code="400"> Bad Request </response>
         /// <response code="401"> Unauthorized </response>
         [Authorize(Roles = "Admin")]
         [HttpPost]
@@ -78,6 +80,7 @@ namespace MagazineManagment.Web.Controllers
         /// <summary>
         /// Update a product
         /// </summary>
+        /// <response code="400"> Bad Request </response>
         /// <response code="401"> Unauthorized </response>
         [Authorize(Roles = "Admin,Employee")]
         [HttpPut]
@@ -140,6 +143,7 @@ namespace MagazineManagment.Web.Controllers
         /// <summary>
         /// Get product image 
         /// </summary>
+        /// <response code="400"> Bad Request </response>
         /// <response code="401"> Unauthorized </response>
         [Authorize(Roles = "Admin,Employee")]
         [HttpGet("GetProductImage/{id}")]
@@ -173,6 +177,7 @@ namespace MagazineManagment.Web.Controllers
         /// Delete the changes that employye made 
         /// </summary>
         /// <response code="401"> Unauthorized </response>
+        /// <response code="400"> Bad Request </response>
         [Authorize(Roles = "Admin")]
         [HttpDelete("DeleteProducChangesByEmpolyees/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductsRecordCopyViewModel))]

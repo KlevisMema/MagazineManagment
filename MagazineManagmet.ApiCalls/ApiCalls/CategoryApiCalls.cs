@@ -20,7 +20,6 @@ namespace MagazineManagmet.ApiCalls.ApiCalls
         {
             _config = config;
             _apiCall = apiCalls;
-            _apiCall = apiCalls;
             _PostMethodApi = postMethodApi;
             _editMethodApi = editMethodApi;
         }

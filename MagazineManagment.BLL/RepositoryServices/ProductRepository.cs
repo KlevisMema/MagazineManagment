@@ -1,4 +1,5 @@
-﻿using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
+﻿
+using MagazineManagment.BLL.RepositoryServices.ServiceInterfaces;
 using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DAL.DataContext;
 using MagazineManagment.DAL.Models;
@@ -22,8 +23,10 @@ namespace MagazineManagment.BLL.Services
         private readonly IGenericRepository<ProductPostEditViewModel, ProductPostEditViewModel, Product> _updateProduct;
 
 
-        public ProductRepository(ApplicationDbContext context, UserManager<IdentityUser> user,
-                                 IMapper mapper, IGenericRepository<ProductViewModel, Product, Product> createProduct,
+        public ProductRepository(ApplicationDbContext context, 
+                                 UserManager<IdentityUser> user,
+                                 IMapper mapper, 
+                                 IGenericRepository<ProductViewModel, Product, Product> createProduct,
                                  IGenericRepository<ProductPostEditViewModel, ProductPostEditViewModel, Product> updateProduct)
         {
             _context = context;
@@ -103,6 +106,9 @@ namespace MagazineManagment.BLL.Services
                 var productToBeUpdated = await _context.Products.FirstOrDefaultAsync(c => c.Id == product.Id);
                 if (productToBeUpdated == null)
                     return ResponseService<ProductPostEditViewModel>.NotFound("Product does not exists");
+
+                if(product.ProductCategoryId == null)
+                    return ResponseService<ProductPostEditViewModel>.NotFound("Category not  found");
 
                 //  check if the serial number is changed, if yes  then check if does exists 
                 bool ckeckIfExists = false;

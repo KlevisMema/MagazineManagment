@@ -126,7 +126,7 @@ namespace MagazineManagment.ClientApplication.Areas.Identity.Pages.Account
 
                     HttpContext.Session.SetString("Token", GenerateToken(AppUser,role));
 
-                    _logger.LogInformation($"User logged in Token {TokenHolder.Token}");
+                    _logger.LogInformation($"User logged in. Token : {TokenHolder.Token}");
 
                     return LocalRedirect(returnUrl);
                 }

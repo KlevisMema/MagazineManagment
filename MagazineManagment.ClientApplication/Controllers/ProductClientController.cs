@@ -139,8 +139,8 @@ namespace MagazineManagment.ClientApplication.Controllers
         {
             var product = await _productApiCalls.DetailsOfProductChangedByEmployee(id, GetToken());
 
-            if (product.ProductName is null)
-                return NotFound();
+            //if (product.ProductName is null)
+            //    return NotFound();
 
             return View(product);
         }

@@ -17,6 +17,15 @@ namespace MagazineManagment.BLL.Services
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
+        public CategoryRepository(ApplicationDbContext context, IMapper mapper,
+                                 IGenericRepository<CategoryViewModel, Category, Category> genericCrudCategory)
+        {
+            _context = context;
+            _mapper = mapper;
+            _genericCrudCategory = genericCrudCategory;
+
+        }
+
         //Get user username
         private static string GetUser(HttpContext context)
         {
@@ -28,28 +37,22 @@ namespace MagazineManagment.BLL.Services
             return getUsername[0].ToString();
         }
 
-        public CategoryRepository(ApplicationDbContext context, IMapper mapper,
-                                  IGenericRepository<CategoryViewModel, Category, Category> genericCrudCategory)
-        {
-            _context = context;
-            _mapper = mapper;
-            _genericCrudCategory = genericCrudCategory;
-
-        }
-
         //Create a category
         public async Task<ResponseService<CategoryViewModel>> CreateCategoryAsync(CategoryCreateViewModel category, HttpContext context)
         {
             try
             {
+                // check if the category is inactive
                 var categoryExistsv2 = _context.Categories.Any(c => c.CategoryName == category.CategoryName && c.IsDeleted == true);
                 if (categoryExistsv2)
                     return ResponseService<CategoryViewModel>.ErrorMsg($"Category {category.CategoryName} is inactive but exists, please give another category name");
 
+                // check if category exits this is to prevent the creation of categories with the same name 
                 var categoryExists = _context.Categories.Any(c => c.CategoryName == category.CategoryName);
                 if (categoryExists)
                     return ResponseService<CategoryViewModel>.ErrorMsg($"Category {category.CategoryName} exists, please give another category name");
 
+                // Get the username who is creating this category
                 category.CreatedBy = GetUser(context);
 
                 return await _genericCrudCategory.Create(_mapper.Map<Category>(category));
@@ -73,6 +76,7 @@ namespace MagazineManagment.BLL.Services
             try
             {
                 var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+
                 if (category == null)
                     return ResponseService<CategoryViewModel>.NotFound("Category does not exists");
 
@@ -94,10 +98,10 @@ namespace MagazineManagment.BLL.Services
                 if (findCategory is null)
                     return ResponseService<CategoryViewModel>.NotFound($"Category with id : {category.Id} doesn't exists!!");
 
+                /* check if the name  that im giving to this category exits already */
                 var categoryExists = false;
                 if (findCategory.CategoryName != category.CategoryName)
                     categoryExists = await _context.Categories.AnyAsync(c => c.CategoryName == category.CategoryName);
-
                 if (categoryExists)
                     return ResponseService<CategoryViewModel>.ErrorMsg($"Category {category.CategoryName} exists please give another category");
 
