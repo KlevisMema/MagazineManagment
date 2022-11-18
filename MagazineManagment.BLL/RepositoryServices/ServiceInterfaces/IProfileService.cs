@@ -1,10 +1,13 @@
 ﻿using MagazineManagment.BLL.ResponseService;
 using MagazineManagment.DTO.ViewModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace MagazineManagment.BLL.RepositoryServices.ServiceInterfaces
 {
     public interface IProfileService
     {
+        Task<ResponseService<Tuple<string?, IdentityUser?>>> Login(LoginViewModel inputModel, string key);
+        Task<ResponseService<string>> Register(RegisterViewModel Input, string key);
         Task<IEnumerable<RolesGetAllDetails>> GetRoles();
         Task<ResponseService<RoleCreateViewModel>> CreateRole(RoleCreateViewModel roleName);
         Task<ResponseService<RoleFindViewModel>> FindRole(string roleId);
