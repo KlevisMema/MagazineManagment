@@ -1,7 +1,20 @@
 using MagazineManagment.DAL.DataSeeding;
 using MagazineManagment.Web.Extensions;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy",
+        builder => builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
+
 
 builder.Services.AddCors(options =>
 {
@@ -16,6 +29,8 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.InjectServices(builder.Configuration);
 
+
+
 var app = builder.Build();
 
 await CategoriesSeed.SeedCategories(app);
@@ -26,6 +41,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.UseHttpsRedirection();
 
