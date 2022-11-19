@@ -32,4 +32,19 @@
 
 15- Cookie session
 
-Clone this ploject to your machine and run it on Visual Studio 2022
+# Instructions : 
+
+Download and install SQL Server and SQL Server Management
+
+Download and install Visual Studio 2022
+
+Clone this ploject to your machine and open it on Visual Studio 2022
+
+Configure project as Multiple startup 
+
+Main solution > Properties
+![Screenshot (2)](https://user-images.githubusercontent.com/88836204/202848727-9d86e63c-5114-42bb-b4f4-7e39fe2990cc.png)
+
+Check the checkbox Multiple startup projects and choose .ClientAplication and .Web to start and alignn them as shown in the image.
+![Screenshot (3)](https://user-images.githubusercontent.com/88836204/202848787-0b22862e-29c3-4a20-8af3-0493517ad626.png)
+
