@@ -7,6 +7,7 @@ using MagazineManagment.Shared.UsersSeedValues;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -272,7 +273,7 @@ namespace MagazineManagment.BLL.RepositoryServices
         }
 
         // User Login 
-        public async Task<ResponseService<Tuple<string?, IdentityUser?>>> Login(LoginViewModel inputModel, string key)
+        public async Task<ResponseService<Tuple<string?, FullUserInfoViewModel?>>> Login(LoginViewModel inputModel, string key)
         {
             var result = await _signInManager.PasswordSignInAsync(inputModel.Email, inputModel.Password, inputModel.RememberMe, lockoutOnFailure: false);
 
@@ -283,13 +284,20 @@ namespace MagazineManagment.BLL.RepositoryServices
 
                 var Token = GenerateToken(AppUser, role, key);
 
-                return ResponseService<Tuple<string?, IdentityUser?>>.Ok(Tuple.Create(Token, AppUser));
+                var userInfo = new FullUserInfoViewModel
+                {
+                    Email = AppUser.Email,
+                    Username = AppUser.UserName,
+                    Role = role
+                };
+
+                return ResponseService<Tuple<string?, FullUserInfoViewModel?>>.Ok(Tuple.Create(Token, userInfo));
             }
-            return ResponseService<Tuple<string?, IdentityUser?>>.ErrorMsg("Invalid login attempt");
+            return ResponseService<Tuple<string?, FullUserInfoViewModel?>>.ErrorMsg("Invalid login attempt");
         }
 
         // Register
-        public async Task<ResponseService<string>> Register(RegisterViewModel Input, string key)
+        public async Task<ResponseService<Tuple<string?, FullUserInfoViewModel?>>> Register(RegisterViewModel Input, string key)
         {
             var user = CreateUser();
 
@@ -306,11 +314,18 @@ namespace MagazineManagment.BLL.RepositoryServices
 
                 var Token = GenerateToken(user, RoleName.Employee, key);
 
-                return ResponseService<string>.Ok(Token);
+                var userInfo = new FullUserInfoViewModel
+                {
+                    Email = Input.Email,
+                    Username = Input.Email,
+                    Role = new List<string> { RoleName.Employee }
+                };
+
+                return ResponseService<Tuple<string?, FullUserInfoViewModel?>>.Ok(Tuple.Create(Token, userInfo));
             }
             else
             {
-                return ResponseService<string>.ErrorMsg("Server error...");
+                return ResponseService<Tuple<string?, FullUserInfoViewModel?>>.ErrorMsg("Server error...");
             }
         }
 
