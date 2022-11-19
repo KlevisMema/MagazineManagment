@@ -2,7 +2,6 @@
 using MagazineManagment.DTO.ViewModels;
 using MagazineManagment.Web.Jwt;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -25,7 +24,7 @@ namespace MagazineManagment.Web.Controllers
         /// <param name="jwt"></param>
         public LoginController
         (
-            IProfileService profileService, 
+            IProfileService profileService,
             IOptions<JwtConfig> jwt
         )
         {
@@ -33,20 +32,19 @@ namespace MagazineManagment.Web.Controllers
             _jwt = jwt;
         }
 
-
         /// <summary>
         /// User Login 
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<ActionResult<Tuple<string?, IdentityUser?>>> Login
+        public async Task<ActionResult<Tuple<string?, FullUserInfoViewModel?>>> Login
         (
             [FromForm] LoginViewModel inputModel
         )
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);   
+                return BadRequest(ModelState);
 
             var result = await _profileService.Login(inputModel, _jwt.Value.Key);
 
@@ -63,14 +61,14 @@ namespace MagazineManagment.Web.Controllers
         /// <returns></returns>
         [HttpPost("Register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register
+        public async Task<ActionResult<Tuple<string?, FullUserInfoViewModel?>>> Register
         (
             [FromForm] RegisterViewModel Input
         )
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-               
+                return BadRequest(ModelState);
             }
             var register = await _profileService.Register(Input, _jwt.Value.Key);
 
